@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+set -e
+set -u
+set -o pipefail
+
+REPO_TOP_DIR=$(git rev-parse --show-toplevel)
+
+for x in ${REPO_TOP_DIR}/scripts/git-hooks/pre-commit.d/*
+do
+  . "$x"
+done
