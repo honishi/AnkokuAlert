@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB650FD617A15A1100B46806 /* AlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DB650FD517A15A1100B46806 /* AlertManager.m */; };
+		DB650FD717A15A1100B46806 /* AlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DB650FD517A15A1100B46806 /* AlertManager.m */; };
+		DB650FDC17A16A5500B46806 /* TestAccount.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB650FD817A1650900B46806 /* TestAccount.plist */; };
 		DBD33B99179C3706003A41F9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD33B98179C3706003A41F9 /* Cocoa.framework */; };
 		DBD33BA3179C3706003A41F9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DBD33BA1179C3706003A41F9 /* InfoPlist.strings */; };
 		DBD33BA5179C3706003A41F9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD33BA4179C3706003A41F9 /* main.m */; };
@@ -31,6 +34,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DB650FD417A15A1100B46806 /* AlertManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertManager.h; sourceTree = "<group>"; };
+		DB650FD517A15A1100B46806 /* AlertManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertManager.m; sourceTree = "<group>"; };
+		DB650FD817A1650900B46806 /* TestAccount.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = TestAccount.plist; sourceTree = "<group>"; };
+		DB650FDA17A165B000B46806 /* TestAccount.plist.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestAccount.plist.sample; sourceTree = "<group>"; };
 		DBD33B95179C3706003A41F9 /* AnkokuAlert.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AnkokuAlert.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBD33B98179C3706003A41F9 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
 		DBD33B9B179C3706003A41F9 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
@@ -120,6 +127,8 @@
 				DBD33BAB179C3706003A41F9 /* AppDelegate.m */,
 				DBD33BAD179C3707003A41F9 /* MainMenu.xib */,
 				DBD33BB0179C3707003A41F9 /* AnkokuAlert.xcdatamodeld */,
+				DB650FD417A15A1100B46806 /* AlertManager.h */,
+				DB650FD517A15A1100B46806 /* AlertManager.m */,
 				DBD33B9F179C3706003A41F9 /* Supporting Files */,
 			);
 			path = AnkokuAlert;
@@ -140,6 +149,8 @@
 		DBD33BBE179C3707003A41F9 /* AnkokuAlertTests */ = {
 			isa = PBXGroup;
 			children = (
+				DB650FDA17A165B000B46806 /* TestAccount.plist.sample */,
+				DB650FD817A1650900B46806 /* TestAccount.plist */,
 				DBD33BC4179C3707003A41F9 /* AnkokuAlertTests.h */,
 				DBD33BC5179C3707003A41F9 /* AnkokuAlertTests.m */,
 				DBD33BBF179C3707003A41F9 /* Supporting Files */,
@@ -238,6 +249,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBD33BC3179C3707003A41F9 /* InfoPlist.strings in Resources */,
+				DB650FDC17A16A5500B46806 /* TestAccount.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -267,6 +279,7 @@
 				DBD33BA5179C3706003A41F9 /* main.m in Sources */,
 				DBD33BAC179C3706003A41F9 /* AppDelegate.m in Sources */,
 				DBD33BB2179C3707003A41F9 /* AnkokuAlert.xcdatamodeld in Sources */,
+				DB650FD617A15A1100B46806 /* AlertManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -275,6 +288,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBD33BC6179C3707003A41F9 /* AnkokuAlertTests.m in Sources */,
+				DB650FD717A15A1100B46806 /* AlertManager.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +470,7 @@
 				DBD33BCB179C3707003A41F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		DBD33BCC179C3707003A41F9 /* Build configuration list for PBXNativeTarget "AnkokuAlertTests" */ = {
 			isa = XCConfigurationList;
@@ -464,6 +479,7 @@
 				DBD33BCE179C3707003A41F9 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

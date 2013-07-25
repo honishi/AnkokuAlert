@@ -7,6 +7,15 @@
 //
 
 #import "AnkokuAlertTests.h"
+#import "AlertManager.h"
+
+@interface AnkokuAlertTests () <AlertManagerDelegate>
+
+@property (nonatomic, strong) AlertManager* alertManager;
+@property (nonatomic, strong) NSString* email;
+@property (nonatomic, strong) NSString* password;
+
+@end
 
 @implementation AnkokuAlertTests
 
@@ -14,7 +23,13 @@
 {
     [super setUp];
 
-    // Set-up code here.
+    NSBundle* bundle = [NSBundle bundleForClass:[AnkokuAlertTests class]];
+    NSString *path = [bundle pathForResource:@"TestAccount" ofType:@"plist"];
+    NSDictionary *testAccount = [NSDictionary dictionaryWithContentsOfFile:path];
+    self.email = testAccount[@"email"];
+    self.password = testAccount[@"password"];
+    
+    self.alertManager = [[AlertManager alloc] initWithDelegate:self];
 }
 
 -(void)tearDown
@@ -24,9 +39,23 @@
     [super tearDown];
 }
 
--(void)testExample
+-(void)testLoginToAnntena
 {
-    STFail(@"Unit tests are not implemented yet in AnkokuAlertTests");
+    [self.alertManager loginToAntennaWithEmail:self.email password:self.password];
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:3.0]];
+    NSLog(@"bbb");
+    self.alertManager = nil;
+
+}
+
+#pragma mark - AlertManagerDelegate Methods
+
+-(void)AlertManagerDidLoginToAntennaWithTicket:(NSString*)ticket
+{
+}
+
+-(void)AlertManagerDidFailToLoginToAntennaWithError:(NSError*)error
+{
 }
 
 @end
