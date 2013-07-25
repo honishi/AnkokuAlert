@@ -17,7 +17,7 @@
 
 @end
 
-@protocol AlertManagerDelegate <NSObject>
+@protocol AlertManagerDelegate<NSObject>
 
 @optional
 -(void)AlertManagerDidLoginToAntennaWithTicket:(NSString*)ticket;

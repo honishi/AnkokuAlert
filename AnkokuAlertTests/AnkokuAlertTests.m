@@ -9,7 +9,7 @@
 #import "AnkokuAlertTests.h"
 #import "AlertManager.h"
 
-@interface AnkokuAlertTests () <AlertManagerDelegate>
+@interface AnkokuAlertTests ()<AlertManagerDelegate>
 
 @property (nonatomic, strong) AlertManager* alertManager;
 @property (nonatomic, strong) NSString* email;
@@ -24,11 +24,11 @@
     [super setUp];
 
     NSBundle* bundle = [NSBundle bundleForClass:[AnkokuAlertTests class]];
-    NSString *path = [bundle pathForResource:@"TestAccount" ofType:@"plist"];
-    NSDictionary *testAccount = [NSDictionary dictionaryWithContentsOfFile:path];
+    NSString* path = [bundle pathForResource:@"TestAccount" ofType:@"plist"];
+    NSDictionary* testAccount = [NSDictionary dictionaryWithContentsOfFile:path];
     self.email = testAccount[@"email"];
     self.password = testAccount[@"password"];
-    
+
     self.alertManager = [[AlertManager alloc] initWithDelegate:self];
 }
 
