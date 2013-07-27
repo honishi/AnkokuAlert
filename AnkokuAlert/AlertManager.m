@@ -19,6 +19,8 @@ NSString* const kRequestHeaderUserAgent = @"NicoLiveAlert 1.2.0";
 NSString* const kRequestHeaderReferer = @"app:/NicoLiveAlert.swf";
 NSString* const kRequestHeaderFlashVer = @"10,3,181,23";
 
+NSString* const AlertManagerErrorDomain = @"com.honishi.AnkokuAlert";
+
 NSString* const AlertManagerAlertStatusUserNameKey = @"AlertManagerAlertStatusUserNameKey";
 NSString* const AlertManagerAlertStatusIsPremiumKey = @"AlertManagerAlertStatusIsPremiumKey";
 NSString* const AlertManagerAlertStatusCommunitiesKey = @"AlertManagerAlertStatusCommunitiesKey";
@@ -49,9 +51,10 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 @end
 
-@interface AlertManager () <NSStreamDelegate>
+@interface AlertManager ()<NSStreamDelegate>
 
-@property (nonatomic, weak) id<AlertManagerDelegate> delegate;
+@property (nonatomic, copy) LoginCompletionBlock loginCompletionBlock;
+@property (nonatomic, weak) id<AlertManagerStreamListener> streamListener;
 @property (nonatomic, strong) NSInputStream* inputStream;
 @property (nonatomic, strong) NSOutputStream* outputStream;
 
@@ -61,15 +64,14 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 #pragma mark - Object Lifecycle
 
--(id)initWithDelegate:(id<AlertManagerDelegate>)delegate
++(AlertManager*)sharedManager
 {
-    self = [super init];
-
-    if (self != nil) {
-        self.delegate = delegate;
-    }
-
-    return self;
+    static AlertManager* sharedManager;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+            sharedManager = [[AlertManager alloc] init];
+        });
+    return sharedManager;
 }
 
 #pragma mark - Property Methods
@@ -77,9 +79,26 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 #pragma mark - [ProtocolName] Methods
 #pragma mark - Public Interface
 
--(void)openStreamWithEmail:(NSString*)email password:(NSString*)password
+-(void)loginWithEmail:(NSString*)email
+             password:(NSString*)password
+           completion:(LoginCompletionBlock)completion;
 {
+    if (self.loginCompletionBlock) {
+        return;
+    }
+    self.loginCompletionBlock = completion;
+
     [self loginToAntennaWithEmail:email password:password];
+}
+
+-(void)openStreamWithAlertStatus:(NSDictionary*)alertStatus
+                  streamListener:(id<AlertManagerStreamListener>)streamListener;
+{
+    self.streamListener = streamListener;
+    [self openSocketWithAlertStatus:alertStatus];
+    NSString* thread = [NSString stringWithFormat:@"<thread thread=\"%@\" version=\"20061206\" res_from=\"-1\"/>",
+                        alertStatus[AlertManagerAlertStatusServerThreadKey]];
+    [self sendStringToOutputStream:thread];
 }
 
 #pragma mark - Internal Methods
@@ -99,18 +118,24 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
     asyncRequestCompletionBlock completion = ^(NSURLResponse* response, NSData* data, NSError* error) {
         if (error) {
-            if ([self.delegate respondsToSelector:@selector(alertManager:didFailToLoginToAntennaWithError:)]) {
-                [self.delegate alertManager:self didFailToLoginToAntennaWithError:error];
+            if (self.loginCompletionBlock) {
+                self.loginCompletionBlock(nil, error);
+                self.loginCompletionBlock = nil;
             }
         } else {
             // LOG(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             NSString* ticket = [self parseTicket:data];
-
-            if ([self.delegate respondsToSelector:@selector(alertManager:didLoginToAntennaWithTicket:)]) {
-                [self.delegate alertManager:self didLoginToAntennaWithTicket:ticket];
+            if (!ticket) {
+                if (self.loginCompletionBlock) {
+                    self.loginCompletionBlock(nil,
+                        [NSError errorWithDomain:AlertManagerErrorDomain
+                                                   code:AlertManagerErrorCodeLoginFailed
+                                               userInfo:nil]);
+                    self.loginCompletionBlock = nil;
+                }
+            } else {
+                [self getAlertStatusWithTicket:ticket];
             }
-            
-            [self getAlertStatusWithTicket:ticket];
         }
     };
 
@@ -124,17 +149,17 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     NSError* error = nil;
     NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
     NSXMLNode* rootElement = xml.rootElement;
-    
+
     NSString* ticket = nil;
     NSArray* nodes = [rootElement nodesForXPath:@"/nicovideo_user_response/ticket" error:&error];
-    
+
     if( nodes.count ) {
         ticket = ((NSXMLNode*)nodes[0]).stringValue;
         LOG(@"ticket: %@", ticket);
     } else {
         LOG(@"ticket not found.");
     }
-    
+
     return ticket;
 }
 
@@ -144,27 +169,23 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 {
     NSURL* url = [NSURL URLWithString:[kUrlGetAlertStatus stringByAppendingString:ticket]];
     FakedMutableURLRequest* request = [FakedMutableURLRequest requestWithURL:url];
-    
+
     asyncRequestCompletionBlock completion = ^(NSURLResponse* response, NSData* data, NSError* error) {
         if (error) {
-            if ([self.delegate respondsToSelector:@selector(alertManager:didFailToGetAlertStatusWithError:)]) {
-                [self.delegate alertManager:self didFailToGetAlertStatusWithError:error];
+            if (self.loginCompletionBlock) {
+                self.loginCompletionBlock(nil, error);
             }
         } else {
             // LOG(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             NSDictionary* alertStatus = [self parseAlertStatus:data];
-            
-            if ([self.delegate respondsToSelector:@selector(alertManager:didGetAlertStatus:)]) {
-                [self.delegate alertManager:self didGetAlertStatus:alertStatus];
+
+            if (self.loginCompletionBlock) {
+                self.loginCompletionBlock(alertStatus.copy, nil);
             }
-            
-            [self openSocketWithAlertStatus:alertStatus];
-            NSString *thread = [NSString stringWithFormat:@"<thread thread=\"%@\" version=\"20061206\" res_from=\"-1\"/>",
-                                alertStatus[AlertManagerAlertStatusServerThreadKey]];
-            [self sendStringToOutputStream:thread];
         }
+        self.loginCompletionBlock = nil;
     };
-    
+
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:NSOperationQueue.mainQueue
                            completionHandler:completion];
@@ -172,22 +193,22 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 -(NSDictionary*)parseAlertStatus:(NSData*)data
 {
-    NSError *error = nil;
+    NSError* error = nil;
     NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
-    NSXMLNode *rootElement = xml.rootElement;
-    
+    NSXMLNode* rootElement = xml.rootElement;
+
     NSString* userName = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/user_name" error:&error][0]).stringValue;
     BOOL isPremium = [rootElement nodesForXPath:@"/getalertstatus/is_premium" error:&error].count ? YES : NO;
-    
+
     NSMutableArray* communities = NSMutableArray.new;
-    for (NSXMLNode* node in [rootElement nodesForXPath:@"/getalertstatus/communities/community_id" error:&error]) {
+    for (NSXMLNode* node in [rootElement nodesForXPath : @"/getalertstatus/communities/community_id" error : &error]) {
         [communities addObject:node.stringValue];
     }
-    
+
     NSString* serverAddress = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/addr" error:&error][0]).stringValue;
     NSString* serverPort = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/port" error:&error][0]).stringValue;
     NSString* serverThread = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/thread" error:&error][0]).stringValue;
-    
+
     return @{AlertManagerAlertStatusUserNameKey: userName,
              AlertManagerAlertStatusIsPremiumKey:[NSNumber numberWithBool:isPremium],
              AlertManagerAlertStatusCommunitiesKey:communities,
@@ -203,31 +224,31 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     if (self.inputStream && self.outputStream) {
         return;
     }
-    
+
     NSInputStream* inputStream;
     NSOutputStream* outputStream;
-    
+
     [NSStream getStreamsToHost:[NSHost hostWithName:alertStatus[AlertManagerAlertStatusServerAddressKey]]
                           port:((NSString*)alertStatus[AlertManagerAlertStatusServerPortKey]).intValue
                    inputStream:&inputStream
                   outputStream:&outputStream];
-    
+
     self.inputStream = inputStream;
     self.outputStream = outputStream;
-    
+
     [self.inputStream setDelegate:self];
     [self.outputStream setDelegate:self];
-    
+
     [self.inputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
     [self.outputStream scheduleInRunLoop:[NSRunLoop currentRunLoop] forMode:NSDefaultRunLoopMode];
-    
+
     [self.inputStream open];
     [self.outputStream open];
 }
 
-- (void)closeSocket
+-(void)closeSocket
 {
-	if (!self.inputStream || !self.outputStream) {
+    if (!self.inputStream || !self.outputStream) {
         return;
     }
 
@@ -242,10 +263,10 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     if (!self.outputStream) {
         return;
     }
-    
+
     // Note: We need to send '\0' at the very last of the string. Following '+1' is trick to do it.
-    const uint8_t *rawstring = (const uint8_t *)[string UTF8String];
-    [self.outputStream write:rawstring maxLength:strlen((char *)rawstring)+1];
+    const uint8_t* rawstring = (const uint8_t*)[string UTF8String];
+    [self.outputStream write:rawstring maxLength:strlen((char*)rawstring)+1];
 }
 
 -(void)stream:(NSStream*)stream handleEvent:(NSStreamEvent)eventCode
@@ -255,65 +276,70 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
             case NSStreamEventNone:
                 LOG(@"stream event none");
                 break;
-                
+
             case NSStreamEventOpenCompleted:
                 LOG(@"stream event open completed");
+                if (stream == self.inputStream) {
+                    if ([self.streamListener respondsToSelector:@selector(alertManagerdidOpenStream:)]) {
+                        [self.streamListener alertManagerdidOpenStream:self];
+                    }
+                }
                 break;
-            
+
             case NSStreamEventHasBytesAvailable:
             {
                 // LOG(@"stream event has bytes available");
                 NSMutableData* data = [[NSMutableData alloc] init];
-                
+
                 uint8_t buf[10240];
                 unsigned long len = 0;
-                len = [(NSInputStream *)stream read:buf maxLength:10240];
-                
+                len = [(NSInputStream*)stream read : buf maxLength : 10240];
+
                 // test code
                 if ( !(0 < len && len < 5000) ) LOG(@"abnormal data detected, length: %ld (bytes)", len);
-                
+
                 if(len) {
-                    [data appendBytes:(const void *)buf length:len];
+                    [data appendBytes:(const void*)buf length:len];
                 } else {
                     LOG(@"No data.");
                 }
-                
+
                 // LOG(@"inputstream length: %ld mutabledata length: %ld", len, [data length]);
-                
+
                 //
                 LOG(@"received: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
 //                NSArray* entries = [self splitReceivedData:data];
-//                
+//
 //                for( NSString* str in entries ){
 //                    // LOG(@"received text: %@", str);
 //                    [self checkNewLive:str];
 //                }
-                
+
                 data = nil;
-                
+
                 break;
             }
-                
+
             case NSStreamEventHasSpaceAvailable:
                 LOG(@"stream event has space available");
                 break;
-                
+
             case NSStreamEventErrorOccurred:
                 LOG(@"stream event error occurred");
-                
+
 //                NSString *message = [[[NSString alloc] initWithFormat:NSLocalizedString(@"ConnectionLost", nil)] autorelease];
 //                LOG(@"%@", message);
 //                [mainMenuController_ printLog:message withDate:NO withEnter:YES];
-                
+
                 // reconnect
 //                [self kickReconnectTimer];
-                
+
                 break;
-                
+
             case NSStreamEventEndEncountered:
                 LOG(@"stream event end encountered");
                 break;
-                
+
             default:
                 LOG(@"unexpected stream event...");
         }

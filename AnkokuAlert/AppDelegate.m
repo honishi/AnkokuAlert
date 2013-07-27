@@ -8,7 +8,13 @@
 
 #import "AppDelegate.h"
 #import "PreferencesWindowController.h"
+#import "MainWindowController.h"
 
+@interface AppDelegate ()
+
+@property (nonatomic, strong) MainWindowController* mainWindowController;
+
+@end
 @implementation AppDelegate
 
 @synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
@@ -18,6 +24,9 @@
 -(void)applicationDidFinishLaunching:(NSNotification*)aNotification
 {
     // Insert code here to initialize your application
+    self.mainWindowController = [[MainWindowController alloc] initWithWindowNibName:@"MainWindowController"];
+    [self.mainWindowController showWindow:self];
+    [self.mainWindowController.window makeKeyAndOrderFront:self];
 }
 
 // Returns the directory the application uses to store the Core Data store file. This code uses a directory named "com.honishi.AnkokuAlert" in the user's Application Support directory.

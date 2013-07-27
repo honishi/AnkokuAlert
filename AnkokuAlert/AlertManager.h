@@ -8,28 +8,37 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString* const AlertManagerErrorDomain;
+
+typedef NS_ENUM (NSInteger, AlertManagerErrorCode) {
+    AlertManagerErrorCodeUnknownError,
+    AlertManagerErrorCodeLoginFailed
+};
+
 extern NSString* const AlertManagerAlertStatusUserNameKey;
 extern NSString* const AlertManagerAlertStatusIsPremiumKey;
 extern NSString* const AlertManagerAlertStatusCommunitiesKey;
-extern NSString* const AlertManagerAlertStatusServerAddressKey;
-extern NSString* const AlertManagerAlertStatusServerPortKey;
-extern NSString* const AlertManagerAlertStatusServerThreadKey;
 
-@protocol AlertManagerDelegate;
+typedef void (^ LoginCompletionBlock)(NSDictionary* alertStatus, NSError* error);
+
+@protocol AlertManagerStreamListener;
 
 @interface AlertManager : NSObject
 
--(id)initWithDelegate:(id<AlertManagerDelegate>)delegate;
--(void)openStreamWithEmail:(NSString*)email password:(NSString*)password;
++(AlertManager*)sharedManager;
+-(void)loginWithEmail:(NSString*)email
+             password:(NSString*)password
+           completion:(LoginCompletionBlock)completion;
+-(void)openStreamWithAlertStatus:(NSDictionary*)alertStatus
+                  streamListener:(id<AlertManagerStreamListener>)streamListener;
 
 @end
 
-@protocol AlertManagerDelegate<NSObject>
+@protocol AlertManagerStreamListener<NSObject>
 
 @optional
--(void)alertManager:(AlertManager*)alertManager didLoginToAntennaWithTicket:(NSString*)ticket;
--(void)alertManager:(AlertManager*)alertManager didFailToLoginToAntennaWithError:(NSError*)error;
--(void)alertManager:(AlertManager*)alertManager didGetAlertStatus:(NSDictionary*)alertStatus;
--(void)alertManager:(AlertManager*)alertManager didFailToGetAlertStatusWithError:(NSError*)error;
+-(void)alertManagerdidOpenStream:(AlertManager*)alertManager;
+-(void)alertManager:(AlertManager*)alertManager didFailToOpenStreamWithError:(NSError*)error;
+-(void)alertManager:(AlertManager*)alertManager didReceiveLiveInfo:(NSDictionary*)live;
 
 @end

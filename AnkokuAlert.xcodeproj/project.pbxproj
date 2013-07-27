@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB2D1F9817A3FF4900183A59 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2D1F9617A3FF4900183A59 /* MainWindowController.m */; };
+		DB2D1F9917A3FF4900183A59 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2D1F9617A3FF4900183A59 /* MainWindowController.m */; };
+		DB2D1F9A17A3FF4900183A59 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */; };
+		DB2D1F9B17A3FF4900183A59 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */; };
 		DB650FD617A15A1100B46806 /* AlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DB650FD517A15A1100B46806 /* AlertManager.m */; };
 		DB650FD717A15A1100B46806 /* AlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DB650FD517A15A1100B46806 /* AlertManager.m */; };
 		DB650FDC17A16A5500B46806 /* TestAccount.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB650FD817A1650900B46806 /* TestAccount.plist */; };
@@ -38,6 +42,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DB2D1F9517A3FF4900183A59 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
+		DB2D1F9617A3FF4900183A59 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
+		DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
 		DB650FD417A15A1100B46806 /* AlertManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertManager.h; sourceTree = "<group>"; };
 		DB650FD517A15A1100B46806 /* AlertManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertManager.m; sourceTree = "<group>"; };
 		DB650FD817A1650900B46806 /* TestAccount.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = TestAccount.plist; sourceTree = "<group>"; };
@@ -137,6 +144,9 @@
 				DBD2AB1117A2D625005AA7EF /* PreferencesWindowController.h */,
 				DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */,
 				DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */,
+				DB2D1F9517A3FF4900183A59 /* MainWindowController.h */,
+				DB2D1F9617A3FF4900183A59 /* MainWindowController.m */,
+				DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */,
 				DB650FD417A15A1100B46806 /* AlertManager.h */,
 				DB650FD517A15A1100B46806 /* AlertManager.m */,
 				DBD33B9F179C3706003A41F9 /* Supporting Files */,
@@ -252,6 +262,7 @@
 				DBD33BA9179C3706003A41F9 /* Credits.rtf in Resources */,
 				DBD33BAF179C3707003A41F9 /* MainMenu.xib in Resources */,
 				DBD2AB1617A2D625005AA7EF /* PreferencesWindowController.xib in Resources */,
+				DB2D1F9A17A3FF4900183A59 /* MainWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -262,6 +273,7 @@
 				DBD33BC3179C3707003A41F9 /* InfoPlist.strings in Resources */,
 				DB650FDC17A16A5500B46806 /* TestAccount.plist in Resources */,
 				DBD2AB1717A2D625005AA7EF /* PreferencesWindowController.xib in Resources */,
+				DB2D1F9B17A3FF4900183A59 /* MainWindowController.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -293,6 +305,7 @@
 				DBD33BB2179C3707003A41F9 /* AnkokuAlert.xcdatamodeld in Sources */,
 				DB650FD617A15A1100B46806 /* AlertManager.m in Sources */,
 				DBD2AB1417A2D625005AA7EF /* PreferencesWindowController.m in Sources */,
+				DB2D1F9817A3FF4900183A59 /* MainWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -303,6 +316,7 @@
 				DBD33BC6179C3707003A41F9 /* AnkokuAlertTests.m in Sources */,
 				DB650FD717A15A1100B46806 /* AlertManager.m in Sources */,
 				DBD2AB1517A2D625005AA7EF /* PreferencesWindowController.m in Sources */,
+				DB2D1F9917A3FF4900183A59 /* MainWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
