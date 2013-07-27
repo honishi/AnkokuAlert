@@ -7,6 +7,7 @@
 //
 
 #import "AppDelegate.h"
+#import "PreferencesWindowController.h"
 
 @implementation AppDelegate
 
@@ -120,6 +121,8 @@
     return [[self managedObjectContext] undoManager];
 }
 
+#pragma mark - Action
+
 // Performs the save action for the application, which is to send the save: message to the application's managed object context. Any encountered errors are presented to the user.
 -(IBAction)saveAction:(id)sender
 {
@@ -133,6 +136,13 @@
         [[NSApplication sharedApplication] presentError:error];
     }
 }
+
+-(IBAction)showPreferencesWindow:(id)sender
+{
+    [[PreferencesWindowController sharedController] showWindow:nil];
+}
+
+#pragma mark -
 
 -(NSApplicationTerminateReply)applicationShouldTerminate:(NSApplication*)sender
 {

@@ -8,19 +8,28 @@
 
 #import <Foundation/Foundation.h>
 
+extern NSString* const AlertManagerAlertStatusUserNameKey;
+extern NSString* const AlertManagerAlertStatusIsPremiumKey;
+extern NSString* const AlertManagerAlertStatusCommunitiesKey;
+extern NSString* const AlertManagerAlertStatusServerAddressKey;
+extern NSString* const AlertManagerAlertStatusServerPortKey;
+extern NSString* const AlertManagerAlertStatusServerThreadKey;
+
 @protocol AlertManagerDelegate;
 
 @interface AlertManager : NSObject
 
 -(id)initWithDelegate:(id<AlertManagerDelegate>)delegate;
--(void)loginToAntennaWithEmail:(NSString*)email password:(NSString*)password;
+-(void)openStreamWithEmail:(NSString*)email password:(NSString*)password;
 
 @end
 
 @protocol AlertManagerDelegate<NSObject>
 
 @optional
--(void)AlertManagerDidLoginToAntennaWithTicket:(NSString*)ticket;
--(void)AlertManagerDidFailToLoginToAntennaWithError:(NSError*)error;
+-(void)alertManager:(AlertManager*)alertManager didLoginToAntennaWithTicket:(NSString*)ticket;
+-(void)alertManager:(AlertManager*)alertManager didFailToLoginToAntennaWithError:(NSError*)error;
+-(void)alertManager:(AlertManager*)alertManager didGetAlertStatus:(NSDictionary*)alertStatus;
+-(void)alertManager:(AlertManager*)alertManager didFailToGetAlertStatusWithError:(NSError*)error;
 
 @end

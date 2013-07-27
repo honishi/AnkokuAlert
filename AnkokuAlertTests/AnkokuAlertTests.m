@@ -41,20 +41,29 @@
 
 -(void)testLoginToAnntena
 {
-    [self.alertManager loginToAntennaWithEmail:self.email password:self.password];
-    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:3.0]];
-    NSLog(@"bbb");
+    [self.alertManager openStreamWithEmail:self.email password:self.password];
+    [[NSRunLoop currentRunLoop] runUntilDate:[NSDate dateWithTimeIntervalSinceNow:10.0]];
     self.alertManager = nil;
 
 }
 
 #pragma mark - AlertManagerDelegate Methods
 
--(void)AlertManagerDidLoginToAntennaWithTicket:(NSString*)ticket
+-(void)alertManager:(AlertManager*)alertManager didLoginToAntennaWithTicket:(NSString*)ticket
+{
+    NSLog(@"ticket: %@", ticket);
+}
+
+-(void)alertManager:(AlertManager*)alertManager didFailToLoginToAntennaWithError:(NSError*)error
 {
 }
 
--(void)AlertManagerDidFailToLoginToAntennaWithError:(NSError*)error
+-(void)alertManager:(AlertManager *)alertManager didGetAlertStatus:(NSDictionary *)alertStatus
+{
+    NSLog(@"alertStatus: %@", alertStatus);
+}
+
+-(void)alertManager:(AlertManager *)alertManager didFailToGetAlertStatusWithError:(NSError *)error
 {
 }
 

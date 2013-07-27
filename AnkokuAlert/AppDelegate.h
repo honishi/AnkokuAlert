@@ -18,4 +18,6 @@
 
 -(IBAction)saveAction:(id)sender;
 
+-(IBAction)showPreferencesWindow:(id)sender;
+
 @end
