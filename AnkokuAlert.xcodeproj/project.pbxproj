@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		DB1088E517AFD5C40086BC71 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = DB1088E217AFD5C40086BC71 /* SSKeychain.m */; };
+		DB1088E617AFD5C40086BC71 /* SSKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = DB1088E217AFD5C40086BC71 /* SSKeychain.m */; };
+		DB1088E717AFD5C40086BC71 /* SSKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = DB1088E417AFD5C40086BC71 /* SSKeychainQuery.m */; };
+		DB1088E817AFD5C40086BC71 /* SSKeychainQuery.m in Sources */ = {isa = PBXBuildFile; fileRef = DB1088E417AFD5C40086BC71 /* SSKeychainQuery.m */; };
+		DB1088EA17AFD5F00086BC71 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB1088E917AFD5F00086BC71 /* Security.framework */; };
 		DB2D1F9817A3FF4900183A59 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2D1F9617A3FF4900183A59 /* MainWindowController.m */; };
 		DB2D1F9917A3FF4900183A59 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2D1F9617A3FF4900183A59 /* MainWindowController.m */; };
 		DB2D1F9A17A3FF4900183A59 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */; };
@@ -42,6 +47,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		DB1088E117AFD5C40086BC71 /* SSKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SSKeychain.h; path = Vendor/SSKeychain/SSKeychain/SSKeychain.h; sourceTree = SOURCE_ROOT; };
+		DB1088E217AFD5C40086BC71 /* SSKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SSKeychain.m; path = Vendor/SSKeychain/SSKeychain/SSKeychain.m; sourceTree = SOURCE_ROOT; };
+		DB1088E317AFD5C40086BC71 /* SSKeychainQuery.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SSKeychainQuery.h; path = Vendor/SSKeychain/SSKeychain/SSKeychainQuery.h; sourceTree = SOURCE_ROOT; };
+		DB1088E417AFD5C40086BC71 /* SSKeychainQuery.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = SSKeychainQuery.m; path = Vendor/SSKeychain/SSKeychain/SSKeychainQuery.m; sourceTree = SOURCE_ROOT; };
+		DB1088E917AFD5F00086BC71 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		DB2D1F9517A3FF4900183A59 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		DB2D1F9617A3FF4900183A59 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
 		DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
@@ -79,6 +89,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				DB1088EA17AFD5F00086BC71 /* Security.framework in Frameworks */,
 				DBD33B99179C3706003A41F9 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -95,9 +106,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		DB1088DF17AFD59E0086BC71 /* Vendor */ = {
+			isa = PBXGroup;
+			children = (
+				DB1088E017AFD5A70086BC71 /* SSKeychain */,
+			);
+			name = Vendor;
+			path = AnkokuAlert;
+			sourceTree = "<group>";
+		};
+		DB1088E017AFD5A70086BC71 /* SSKeychain */ = {
+			isa = PBXGroup;
+			children = (
+				DB1088E117AFD5C40086BC71 /* SSKeychain.h */,
+				DB1088E217AFD5C40086BC71 /* SSKeychain.m */,
+				DB1088E317AFD5C40086BC71 /* SSKeychainQuery.h */,
+				DB1088E417AFD5C40086BC71 /* SSKeychainQuery.m */,
+			);
+			name = SSKeychain;
+			sourceTree = "<group>";
+		};
 		DBD33B8C179C3706003A41F9 = {
 			isa = PBXGroup;
 			children = (
+				DB1088E917AFD5F00086BC71 /* Security.framework */,
+				DB1088DF17AFD59E0086BC71 /* Vendor */,
 				DBD33B9E179C3706003A41F9 /* AnkokuAlert */,
 				DBD33BBE179C3707003A41F9 /* AnkokuAlertTests */,
 				DBD33B97179C3706003A41F9 /* Frameworks */,
@@ -306,6 +339,8 @@
 				DB650FD617A15A1100B46806 /* AlertManager.m in Sources */,
 				DBD2AB1417A2D625005AA7EF /* PreferencesWindowController.m in Sources */,
 				DB2D1F9817A3FF4900183A59 /* MainWindowController.m in Sources */,
+				DB1088E517AFD5C40086BC71 /* SSKeychain.m in Sources */,
+				DB1088E717AFD5C40086BC71 /* SSKeychainQuery.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -317,6 +352,8 @@
 				DB650FD717A15A1100B46806 /* AlertManager.m in Sources */,
 				DBD2AB1517A2D625005AA7EF /* PreferencesWindowController.m in Sources */,
 				DB2D1F9917A3FF4900183A59 /* MainWindowController.m in Sources */,
+				DB1088E617AFD5C40086BC71 /* SSKeychain.m in Sources */,
+				DB1088E817AFD5C40086BC71 /* SSKeychainQuery.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

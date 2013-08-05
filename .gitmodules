@@ -1,0 +1,3 @@
+[submodule "Vendor/SSKeychain"]
+	path = Vendor/SSKeychain
+	url = git@github.com:soffes/sskeychain.git

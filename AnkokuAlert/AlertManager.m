@@ -28,6 +28,8 @@ NSString* const AlertManagerAlertStatusServerAddressKey = @"AlertManagerAlertSta
 NSString* const AlertManagerAlertStatusServerPortKey = @"AlertManagerAlertStatusServerPortKey";
 NSString* const AlertManagerAlertStatusServerThreadKey = @"AlertManagerAlertStatusServerThreadKey";
 
+NSUInteger const kMaxInputStreamBufferSize = 10240;
+
 typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* data, NSError* error);
 
 @interface FakedMutableURLRequest : NSMutableURLRequest
@@ -129,8 +131,8 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
                 if (self.loginCompletionBlock) {
                     self.loginCompletionBlock(nil,
                         [NSError errorWithDomain:AlertManagerErrorDomain
-                                                   code:AlertManagerErrorCodeLoginFailed
-                                               userInfo:nil]);
+                                            code:AlertManagerErrorCodeLoginFailed
+                                        userInfo:nil]);
                     self.loginCompletionBlock = nil;
                 }
             } else {
@@ -289,33 +291,23 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
             case NSStreamEventHasBytesAvailable:
             {
                 // LOG(@"stream event has bytes available");
-                NSMutableData* data = [[NSMutableData alloc] init];
+                NSArray* chunks = [self chunckFromInputStream:(NSInputStream*)stream];
 
-                uint8_t buf[10240];
-                unsigned long len = 0;
-                len = [(NSInputStream*)stream read : buf maxLength : 10240];
+                for (NSData* data in chunks) {
+                    // NSString* chatString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+                    // LOG(@"received: %@", chatString);
 
-                // test code
-                if ( !(0 < len && len < 5000) ) LOG(@"abnormal data detected, length: %ld (bytes)", len);
+                    NSError* error = nil;
+                    NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
+                    //LOG(@"data: %@", data);
+                    NSXMLNode* rootElement = xml.rootElement;
+                    NSArray* nodes = [rootElement nodesForXPath:@"/chat" error:&error];
 
-                if(len) {
-                    [data appendBytes:(const void*)buf length:len];
-                } else {
-                    LOG(@"No data.");
+                    if (nodes) {
+                        NSString* chat = ((NSXMLNode*)nodes[0]).stringValue;
+                        // LOG(@"parsed: %@", chat);
+                    }
                 }
-
-                // LOG(@"inputstream length: %ld mutabledata length: %ld", len, [data length]);
-
-                //
-                LOG(@"received: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-//                NSArray* entries = [self splitReceivedData:data];
-//
-//                for( NSString* str in entries ){
-//                    // LOG(@"received text: %@", str);
-//                    [self checkNewLive:str];
-//                }
-
-                data = nil;
 
                 break;
             }
@@ -344,6 +336,46 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
                 LOG(@"unexpected stream event...");
         }
     }
+}
+
+-(NSArray*)chunckFromInputStream:(NSInputStream*)inputStream
+{
+    uint8_t buffer[kMaxInputStreamBufferSize];
+    NSUInteger readLength = 0;
+    readLength = [inputStream read:buffer maxLength:kMaxInputStreamBufferSize];
+    // LOG(@"readLength: %ld", readLength);
+
+    if ( !(0 < readLength && readLength < 5000) ) {
+        LOG(@"abnormal data detected, length: %ld", readLength);
+    }
+
+    NSMutableArray* chunks = nil;
+    if (readLength) {
+        chunks = NSMutableArray.new;
+        NSMutableData* data = nil;
+        NSUInteger p = 0;
+        while ( p < readLength ) {
+            if (!data) {
+                data = NSMutableData.new;
+            }
+            if (buffer[p] != 0) {
+                [data appendBytes:(const void*)(buffer+p) length:1];
+            } else {
+                [chunks addObject:data];
+                data = nil;
+            }
+            p++;
+        }
+        // check
+        if (data) {
+            LOG(@"tcp segmentation lost? : %@", data);
+        }
+    } else {
+        LOG(@"No data.");
+    }
+    // LOG(@"found %ld chunk(s)", chunks.count);
+
+    return chunks;
 }
 
 #pragma mark Get Stream Info
