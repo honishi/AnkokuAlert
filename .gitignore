@@ -2,6 +2,7 @@
 *.xcodeproj/*
 !*.xcodeproj/project.pbxproj
 !*.xcworkspace/contents.xcworkspacedata
+build
 
 # account info
 TestAccount.plist

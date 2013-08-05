@@ -9,6 +9,10 @@
 #import "PreferencesWindowController.h"
 #import "AlertManager.h"
 
+NSString* const kUserDefaultsAccounts = @"Accounts";
+NSString* const kUserDefaultsAccountsUsername = @"Username";
+NSString* const kUserDefaultsAccountsIsDefault = @"IsDefault";
+
 @interface PreferencesWindowController ()<NSTableViewDataSource, NSTableViewDelegate>
 
 @property (nonatomic, weak) IBOutlet NSTableView* accountTableView;
@@ -22,6 +26,8 @@
 @property (weak) IBOutlet NSSecureTextField* passwordTextField;
 @property (weak) IBOutlet NSButton* loginButton;
 @property (weak) IBOutlet NSProgressIndicator* loginProgressIndicator;
+
+@property (weak) IBOutlet NSArrayController *accountsArrayController;
 
 @end
 
@@ -52,29 +58,24 @@
     return self;
 }
 
+-(void)awakeFromNib
+{
+    // test code for user defaults
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSArray* accounts = @[
+                          @{kUserDefaultsAccountsUsername:@"kato", kUserDefaultsAccountsIsDefault:[NSNumber numberWithBool:NO]},
+                          @{kUserDefaultsAccountsUsername:@"tanaka", kUserDefaultsAccountsIsDefault:[NSNumber numberWithBool:YES]},
+                          @{kUserDefaultsAccountsUsername:@"sato", kUserDefaultsAccountsIsDefault:[NSNumber numberWithBool:NO]}
+                          ];
+    [defaults setObject:accounts forKey:@"Accounts"];
+    [defaults synchronize];
+}
+
 -(void)windowDidLoad
 {
     [super windowDidLoad];
 
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-}
-
-#pragma mark - Account
-
-#pragma mark tableview datasource
-
--(NSInteger)numberOfRowsInTableView:(NSTableView*)tableView
-{
-    return 3;
-}
-
--(id)tableView:(NSTableView*)tableView objectValueForTableColumn:(NSTableColumn*)tableColumn row:(NSInteger)row
-{
-    if ([tableColumn.identifier isEqualToString:@"NoColumn"]) {
-        return @"no";
-    }
-
-    return nil;
 }
 
 #pragma mark - Action
@@ -94,7 +95,6 @@
 
 -(IBAction)loginUsingAccount:(id)sender
 {
-    // [self.loginProgressIndicator setHidden:NO];
     [self.loginProgressIndicator startAnimation:self];
 
     [[AlertManager sharedManager] loginWithEmail:self.emailTextField.stringValue password:self.passwordTextField.stringValue completion:^(NSDictionary* alertStatus, NSError* error) {
@@ -104,8 +104,45 @@
              NSLog(@"login error.");
          } else {
              NSLog(@"login completed: %@", alertStatus);
+             
+             [NSApp endSheet:self.accountInputSheet];
+             [self.accountInputSheet orderOut:self];
+             
+             NSDictionary* newAccount = @{kUserDefaultsAccountsUsername:alertStatus[AlertManagerAlertStatusUserNameKey], kUserDefaultsAccountsIsDefault:[NSNumber numberWithBool:NO]};
+             [self.accountsArrayController addObject:newAccount];
          }
      }];
+}
+
+- (IBAction)setDefaultAccount:(id)sender
+{
+    // http://stackoverflow.com/a/5807971
+    NSIndexSet *indexSet = self.accountsArrayController.selectionIndexes;
+    
+    NSUInteger selectedIndex = self.accountsArrayController.selectionIndex;
+    NSDictionary* selectedAccount = self.accountsArrayController.arrangedObjects[selectedIndex];
+    NSString* selectedUsername = selectedAccount[kUserDefaultsAccountsUsername];
+    
+    NSUInteger index = 0;
+    for (NSDictionary* account in self.accountsArrayController.arrangedObjects) {
+        NSMutableDictionary* newAccount = account.mutableCopy;
+        if ([account[kUserDefaultsAccountsUsername] isEqualToString:selectedUsername]) {
+            newAccount[kUserDefaultsAccountsIsDefault] = [NSNumber numberWithBool:YES];
+        }
+        else {
+            newAccount[kUserDefaultsAccountsIsDefault] = [NSNumber numberWithBool:NO];
+        }
+        [self.accountsArrayController removeObjectAtArrangedObjectIndex:index];
+        [self.accountsArrayController insertObject:newAccount atArrangedObjectIndex:index];
+        index++;
+    }
+    
+    [self.accountsArrayController setSelectionIndexes:indexSet];
+}
+
+- (IBAction)removeAccount:(id)sender
+{
+    [self.accountsArrayController removeObjectAtArrangedObjectIndex:self.accountsArrayController.selectionIndex];
 }
 
 @end

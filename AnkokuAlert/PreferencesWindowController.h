@@ -8,6 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
+extern NSString* const kUserDefaultsAccounts;
+extern NSString* const kUserDefaultsAccountsUsername;
+extern NSString* const kUserDefaultsAccountsIsDefault;
+
 @interface PreferencesWindowController : NSWindowController
 
 +(PreferencesWindowController*)sharedController;
