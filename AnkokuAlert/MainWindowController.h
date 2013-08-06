@@ -10,4 +10,7 @@
 
 @interface MainWindowController : NSWindowController
 
+@property (nonatomic) NSNumber* livePerSecond;
+@property (nonatomic) BOOL isStreamOpened;
+
 @end

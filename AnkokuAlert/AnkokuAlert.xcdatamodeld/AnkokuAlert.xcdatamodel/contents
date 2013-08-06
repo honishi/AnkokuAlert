@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="untitled.xcdatamodel" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="1" systemVersion="11A491" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
-    <elements/>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12E55" minimumToolsVersion="Automatic" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Community" representedClassName="MOCommunity" syncable="YES">
+        <attribute name="community" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="communityName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="enabled" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="useBrowser" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="useSound" optional="YES" attributeType="Boolean" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Community" positionX="160" positionY="192" width="128" height="120"/>
+    </elements>
 </model>

@@ -10,10 +10,9 @@
 
 NSString* const kUrlLoginToAntenna = @"https://secure.nicovideo.jp/secure/login?site=nicolive_antenna";
 NSString* const kUrlGetAlertStatus = @"http://live.nicovideo.jp/api/getalertstatus?ticket=";
-
-//NSString* const kUrlGetStreamInfo = @"http://live.nicovideo.jp/api/getstreaminfo/";
-//NSString* const kUrlLive = @"http://live.nicovideo.jp/watch/";
-//NSString* const kUrlCommunity =@"http://com.nicovideo.jp/community/";
+NSString* const kUrlGetStreamInfo = @"http://live.nicovideo.jp/api/getstreaminfo/lv";
+NSString* const kUrlLive = @"http://live.nicovideo.jp/watch/";
+NSString* const kUrlCommunity = @"http://com.nicovideo.jp/community/";
 
 NSString* const kRequestHeaderUserAgent = @"NicoLiveAlert 1.2.0";
 NSString* const kRequestHeaderReferer = @"app:/NicoLiveAlert.swf";
@@ -21,12 +20,21 @@ NSString* const kRequestHeaderFlashVer = @"10,3,181,23";
 
 NSString* const AlertManagerErrorDomain = @"com.honishi.AnkokuAlert";
 
-NSString* const AlertManagerAlertStatusUserNameKey = @"AlertManagerAlertStatusUserNameKey";
-NSString* const AlertManagerAlertStatusIsPremiumKey = @"AlertManagerAlertStatusIsPremiumKey";
-NSString* const AlertManagerAlertStatusCommunitiesKey = @"AlertManagerAlertStatusCommunitiesKey";
-NSString* const AlertManagerAlertStatusServerAddressKey = @"AlertManagerAlertStatusServerAddressKey";
-NSString* const AlertManagerAlertStatusServerPortKey = @"AlertManagerAlertStatusServerPortKey";
-NSString* const AlertManagerAlertStatusServerThreadKey = @"AlertManagerAlertStatusServerThreadKey";
+NSString* const AlertManagerAlertStatusKeyUserName = @"AlertManagerAlertStatusKeyUserName";
+NSString* const AlertManagerAlertStatusKeyIsPremium = @"AlertManagerAlertStatusKeyIsPremium";
+NSString* const AlertManagerAlertStatusKeyCommunities = @"AlertManagerAlertStatusKeyCommunities";
+NSString* const AlertManagerAlertStatusServerAddressKey = @"AlertManagerAlertStatusKeyServerAddress";
+NSString* const AlertManagerAlertStatusServerPortKey = @"AlertManagerAlertStatusKeyServerPort";
+NSString* const AlertManagerAlertStatusServerThreadKey = @"AlertManagerAlertStatusKeyServerThread";
+
+NSString* const AlertManagerStreamInfoKeyLive = @"AlertManagerStreamInfoKeyLive";
+NSString* const AlertManagerStreamInfoKeyLiveTitle = @"AlertManagerStreamInfoKeyLiveTitle";
+NSString* const AlertManagerStreamInfoKeyLiveUrl = @"AlertManagerStreamInfoKeyLiveUrl";
+NSString* const AlertManagerStreamInfoKeyCommunity = @"AlertManagerStreamInfoKeyCommunity";
+NSString* const AlertManagerStreamInfoKeyCommunityName = @"AlertManagerStreamInfoKeyCommunityName";
+NSString* const AlertManagerStreamInfoKeyCommunityUrl = @"AlertManagerStreamInfoKeyCommunityUrl";
+
+NSString* const AlertManagerCommunityInfoKeyCommunityName = @"AlertManagerCommunityInfoKeyCommunityName";
 
 NSUInteger const kMaxInputStreamBufferSize = 10240;
 
@@ -103,6 +111,67 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     [self sendStringToOutputStream:thread];
 }
 
+-(void)closeStream
+{
+    [self closeSocket];
+}
+
+-(void)streamInfoForLive:(NSString*)live completion:(StreamInfoCompletionBlock)completion
+{
+    NSURL* url = [NSURL URLWithString:[kUrlGetStreamInfo stringByAppendingString:live]];
+    FakedMutableURLRequest* request = [FakedMutableURLRequest requestWithURL:url];
+
+    asyncRequestCompletionBlock requestCompletion = ^(NSURLResponse* response, NSData* data, NSError* error) {
+        if (error) {
+            if (completion) {
+                completion(nil,
+                    [NSError errorWithDomain:AlertManagerErrorDomain
+                                        code:AlertManagerErrorCodeStreamInfoFailed
+                                    userInfo:nil]);
+            }
+        } else {
+            // LOG(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            NSDictionary* streamInfo = [self parseStreamInfo:data];
+
+            if (completion) {
+                completion(streamInfo, nil);
+            }
+        }
+    };
+
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:NSOperationQueue.mainQueue
+                           completionHandler:requestCompletion];
+}
+
+-(void)communityInfoForCommunity:(NSString*)community completion:(CommunityInfoCompletionBlock)completion
+{
+    NSURL* url = [NSURL URLWithString:[kUrlCommunity stringByAppendingString:community]];
+    FakedMutableURLRequest* request = [FakedMutableURLRequest requestWithURL:url];
+
+    asyncRequestCompletionBlock requestCompletion = ^(NSURLResponse* response, NSData* data, NSError* error) {
+        if (error) {
+            if (completion) {
+                completion(nil,
+                    [NSError errorWithDomain:AlertManagerErrorDomain
+                                        code:AlertManagerErrorCodeCommunityInfoFailed
+                                    userInfo:nil]);
+            }
+        } else {
+            // LOG(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            NSDictionary* communityInfo = [self parseCommunityInfo:data];
+
+            if (completion) {
+                completion(communityInfo, nil);
+            }
+        }
+    };
+
+    [NSURLConnection sendAsynchronousRequest:request
+                                       queue:NSOperationQueue.mainQueue
+                           completionHandler:requestCompletion];
+}
+
 #pragma mark - Internal Methods
 
 #pragma mark Login to Antenna
@@ -118,7 +187,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     NSString* body = [NSString stringWithFormat:@"mail=%@&password=%@", encodedEmail, encodedPassword];
     [request setHTTPBody:[body dataUsingEncoding:NSUTF8StringEncoding]];
 
-    asyncRequestCompletionBlock completion = ^(NSURLResponse* response, NSData* data, NSError* error) {
+    asyncRequestCompletionBlock requestCompletion = ^(NSURLResponse* response, NSData* data, NSError* error) {
         if (error) {
             if (self.loginCompletionBlock) {
                 self.loginCompletionBlock(nil, error);
@@ -143,23 +212,32 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:NSOperationQueue.mainQueue
-                           completionHandler:completion];
+                           completionHandler:requestCompletion];
 }
 
 -(NSString*)parseTicket:(NSData*)data
 {
-    NSError* error = nil;
-    NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
-    NSXMLNode* rootElement = xml.rootElement;
-
     NSString* ticket = nil;
-    NSArray* nodes = [rootElement nodesForXPath:@"/nicovideo_user_response/ticket" error:&error];
 
-    if( nodes.count ) {
-        ticket = ((NSXMLNode*)nodes[0]).stringValue;
-        LOG(@"ticket: %@", ticket);
-    } else {
-        LOG(@"ticket not found.");
+    @try {
+        NSError* error = nil;
+        NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
+        NSXMLNode* rootElement = xml.rootElement;
+
+        NSArray* nodes = [rootElement nodesForXPath:@"/nicovideo_user_response/ticket" error:&error];
+
+        if( nodes.count ) {
+            ticket = ((NSXMLNode*)nodes[0]).stringValue;
+            LOG(@"ticket: %@", ticket);
+        } else {
+            LOG(@"ticket not found.");
+        }
+    }
+    @catch (NSException* exception) {
+        LOG(@"caught exception in parsing ticket: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    }
+    @finally {
+        // do nothing
     }
 
     return ticket;
@@ -172,7 +250,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     NSURL* url = [NSURL URLWithString:[kUrlGetAlertStatus stringByAppendingString:ticket]];
     FakedMutableURLRequest* request = [FakedMutableURLRequest requestWithURL:url];
 
-    asyncRequestCompletionBlock completion = ^(NSURLResponse* response, NSData* data, NSError* error) {
+    asyncRequestCompletionBlock requestCompletion = ^(NSURLResponse* response, NSData* data, NSError* error) {
         if (error) {
             if (self.loginCompletionBlock) {
                 self.loginCompletionBlock(nil, error);
@@ -190,33 +268,45 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
     [NSURLConnection sendAsynchronousRequest:request
                                        queue:NSOperationQueue.mainQueue
-                           completionHandler:completion];
+                           completionHandler:requestCompletion];
 }
 
 -(NSDictionary*)parseAlertStatus:(NSData*)data
 {
-    NSError* error = nil;
-    NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
-    NSXMLNode* rootElement = xml.rootElement;
+    NSDictionary* alertStatus;
 
-    NSString* userName = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/user_name" error:&error][0]).stringValue;
-    BOOL isPremium = [rootElement nodesForXPath:@"/getalertstatus/is_premium" error:&error].count ? YES : NO;
+    @try {
+        NSError* error = nil;
+        NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
+        NSXMLNode* rootElement = xml.rootElement;
 
-    NSMutableArray* communities = NSMutableArray.new;
-    for (NSXMLNode* node in [rootElement nodesForXPath : @"/getalertstatus/communities/community_id" error : &error]) {
-        [communities addObject:node.stringValue];
+        NSString* userName = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/user_name" error:&error][0]).stringValue;
+        BOOL isPremium = [rootElement nodesForXPath:@"/getalertstatus/is_premium" error:&error].count ? YES : NO;
+
+        NSMutableArray* communities = NSMutableArray.new;
+        for (NSXMLNode* node in [rootElement nodesForXPath : @"/getalertstatus/communities/community_id" error : &error]) {
+            [communities addObject:node.stringValue];
+        }
+
+        NSString* serverAddress = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/addr" error:&error][0]).stringValue;
+        NSString* serverPort = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/port" error:&error][0]).stringValue;
+        NSString* serverThread = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/thread" error:&error][0]).stringValue;
+
+        alertStatus = @{AlertManagerAlertStatusKeyUserName: userName,
+                        AlertManagerAlertStatusKeyIsPremium:[NSNumber numberWithBool:isPremium],
+                        AlertManagerAlertStatusKeyCommunities:communities,
+                        AlertManagerAlertStatusServerAddressKey:serverAddress,
+                        AlertManagerAlertStatusServerPortKey:serverPort,
+                        AlertManagerAlertStatusServerThreadKey:serverThread};
+    }
+    @catch (NSException* exception) {
+        LOG(@"caught exception in parsing alert status: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    }
+    @finally {
+        // do nothing
     }
 
-    NSString* serverAddress = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/addr" error:&error][0]).stringValue;
-    NSString* serverPort = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/port" error:&error][0]).stringValue;
-    NSString* serverThread = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/thread" error:&error][0]).stringValue;
-
-    return @{AlertManagerAlertStatusUserNameKey: userName,
-             AlertManagerAlertStatusIsPremiumKey:[NSNumber numberWithBool:isPremium],
-             AlertManagerAlertStatusCommunitiesKey:communities,
-             AlertManagerAlertStatusServerAddressKey:serverAddress,
-             AlertManagerAlertStatusServerPortKey:serverPort,
-             AlertManagerAlertStatusServerThreadKey:serverThread};
+    return alertStatus;
 }
 
 #pragma mark Open Socket
@@ -258,6 +348,10 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     [self.outputStream close];
     self.inputStream = nil;
     self.outputStream = nil;
+
+    if ([self.streamListener respondsToSelector:@selector(alertManagerDidCloseStream:)]) {
+        [self.streamListener alertManagerDidCloseStream:self];
+    }
 }
 
 -(void)sendStringToOutputStream:(NSString*)string
@@ -276,11 +370,11 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     @autoreleasepool {
         switch(eventCode) {
             case NSStreamEventNone:
-                LOG(@"stream event none");
+                LOG(@"*** stream event none");
                 break;
 
             case NSStreamEventOpenCompleted:
-                LOG(@"stream event open completed");
+                LOG(@"*** stream event open completed");
                 if (stream == self.inputStream) {
                     if ([self.streamListener respondsToSelector:@selector(alertManagerdidOpenStream:)]) {
                         [self.streamListener alertManagerdidOpenStream:self];
@@ -290,55 +384,45 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
             case NSStreamEventHasBytesAvailable:
             {
-                // LOG(@"stream event has bytes available");
-                NSArray* chunks = [self chunckFromInputStream:(NSInputStream*)stream];
+                // LOG(@"*** stream event has bytes available");
+                NSArray* chunks = [self chunksFromInputStream:(NSInputStream*)stream];
 
                 for (NSData* data in chunks) {
-                    // NSString* chatString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-                    // LOG(@"received: %@", chatString);
+                    // LOG(@"data: %@", data);
+                    // LOG(@"string: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+                    NSArray* live = [self parseChat:data];
 
-                    NSError* error = nil;
-                    NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
-                    //LOG(@"data: %@", data);
-                    NSXMLNode* rootElement = xml.rootElement;
-                    NSArray* nodes = [rootElement nodesForXPath:@"/chat" error:&error];
-
-                    if (nodes) {
-                        NSString* chat = ((NSXMLNode*)nodes[0]).stringValue;
-                        // LOG(@"parsed: %@", chat);
+                    if (live) {
+                        if ([self.streamListener respondsToSelector:@selector(alertManager:didReceiveLive:community:user:)]) {
+                            [self.streamListener alertManager:self didReceiveLive:live[0] community:live[1] user:live[2]];
+                        }
                     }
                 }
-
                 break;
             }
 
             case NSStreamEventHasSpaceAvailable:
-                LOG(@"stream event has space available");
+                LOG(@"*** stream event has space available");
                 break;
 
             case NSStreamEventErrorOccurred:
-                LOG(@"stream event error occurred");
-
-//                NSString *message = [[[NSString alloc] initWithFormat:NSLocalizedString(@"ConnectionLost", nil)] autorelease];
-//                LOG(@"%@", message);
-//                [mainMenuController_ printLog:message withDate:NO withEnter:YES];
-
-                // reconnect
-//                [self kickReconnectTimer];
-
+                LOG(@"*** stream event error occurred");
                 break;
 
             case NSStreamEventEndEncountered:
-                LOG(@"stream event end encountered");
+                LOG(@"*** stream event end encountered");
+                if ([self.streamListener respondsToSelector:@selector(alertManagerDidCloseStream:)]) {
+                    [self.streamListener alertManagerDidCloseStream:self];
+                }
                 break;
 
             default:
-                LOG(@"unexpected stream event...");
+                LOG(@"*** unexpected stream event...");
         }
     }
 }
 
--(NSArray*)chunckFromInputStream:(NSInputStream*)inputStream
+-(NSArray*)chunksFromInputStream:(NSInputStream*)inputStream
 {
     uint8_t buffer[kMaxInputStreamBufferSize];
     NSUInteger readLength = 0;
@@ -366,21 +450,105 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
             }
             p++;
         }
-        // check
+        // check tcp fragmentation
         if (data) {
             LOG(@"tcp segmentation lost? : %@", data);
         }
     } else {
-        LOG(@"No data.");
+        LOG(@"no data.");
     }
     // LOG(@"found %ld chunk(s)", chunks.count);
 
     return chunks;
 }
 
-#pragma mark Get Stream Info
+-(NSArray*)parseChat:(NSData*)data
+{
+    NSArray* liveArray;
 
-// TODO: implementation
+    @try {
+        NSError* error = nil;
+        NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
+        NSXMLNode* rootElement = xml.rootElement;
+        NSArray* nodes = [rootElement nodesForXPath:@"/chat" error:&error];
+
+        if (nodes.count) {
+            NSString* liveString = ((NSXMLNode*)nodes[0]).stringValue;
+            // LOG(@"parsed: %@", liveString);
+            liveArray = [liveString componentsSeparatedByString:@","];
+        }
+    }
+    @catch (NSException* exception) {
+        LOG(@"caught exception in parsing chat: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    }
+    @finally {
+        // do nothing
+    }
+
+    return (liveArray.count == 3 ? liveArray : nil);
+}
+
+#pragma mark Stream Info
+
+-(NSDictionary*)parseStreamInfo:(NSData*)data
+{
+    NSDictionary* streamInfo;
+
+    @try {
+        NSError* error = nil;
+        NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
+        NSXMLNode* rootElement = xml.rootElement;
+
+        NSString* community = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/streaminfo/default_community" error:&error][0]).stringValue;
+        NSString* communityName = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/communityinfo/name" error:&error][0]).stringValue;
+        NSString* communityUrl = [kUrlCommunity stringByAppendingString:community];
+        NSString* live = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/request_id" error:&error][0]).stringValue;
+        NSString* liveTitle = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/streaminfo/title" error:&error][0]).stringValue;
+        NSString* liveUrl = [kUrlLive stringByAppendingString:live];
+
+        streamInfo = @{AlertManagerStreamInfoKeyLive: live,
+                       AlertManagerStreamInfoKeyLiveTitle: liveTitle,
+                       AlertManagerStreamInfoKeyLiveUrl: liveUrl,
+                       AlertManagerStreamInfoKeyCommunity: community,
+                       AlertManagerStreamInfoKeyCommunityName: communityName,
+                       AlertManagerStreamInfoKeyCommunityUrl: communityUrl};
+    }
+    @catch (NSException* exception) {
+        LOG(@"caught exception in parsing stream info: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    }
+    @finally {
+        // do nothing
+    }
+
+    return streamInfo;
+}
+
+#pragma mark Community Info
+
+-(NSDictionary*)parseCommunityInfo:(NSData*)data
+{
+    NSDictionary* communityInfo;
+
+    @try {
+        NSError* error = nil;
+        NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
+        NSXMLNode* rootElement = xml.rootElement;
+
+        NSString* communityName = ((NSXMLNode*)[rootElement nodesForXPath:@"//*[@id=\"community_name\"]" error:&error][0]).stringValue;
+
+        communityInfo = @{AlertManagerCommunityInfoKeyCommunityName: communityName};
+    }
+    @catch (NSException* exception) {
+        // parse error, or not community member
+        LOG(@"caught exception in parsing community info");
+        // LOG(@"caught exception in parsing community info: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    }
+    @finally {
+        // do nothing
+    }
+
+    return communityInfo;
+}
 
 #pragma mark Encoding/Decoding Utility
 

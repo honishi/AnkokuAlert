@@ -57,7 +57,7 @@
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
 				<object class="NSView" key="NSWindowView" id="764302125">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSTextField" id="265820284">
@@ -241,7 +241,6 @@
 						</object>
 					</array>
 					<string key="NSFrameSize">{354, 139}</string>
-					<reference key="NSSuperview"/>
 					<reference key="NSNextKeyView" ref="1048686603"/>
 					<string key="NSReuseIdentifierKey">_NS:21</string>
 				</object>
@@ -259,7 +258,7 @@
 				<nil key="NSViewClass"/>
 				<nil key="NSUserInterfaceItemIdentifier"/>
 				<object class="NSView" key="NSWindowView" id="830679764">
-					<reference key="NSNextResponder"/>
+					<nil key="NSNextResponder"/>
 					<int key="NSvFlags">256</int>
 					<array class="NSMutableArray" key="NSSubviews">
 						<object class="NSTextField" id="738601003">
@@ -296,7 +295,7 @@
 											<array class="NSMutableArray" key="NSSubviews"/>
 											<string key="NSFrameSize">{303, 86}</string>
 											<reference key="NSSuperview" ref="780611592"/>
-											<reference key="NSNextKeyView" ref="955774517"/>
+											<reference key="NSNextKeyView" ref="426704719"/>
 											<string key="NSReuseIdentifierKey">_NS:13</string>
 											<bool key="NSEnabled">YES</bool>
 											<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -469,7 +468,7 @@
 							</array>
 							<string key="NSFrame">{{20, 147}, {305, 104}}</string>
 							<reference key="NSSuperview" ref="830679764"/>
-							<reference key="NSNextKeyView" ref="426704719"/>
+							<reference key="NSNextKeyView" ref="780611592"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<int key="NSsFlags">133682</int>
 							<reference key="NSVScroller" ref="12357216"/>
@@ -574,7 +573,6 @@
 						</object>
 					</array>
 					<string key="NSFrameSize">{345, 288}</string>
-					<reference key="NSSuperview"/>
 					<reference key="NSNextKeyView" ref="738601003"/>
 					<string key="NSReuseIdentifierKey">_NS:21</string>
 				</object>
@@ -606,28 +604,12 @@
 					<int key="connectionID">167</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">cancelAddAccount:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="933011921"/>
-					</object>
-					<int key="connectionID">170</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">accountTableView</string>
 						<reference key="source" ref="1001"/>
 						<reference key="destination" ref="382734071"/>
 					</object>
 					<int key="connectionID">78</int>
-				</object>
-				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">beginAddAccount:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="952663414"/>
-					</object>
-					<int key="connectionID">169</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -694,14 +676,6 @@
 					<int key="connectionID">273</int>
 				</object>
 				<object class="IBConnectionRecord">
-					<object class="IBActionConnection" key="connection">
-						<string key="label">loginUsingAccount:</string>
-						<reference key="source" ref="1001"/>
-						<reference key="destination" ref="682778176"/>
-					</object>
-					<int key="connectionID">274</int>
-				</object>
-				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
 						<string key="label">accountsArrayController</string>
 						<reference key="source" ref="1001"/>
@@ -724,6 +698,30 @@
 						<reference key="destination" ref="644442593"/>
 					</object>
 					<int key="connectionID">359</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">inputAccount:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="952663414"/>
+					</object>
+					<int key="connectionID">432</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">cancelInputAccount:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="933011921"/>
+					</object>
+					<int key="connectionID">433</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBActionConnection" key="connection">
+						<string key="label">addAccount:</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="682778176"/>
+					</object>
+					<int key="connectionID">434</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -1981,7 +1979,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">430</int>
+			<int key="maxID">434</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes"/>
 		<int key="IBDocument.localizationMode">0</int>

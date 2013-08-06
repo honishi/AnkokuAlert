@@ -85,7 +85,7 @@
     NSLog(@"LOG: %s:%d: %@", __PRETTY_FUNCTION__, __LINE__, @"");
 }
 
--(void)alertManager:(AlertManager*)alertManager didReceiveLiveInfo:(NSDictionary*)live
+-(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)live community:(NSString*)community user:(NSString*)user
 {
     NSLog(@"LOG: %s:%d: %@", __PRETTY_FUNCTION__, __LINE__, @"");
 }

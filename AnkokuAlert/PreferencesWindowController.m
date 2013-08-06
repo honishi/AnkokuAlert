@@ -103,20 +103,20 @@ NSString* const kUserDefaultsAccountsIsDefault = @"IsDefault";
 
 #pragma mark - Action
 
--(IBAction)beginAddAccount:(id)sender
+#pragma mark Add/Remove Account
+
+-(IBAction)inputAccount:(id)sender
 {
     [NSApp beginSheet:self.accountInputSheet modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
 }
 
-#pragma mark Add Account
-
--(IBAction)cancelAddAccount:(id)sender
+-(IBAction)cancelInputAccount:(id)sender
 {
     [NSApp endSheet:self.accountInputSheet];
     [self.accountInputSheet orderOut:sender];
 }
 
--(IBAction)loginUsingAccount:(id)sender
+-(IBAction)addAccount:(id)sender
 {
     [self.loginProgressIndicator startAnimation:self];
 
@@ -137,7 +137,7 @@ NSString* const kUserDefaultsAccountsIsDefault = @"IsDefault";
 
              BOOL isDefault = ((NSArray*)self.accountsArrayController.arrangedObjects).count ? YES : NO;
              NSDictionary* newAccount = @{kUserDefaultsAccountsEmail:email,
-                                          kUserDefaultsAccountsUsername:alertStatus[AlertManagerAlertStatusUserNameKey],
+                                          kUserDefaultsAccountsUsername:alertStatus[AlertManagerAlertStatusKeyUserName],
                                           kUserDefaultsAccountsIsDefault:[NSNumber numberWithBool:isDefault]};
              [self.accountsArrayController addObject:newAccount];
 
