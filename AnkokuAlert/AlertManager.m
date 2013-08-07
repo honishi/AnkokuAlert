@@ -20,6 +20,7 @@ NSString* const kRequestHeaderFlashVer = @"10,3,181,23";
 
 NSString* const AlertManagerErrorDomain = @"com.honishi.AnkokuAlert";
 
+NSString* const AlertManagerAlertStatusKeyUserId = @"AlertManagerAlertStatusKeyUserId";
 NSString* const AlertManagerAlertStatusKeyUserName = @"AlertManagerAlertStatusKeyUserName";
 NSString* const AlertManagerAlertStatusKeyIsPremium = @"AlertManagerAlertStatusKeyIsPremium";
 NSString* const AlertManagerAlertStatusKeyCommunities = @"AlertManagerAlertStatusKeyCommunities";
@@ -280,6 +281,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
         NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
         NSXMLNode* rootElement = xml.rootElement;
 
+        NSString* userId = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/user_id" error:&error][0]).stringValue;
         NSString* userName = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/user_name" error:&error][0]).stringValue;
         BOOL isPremium = [rootElement nodesForXPath:@"/getalertstatus/is_premium" error:&error].count ? YES : NO;
 
@@ -292,7 +294,8 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
         NSString* serverPort = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/port" error:&error][0]).stringValue;
         NSString* serverThread = ((NSXMLNode*)[rootElement nodesForXPath:@"/getalertstatus/ms/thread" error:&error][0]).stringValue;
 
-        alertStatus = @{AlertManagerAlertStatusKeyUserName: userName,
+        alertStatus = @{AlertManagerAlertStatusKeyUserId: userId,
+                        AlertManagerAlertStatusKeyUserName: userName,
                         AlertManagerAlertStatusKeyIsPremium:[NSNumber numberWithBool:isPremium],
                         AlertManagerAlertStatusKeyCommunities:communities,
                         AlertManagerAlertStatusServerAddressKey:serverAddress,

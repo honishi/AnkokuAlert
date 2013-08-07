@@ -22,6 +22,7 @@
 {
     // Insert code here to initialize your application
     [MagicalRecord setupCoreDataStack];
+    LOG(@"%@", [MagicalRecord currentStack]);
     self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
 
     self.mainWindowController = [[MainWindowController alloc] initWithWindowNibName:@"MainWindowController"];

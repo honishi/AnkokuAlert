@@ -7,16 +7,20 @@
 extern const struct MOCommunityAttributes {
     __unsafe_unretained NSString* community;
     __unsafe_unretained NSString* communityName;
+    __unsafe_unretained NSString* displayOrder;
     __unsafe_unretained NSString* enabled;
     __unsafe_unretained NSString* useBrowser;
     __unsafe_unretained NSString* useSound;
 } MOCommunityAttributes;
 
 extern const struct MOCommunityRelationships {
+    __unsafe_unretained NSString* user;
 } MOCommunityRelationships;
 
 extern const struct MOCommunityFetchedProperties {
 } MOCommunityFetchedProperties;
+
+@class MOUser;
 
 
 
@@ -53,6 +57,20 @@ extern const struct MOCommunityFetchedProperties {
 
 
 //- (BOOL)validateCommunityName:(id*)value_ error:(NSError**)error_;
+
+
+
+
+
+@property (nonatomic, strong) NSNumber* displayOrder;
+
+
+
+@property int32_t displayOrderValue;
+-(int32_t)displayOrderValue;
+-(void)setDisplayOrderValue:(int32_t)value_;
+
+//- (BOOL)validateDisplayOrder:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -100,6 +118,13 @@ extern const struct MOCommunityFetchedProperties {
 
 
 
+@property (nonatomic, strong) MOUser* user;
+
+//- (BOOL)validateUser:(id*)value_ error:(NSError**)error_;
+
+
+
+
 
 @end
 
@@ -118,6 +143,15 @@ extern const struct MOCommunityFetchedProperties {
 
 -(NSString*)primitiveCommunityName;
 -(void)setPrimitiveCommunityName:(NSString*)value;
+
+
+
+
+-(NSNumber*)primitiveDisplayOrder;
+-(void)setPrimitiveDisplayOrder:(NSNumber*)value;
+
+-(int32_t)primitiveDisplayOrderValue;
+-(void)setPrimitiveDisplayOrderValue:(int32_t)value_;
 
 
 
@@ -147,6 +181,11 @@ extern const struct MOCommunityFetchedProperties {
 -(void)setPrimitiveUseSoundValue:(BOOL)value_;
 
 
+
+
+
+-(MOUser*)primitiveUser;
+-(void)setPrimitiveUser:(MOUser*)value;
 
 
 @end

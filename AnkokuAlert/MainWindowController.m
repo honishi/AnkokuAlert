@@ -12,7 +12,10 @@
 #import "SSKeychain.h"
 #import "MOCommunity.h"
 
-float const kLiveCounterTimerInterval = 0.5f;
+#define DEBUG_CLEAR_AND_FEED_DUMMY_COMMUNITIES
+
+float const kLiveStatTimerInterval = 0.5f;
+int const kLiveStatSamplingCount = 20;
 
 #pragma mark - Value Transformer
 
@@ -41,18 +44,20 @@ float const kLiveCounterTimerInterval = 0.5f;
 
 #pragma mark - Main Window Controller
 
-@interface MainWindowController ()<AlertManagerStreamListener>
+@interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource>
 
+@property (weak) IBOutlet NSTableView* communityTableView;
 // NSTextVIew doesn't support weak reference in arc.
 @property (strong) IBOutlet NSTextView* logTextView;
 @property (weak) IBOutlet NSScrollView* logScrollView;
 @property (weak) IBOutlet NSLevelIndicatorCell* liveLevelIndicatorCell;
 @property (weak) IBOutlet NSTextFieldCell* liveTextFieldCell;
-
-@property (nonatomic) NSUInteger previousReceivedLiveCount;
-@property (nonatomic) NSUInteger receivedLiveCount;
+@property (weak) IBOutlet NSArrayController* communityArrayController;
 
 @property (unsafe_unretained) IBOutlet NSPanel* communityInputSheet;
+
+@property (nonatomic) NSUInteger liveCount;
+@property (nonatomic) NSMutableArray* liveStats;
 
 @end
 
@@ -65,9 +70,31 @@ float const kLiveCounterTimerInterval = 0.5f;
     self = [super initWithWindow:window];
     if (self) {
         // Initialization code here.
+        self.liveStats = NSMutableArray.new;
+
+#ifdef DEBUG_CLEAR_AND_FEED_DUMMY_COMMUNITIES
+        for (MOCommunity* community in [MOCommunity MR_findAll]) {
+            [community deleteEntity];
+        }
+
+        for (NSInteger i = 0; i < 20; i++) {
+            MOCommunity* community = [MOCommunity MR_createEntity];
+            community.displayOrder = [NSNumber numberWithInt:i];
+            community.community = [NSString stringWithFormat:@"co%05ld", i];
+            community.communityName = [NSString stringWithFormat:@"テストコミュニティ(%ld).", i];
+        }
+
+        [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
+#endif
     }
 
     return self;
+}
+
+-(void)awakeFromNib
+{
+    // TODO: check whether the initialization way is correct, or not.
+    // do not use this, awakeFromNib is called in initialization of every tableview cell.
 }
 
 -(void)windowDidLoad
@@ -75,7 +102,15 @@ float const kLiveCounterTimerInterval = 0.5f;
     [super windowDidLoad];
 
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
-    [NSTimer scheduledTimerWithTimeInterval:kLiveCounterTimerInterval target:self selector:@selector(liveCounterTimerFired:) userInfo:nil repeats:YES];
+    NSSortDescriptor* defaultSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+    [self.communityArrayController setSortDescriptors:@[defaultSortDescriptor]];
+
+    // NSArray* array = [NSArray arrayWithObject:NSFilenamesPboardType];
+    // [self.communityTableView registerForDraggedTypes:array];
+    [self.communityTableView registerForDraggedTypes:@[@"aRow"]];
+    [self.communityTableView setDraggingSourceOperationMask:NSDragOperationAll forLocal:NO];
+
+    [NSTimer scheduledTimerWithTimeInterval:kLiveStatTimerInterval target:self selector:@selector(liveCounterTimerFired:) userInfo:nil repeats:YES];
 }
 
 //-(void)
@@ -98,13 +133,68 @@ float const kLiveCounterTimerInterval = 0.5f;
          LOG(@"communityInfo: %@", communityInfo[AlertManagerCommunityInfoKeyCommunityName]);
      }];
 
-    self.receivedLiveCount++;
+    NSArray* alertCommunities = self.communityArrayController.arrangedObjects;
+    for (MOCommunity* alertCommunity in alertCommunities) {
+        if ([community isEqualToString:alertCommunity.community]) {
+            // alert!
+        }
+    }
+
+    self.liveCount++;
 }
 
 -(void)alertManagerDidCloseStream:(AlertManager*)alertManager
 {
     LOG(@"stream closed.");
     self.isStreamOpened = NO;
+}
+
+#pragma mark NSTableViewDataSource Methods
+
+#pragma mark Drag & Drop Reordering Support
+
+-(BOOL)tableView:(NSTableView*)tableView writeRowsWithIndexes:(NSIndexSet*)rowIndexes toPasteboard:(NSPasteboard*)pboard
+{
+    // MOCommunity* community = self.communityArrayController.arrangedObjects[rowIndexes.firstIndex];
+    LOG(@"%ld", rowIndexes.firstIndex);
+
+    [pboard declareTypes:[NSArray arrayWithObject:@"aRow"] owner:self];
+    // [pboard setValue:community forKey:@"aRow"];
+    // [pboard setString:community.community forType:@"aRow"];
+    [pboard setString:[NSNumber numberWithInteger:rowIndexes.firstIndex].stringValue forType:@"aRow"];
+
+    return YES;
+}
+
+-(NSDragOperation)tableView:(NSTableView*)tableView validateDrop:(id<NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)dropOperation
+{
+    return NSDragOperationMove; // NSDragOperationEvery;
+}
+
+-(BOOL)tableView:(NSTableView*)tableView acceptDrop:(id<NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation
+{
+    // LOG_CURRENT_METHOD;
+
+    NSPasteboard* pboard = info.draggingPasteboard;
+    NSInteger fromIndex = [pboard stringForType:@"aRow"].integerValue;
+    NSInteger toIndex = row;
+
+    MOCommunity* fromCommunity = [MOCommunity MR_findFirstByAttribute:@"displayOrder" withValue:[NSNumber numberWithInteger:fromIndex]];
+    MOCommunity* toCommunity = [MOCommunity MR_findFirstByAttribute:@"displayOrder" withValue:[NSNumber numberWithInteger:toIndex]];
+
+    fromCommunity.displayOrder = [NSNumber numberWithInteger:toIndex];
+    toCommunity.displayOrder = [NSNumber numberWithInteger:fromIndex];
+
+    [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
+    [self.communityArrayController fetch:self];
+    // [self.communityTableView reloadData];
+
+    // LOG(@"from %ld --> to %ld", fromIndex, toIndex);
+
+//    [appDelegate_ moveAccountFrom:fromIndex to:toIndex];
+//    [accountTableView_ reloadData];
+
+    return YES;
 }
 
 // #pragma mark - Public Interface
@@ -148,8 +238,23 @@ float const kLiveCounterTimerInterval = 0.5f;
 
 -(void)liveCounterTimerFired:(NSTimer*)timer
 {
-    self.livePerSecond = [NSNumber numberWithDouble:(self.receivedLiveCount-self.previousReceivedLiveCount)/kLiveCounterTimerInterval];
-    self.previousReceivedLiveCount = self.receivedLiveCount;
+    NSDictionary* stat = @{@"date":[NSDate date], @"liveCount": [NSNumber numberWithInteger:self.liveCount]};
+    [self.liveStats addObject:stat];
+
+    if (2 < self.liveStats.count) {
+        NSDictionary* oldest = self.liveStats[0];
+        NSDictionary* newest = self.liveStats[self.liveStats.count-1];
+        NSUInteger oldestLiveCount = ((NSNumber*)oldest[@"liveCount"]).integerValue;
+        NSUInteger newestLiveCount = ((NSNumber*)newest[@"liveCount"]).integerValue;
+        NSDate* oldestDate = oldest[@"date"];
+        NSDate* newestDate = newest[@"date"];
+        double rate = (newestLiveCount-oldestLiveCount)/([newestDate timeIntervalSinceDate:oldestDate]);
+        self.livePerSecond = [NSNumber numberWithDouble:rate];
+    }
+
+    if (kLiveStatSamplingCount < self.liveStats.count) {
+        [self.liveStats removeObjectAtIndex:0];
+    }
 }
 
 #pragma mark - Button Actions
@@ -202,8 +307,7 @@ float const kLiveCounterTimerInterval = 0.5f;
 
 -(IBAction)enableCommunityButtonClicked:(id)sender
 {
-    LOG(@"aaa:%@", sender);
-
+    [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
 }
 
 @end

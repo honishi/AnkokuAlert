@@ -6,12 +6,14 @@
 const struct MOCommunityAttributes MOCommunityAttributes = {
     .community = @"community",
     .communityName = @"communityName",
+    .displayOrder = @"displayOrder",
     .enabled = @"enabled",
     .useBrowser = @"useBrowser",
     .useSound = @"useSound",
 };
 
 const struct MOCommunityRelationships MOCommunityRelationships = {
+    .user = @"user",
 };
 
 const struct MOCommunityFetchedProperties MOCommunityFetchedProperties = {
@@ -48,6 +50,11 @@ const struct MOCommunityFetchedProperties MOCommunityFetchedProperties = {
 {
     NSSet* keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
+    if ([key isEqualToString:@"displayOrderValue"]) {
+        NSSet* affectingKey = [NSSet setWithObject:@"displayOrder"];
+        keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+        return keyPaths;
+    }
     if ([key isEqualToString:@"enabledValue"]) {
         NSSet* affectingKey = [NSSet setWithObject:@"enabled"];
         keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -79,6 +86,36 @@ const struct MOCommunityFetchedProperties MOCommunityFetchedProperties = {
 
 @dynamic communityName;
 
+
+
+
+
+
+@dynamic displayOrder;
+
+
+
+-(int32_t)displayOrderValue
+{
+    NSNumber* result = [self displayOrder];
+    return [result intValue];
+}
+
+-(void)setDisplayOrderValue:(int32_t)value_
+{
+    [self setDisplayOrder:[NSNumber numberWithInt:value_]];
+}
+
+-(int32_t)primitiveDisplayOrderValue
+{
+    NSNumber* result = [self primitiveDisplayOrder];
+    return [result intValue];
+}
+
+-(void)setPrimitiveDisplayOrderValue:(int32_t)value_
+{
+    [self setPrimitiveDisplayOrder:[NSNumber numberWithInt:value_]];
+}
 
 
 
@@ -171,6 +208,10 @@ const struct MOCommunityFetchedProperties MOCommunityFetchedProperties = {
 }
 
 
+
+
+
+@dynamic user;
 
 
 

@@ -17,6 +17,7 @@ typedef NS_ENUM (NSInteger, AlertManagerErrorCode) {
     AlertManagerErrorCodeCommunityInfoFailed
 };
 
+extern NSString* const AlertManagerAlertStatusKeyUserId;
 extern NSString* const AlertManagerAlertStatusKeyUserName;
 extern NSString* const AlertManagerAlertStatusKeyIsPremium;
 extern NSString* const AlertManagerAlertStatusKeyCommunities;

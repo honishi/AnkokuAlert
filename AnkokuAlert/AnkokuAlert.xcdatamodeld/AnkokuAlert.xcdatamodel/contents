@@ -3,11 +3,20 @@
     <entity name="Community" representedClassName="MOCommunity" syncable="YES">
         <attribute name="community" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="communityName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="displayOrder" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="enabled" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="useBrowser" optional="YES" attributeType="Boolean" syncable="YES"/>
         <attribute name="useSound" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <relationship name="user" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="communities" inverseEntity="User" syncable="YES"/>
+    </entity>
+    <entity name="User" representedClassName="MOUser" syncable="YES">
+        <attribute name="isDefault" optional="YES" attributeType="Boolean" syncable="YES"/>
+        <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="communities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Community" inverseName="user" inverseEntity="Community" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Community" positionX="160" positionY="192" width="128" height="120"/>
+        <element name="Community" positionX="160" positionY="192" width="128" height="148"/>
+        <element name="User" positionX="-108" positionY="165" width="128" height="103"/>
     </elements>
 </model>

@@ -91,6 +91,10 @@
 		ED4E6AF017B0E94200B008CB /* MagicalRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E6ABB17B0E94200B008CB /* MagicalRecord.m */; };
 		ED4E6AF117B0E94200B008CB /* MagicalRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E6ABB17B0E94200B008CB /* MagicalRecord.m */; };
 		ED4E6AF217B0EBC700B008CB /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD33B9C179C3706003A41F9 /* CoreData.framework */; };
+		ED7DC33C17B2204E007A9D8F /* _MOUser.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC33917B2204E007A9D8F /* _MOUser.m */; };
+		ED7DC33D17B2204E007A9D8F /* _MOUser.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC33917B2204E007A9D8F /* _MOUser.m */; };
+		ED7DC33E17B2204E007A9D8F /* MOUser.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC33B17B2204E007A9D8F /* MOUser.m */; };
+		ED7DC33F17B2204E007A9D8F /* MOUser.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC33B17B2204E007A9D8F /* MOUser.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -197,6 +201,10 @@
 		ED4E6ABB17B0E94200B008CB /* MagicalRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicalRecord.m; sourceTree = "<group>"; };
 		ED4E6ABC17B0E94200B008CB /* MagicalRecordShorthand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicalRecordShorthand.h; sourceTree = "<group>"; };
 		ED4E6ABD17B0E94200B008CB /* CoreData+MagicalRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CoreData+MagicalRecord.h"; path = "Vendor/MagicalRecord/MagicalRecord/CoreData+MagicalRecord.h"; sourceTree = SOURCE_ROOT; };
+		ED7DC33817B2204E007A9D8F /* _MOUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _MOUser.h; path = Models/_MOUser.h; sourceTree = "<group>"; };
+		ED7DC33917B2204E007A9D8F /* _MOUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _MOUser.m; path = Models/_MOUser.m; sourceTree = "<group>"; };
+		ED7DC33A17B2204E007A9D8F /* MOUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOUser.h; path = Models/MOUser.h; sourceTree = "<group>"; };
+		ED7DC33B17B2204E007A9D8F /* MOUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOUser.m; path = Models/MOUser.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -341,6 +349,10 @@
 		ED4E6A7917B0E44F00B008CB /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				ED7DC33817B2204E007A9D8F /* _MOUser.h */,
+				ED7DC33917B2204E007A9D8F /* _MOUser.m */,
+				ED7DC33A17B2204E007A9D8F /* MOUser.h */,
+				ED7DC33B17B2204E007A9D8F /* MOUser.m */,
 				ED4E6A7A17B0E5A900B008CB /* _MOCommunity.h */,
 				ED4E6A7B17B0E5A900B008CB /* _MOCommunity.m */,
 				ED4E6A7C17B0E5A900B008CB /* MOCommunity.h */,
@@ -601,6 +613,8 @@
 				ED4E6AEC17B0E94200B008CB /* MagicalRecord+Setup.m in Sources */,
 				ED4E6AEE17B0E94200B008CB /* MagicalRecord+ShorthandSupport.m in Sources */,
 				ED4E6AF017B0E94200B008CB /* MagicalRecord.m in Sources */,
+				ED7DC33C17B2204E007A9D8F /* _MOUser.m in Sources */,
+				ED7DC33E17B2204E007A9D8F /* MOUser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -642,6 +656,8 @@
 				ED4E6AED17B0E94200B008CB /* MagicalRecord+Setup.m in Sources */,
 				ED4E6AEF17B0E94200B008CB /* MagicalRecord+ShorthandSupport.m in Sources */,
 				ED4E6AF117B0E94200B008CB /* MagicalRecord.m in Sources */,
+				ED7DC33D17B2204E007A9D8F /* _MOUser.m in Sources */,
+				ED7DC33F17B2204E007A9D8F /* MOUser.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
