@@ -9,25 +9,26 @@
 #import "PreferencesWindowController.h"
 #import "AlertManager.h"
 #import "SSKeychain.h"
+#import "MOAccount.h"
 
-NSString* const kUserDefaultsAccounts = @"Accounts";
-NSString* const kUserDefaultsAccountsEmail = @"Email";
-NSString* const kUserDefaultsAccountsUsername = @"Username";
-NSString* const kUserDefaultsAccountsIsDefault = @"IsDefault";
+// #define DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
+
+#define DUMMY_USERID    @"12345"
+#define DUMMY_USERNAME  @"DUMMY_USER"
+#define DUMMY_EMAIL     @"dummy@example.com"
+#define DUMMY_PASSWORD  @"dummy_password"
 
 @interface PreferencesWindowController ()
 
-@property (nonatomic, weak) IBOutlet NSTableView* accountTableView;
-@property (nonatomic, weak) IBOutlet NSButton* addAccountButton;
-@property (nonatomic, weak) IBOutlet NSButton* editAccountButton;
-@property (nonatomic, weak) IBOutlet NSButton* defaultAccountButton;
-@property (nonatomic, weak) IBOutlet NSButton* removeAccountButton;
+@property (nonatomic, readwrite) NSManagedObjectContext* managedObjectContext;
+@property (nonatomic, readwrite) BOOL addingAccountInProgress;
 
+@property (nonatomic, weak) IBOutlet NSTableView* accountTableView;
 @property (nonatomic, weak) IBOutlet NSPanel* accountInputSheet;
+@property (weak) IBOutlet NSTextField* messageTextField;
 @property (weak) IBOutlet NSTextField* emailTextField;
 @property (weak) IBOutlet NSSecureTextField* passwordTextField;
 @property (weak) IBOutlet NSButton* loginButton;
-@property (weak) IBOutlet NSProgressIndicator* loginProgressIndicator;
 
 @property (weak) IBOutlet NSArrayController* accountsArrayController;
 
@@ -62,15 +63,6 @@ NSString* const kUserDefaultsAccountsIsDefault = @"IsDefault";
 
 -(void)awakeFromNib
 {
-//    // test code for user defaults
-//    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
-//    NSArray* accounts = @[
-//                          @{kUserDefaultsAccountsUsername:@"kato", kUserDefaultsAccountsIsDefault:[NSNumber numberWithBool:NO]},
-//                          @{kUserDefaultsAccountsUsername:@"tanaka", kUserDefaultsAccountsIsDefault:[NSNumber numberWithBool:YES]},
-//                          @{kUserDefaultsAccountsUsername:@"sato", kUserDefaultsAccountsIsDefault:[NSNumber numberWithBool:NO]}
-//                          ];
-//    [defaults setObject:accounts forKey:@"Accounts"];
-//    [defaults synchronize];
 }
 
 -(void)windowDidLoad
@@ -78,6 +70,15 @@ NSString* const kUserDefaultsAccountsIsDefault = @"IsDefault";
     [super windowDidLoad];
 
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+    self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
+
+    if (![MOAccount findAll].count) {
+        double delayInSeconds = 1.0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+                [self inputAccount:self];
+            });
+    }
 }
 
 // #pragma mark - Property Methods
@@ -88,14 +89,14 @@ NSString* const kUserDefaultsAccountsIsDefault = @"IsDefault";
 
 -(NSDictionary*)defaultAccount
 {
-    NSArray* accounts = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsAccounts];
-
-    for (NSDictionary* account in accounts) {
-        if ([account[kUserDefaultsAccountsIsDefault] isEqualToNumber:[NSNumber numberWithBool:YES]]) {
-            return account;
-        }
-    }
-
+//    NSArray* accounts = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsAccounts];
+//
+//    for (NSDictionary* account in accounts) {
+//        if ([account[kUserDefaultsAccountsIsDefault] isEqualToNumber:[NSNumber numberWithBool:YES]]) {
+//            return account;
+//        }
+//    }
+//
     return nil;
 }
 
@@ -107,73 +108,87 @@ NSString* const kUserDefaultsAccountsIsDefault = @"IsDefault";
 
 -(IBAction)inputAccount:(id)sender
 {
-    [NSApp beginSheet:self.accountInputSheet modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
+    [self beginAccountInputSheetWithMessage:@"Please enter your email address and password."];
 }
 
 -(IBAction)cancelInputAccount:(id)sender
 {
+    [self endAccountInputSheet];
+}
+
+-(void)beginAccountInputSheetWithMessage:(NSString*)message
+{
+    self.messageTextField.stringValue = message;
+    [NSApp beginSheet:self.accountInputSheet modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
+}
+
+-(void)endAccountInputSheet
+{
     [NSApp endSheet:self.accountInputSheet];
-    [self.accountInputSheet orderOut:sender];
+    [self.accountInputSheet orderOut:self];
 }
 
 -(IBAction)addAccount:(id)sender
 {
-    [self.loginProgressIndicator startAnimation:self];
-
     NSString* email = self.emailTextField.stringValue;
     NSString* password = self.passwordTextField.stringValue;
 
+    [self endAccountInputSheet];
+    self.addingAccountInProgress = YES;
+
     [[AlertManager sharedManager] loginWithEmail:email password:password completion:^
          (NSDictionary* alertStatus, NSError* error) {
-         // [self.loginProgressIndicator setHidden:YES];
-         [self.loginProgressIndicator stopAnimation:self];
+         self.addingAccountInProgress = NO;
+#ifndef DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
          if (error) {
              NSLog(@"login error.");
+             [self beginAccountInputSheetWithMessage:@"Login failed. Please try again..."];
          } else {
-             NSLog(@"login completed: %@", alertStatus);
+#endif
+         NSLog(@"login completed: %@", alertStatus);
 
-             [NSApp endSheet:self.accountInputSheet];
-             [self.accountInputSheet orderOut:self];
+         BOOL isDefault = [MOAccount findAll].count ? NO : YES;
 
-             BOOL isDefault = ((NSArray*)self.accountsArrayController.arrangedObjects).count ? YES : NO;
-             NSDictionary* newAccount = @{kUserDefaultsAccountsEmail:email,
-                                          kUserDefaultsAccountsUsername:alertStatus[AlertManagerAlertStatusKeyUserName],
-                                          kUserDefaultsAccountsIsDefault:[NSNumber numberWithBool:isDefault]};
-             [self.accountsArrayController addObject:newAccount];
+         MOAccount* account = [MOAccount MR_createEntity];
+#ifndef DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
+         account.userId = alertStatus[AlertManagerAlertStatusKeyUserId];
+         account.userName = alertStatus[AlertManagerAlertStatusKeyUserName];
+         account.email = email;
+#else
+         account.userId = DUMMY_USERID;
+         account.userName = DUMMY_USERNAME;
+         account.email = DUMMY_EMAIL;
+#endif
+         account.isDefault = [NSNumber numberWithBool:isDefault];
+         [SSKeychain setPassword:password forService:[[NSBundle mainBundle] bundleIdentifier] account:email];
 
-             [SSKeychain setPassword:password forService:[[NSBundle mainBundle] bundleIdentifier] account:email];
-         }
+         [self.accountsArrayController addObject:account];
+         [self.managedObjectContext MR_saveOnlySelfAndWait];
+
+         [self.accountTableView scrollRowToVisible:(self.accountTableView.numberOfRows-1)];
+#ifndef DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
+     }
+#endif
      }];
-}
-
--(IBAction)setDefaultAccount:(id)sender
-{
-    // http://stackoverflow.com/a/5807971
-    NSIndexSet* indexSet = self.accountsArrayController.selectionIndexes;
-
-    NSUInteger selectedIndex = self.accountsArrayController.selectionIndex;
-    NSDictionary* selectedAccount = self.accountsArrayController.arrangedObjects[selectedIndex];
-    NSString* selectedUsername = selectedAccount[kUserDefaultsAccountsUsername];
-
-    NSUInteger index = 0;
-    for (NSDictionary* account in self.accountsArrayController.arrangedObjects) {
-        NSMutableDictionary* newAccount = account.mutableCopy;
-        if ([account[kUserDefaultsAccountsUsername] isEqualToString:selectedUsername]) {
-            newAccount[kUserDefaultsAccountsIsDefault] = [NSNumber numberWithBool:YES];
-        } else {
-            newAccount[kUserDefaultsAccountsIsDefault] = [NSNumber numberWithBool:NO];
-        }
-        [self.accountsArrayController removeObjectAtArrangedObjectIndex:index];
-        [self.accountsArrayController insertObject:newAccount atArrangedObjectIndex:index];
-        index++;
-    }
-
-    [self.accountsArrayController setSelectionIndexes:indexSet];
 }
 
 -(IBAction)removeAccount:(id)sender
 {
-    [self.accountsArrayController removeObjectAtArrangedObjectIndex:self.accountsArrayController.selectionIndex];
+    [self.accountsArrayController removeObjectsAtArrangedObjectIndexes:self.accountsArrayController.selectionIndexes];
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
+}
+
+-(IBAction)changeDefaultAccount:(id)sender
+{
+    NSUInteger defaultRow = [self.accountTableView rowForView:sender];
+
+    NSUInteger index = 0;
+    for (MOAccount* account in self.accountsArrayController.arrangedObjects) {
+        account.isDefault = [NSNumber numberWithBool:(index == defaultRow ? YES : NO)];
+        index++;
+    }
+
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
 }
 
 @end

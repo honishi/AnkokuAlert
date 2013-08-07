@@ -13,7 +13,6 @@
 @interface AppDelegate ()
 
 @property (nonatomic, strong) MainWindowController* mainWindowController;
-@property (nonatomic, readwrite) NSManagedObjectContext* managedObjectContext;
 
 @end
 @implementation AppDelegate
@@ -22,8 +21,7 @@
 {
     // Insert code here to initialize your application
     [MagicalRecord setupCoreDataStack];
-    LOG(@"%@", [MagicalRecord currentStack]);
-    self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
+    // LOG(@"%@", [MagicalRecord currentStack]);
 
     self.mainWindowController = [[MainWindowController alloc] initWithWindowNibName:@"MainWindowController"];
     [self.mainWindowController showWindow:self];

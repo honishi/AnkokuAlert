@@ -13,7 +13,7 @@ const struct MOCommunityAttributes MOCommunityAttributes = {
 };
 
 const struct MOCommunityRelationships MOCommunityRelationships = {
-    .user = @"user",
+    .account = @"account",
 };
 
 const struct MOCommunityFetchedProperties MOCommunityFetchedProperties = {
@@ -211,7 +211,7 @@ const struct MOCommunityFetchedProperties MOCommunityFetchedProperties = {
 
 
 
-@dynamic user;
+@dynamic account;
 
 
 

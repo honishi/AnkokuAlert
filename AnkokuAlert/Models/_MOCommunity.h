@@ -14,13 +14,13 @@ extern const struct MOCommunityAttributes {
 } MOCommunityAttributes;
 
 extern const struct MOCommunityRelationships {
-    __unsafe_unretained NSString* user;
+    __unsafe_unretained NSString* account;
 } MOCommunityRelationships;
 
 extern const struct MOCommunityFetchedProperties {
 } MOCommunityFetchedProperties;
 
-@class MOUser;
+@class MOAccount;
 
 
 
@@ -118,9 +118,9 @@ extern const struct MOCommunityFetchedProperties {
 
 
 
-@property (nonatomic, strong) MOUser* user;
+@property (nonatomic, strong) MOAccount* account;
 
-//- (BOOL)validateUser:(id*)value_ error:(NSError**)error_;
+//- (BOOL)validateAccount:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -184,8 +184,8 @@ extern const struct MOCommunityFetchedProperties {
 
 
 
--(MOUser*)primitiveUser;
--(void)setPrimitiveUser:(MOUser*)value;
+-(MOAccount*)primitiveAccount;
+-(void)setPrimitiveAccount:(MOAccount*)value;
 
 
 @end

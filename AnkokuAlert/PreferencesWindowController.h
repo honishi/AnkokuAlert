@@ -8,12 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-extern NSString* const kUserDefaultsAccounts;
-extern NSString* const kUserDefaultsAccountsEmail;
-extern NSString* const kUserDefaultsAccountsUsername;
-extern NSString* const kUserDefaultsAccountsIsDefault;
-
 @interface PreferencesWindowController : NSWindowController
+
+@property (nonatomic, readonly) NSManagedObjectContext* managedObjectContext;
+@property (nonatomic, readonly, getter = isAddingAccountInProgress) BOOL addingAccountInProgress;
 
 +(PreferencesWindowController*)sharedController;
 -(NSDictionary*)defaultAccount;

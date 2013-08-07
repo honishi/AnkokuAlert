@@ -10,6 +10,9 @@
 
 @interface MainWindowController : NSWindowController
 
+@property (nonatomic, readonly) NSManagedObjectContext* managedObjectContext;
+@property (nonatomic, readonly) NSPredicate* accountFilterPredicate;
+
 @property (nonatomic) NSNumber* livePerSecond;
 @property (nonatomic) BOOL isStreamOpened;
 

@@ -12,10 +12,6 @@
 
 @property (assign) IBOutlet NSWindow* window;
 
-@property (nonatomic, readonly) NSManagedObjectContext* managedObjectContext;
-
-//-(IBAction)saveAction:(id)sender;
-
 -(IBAction)showPreferencesWindow:(id)sender;
 
 @end

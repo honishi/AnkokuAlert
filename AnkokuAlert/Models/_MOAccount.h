@@ -1,21 +1,22 @@
 // DO NOT EDIT. This file is machine-generated and constantly overwritten.
-// Make changes to MOUser.h instead.
+// Make changes to MOAccount.h instead.
 
 #import <CoreData/CoreData.h>
 
 
-extern const struct MOUserAttributes {
+extern const struct MOAccountAttributes {
+    __unsafe_unretained NSString* email;
     __unsafe_unretained NSString* isDefault;
     __unsafe_unretained NSString* userId;
     __unsafe_unretained NSString* userName;
-} MOUserAttributes;
+} MOAccountAttributes;
 
-extern const struct MOUserRelationships {
+extern const struct MOAccountRelationships {
     __unsafe_unretained NSString* communities;
-} MOUserRelationships;
+} MOAccountRelationships;
 
-extern const struct MOUserFetchedProperties {
-} MOUserFetchedProperties;
+extern const struct MOAccountFetchedProperties {
+} MOAccountFetchedProperties;
 
 @class MOCommunity;
 
@@ -23,14 +24,25 @@ extern const struct MOUserFetchedProperties {
 
 
 
-@interface MOUserID : NSManagedObjectID {}
+
+@interface MOAccountID : NSManagedObjectID {}
 @end
 
-@interface _MOUser : NSManagedObject {}
+@interface _MOAccount : NSManagedObject {}
 +(id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_;
 +(NSString*)entityName;
 +(NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
--(MOUserID*)objectID;
+-(MOAccountID*)objectID;
+
+
+
+
+
+@property (nonatomic, strong) NSString* email;
+
+
+
+//- (BOOL)validateEmail:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -80,7 +92,7 @@ extern const struct MOUserFetchedProperties {
 
 @end
 
-@interface _MOUser (CoreDataGeneratedAccessors)
+@interface _MOAccount (CoreDataGeneratedAccessors)
 
 -(void)addCommunities:(NSSet*)value_;
 -(void)removeCommunities:(NSSet*)value_;
@@ -89,7 +101,13 @@ extern const struct MOUserFetchedProperties {
 
 @end
 
-@interface _MOUser (CoreDataGeneratedPrimitiveAccessors)
+@interface _MOAccount (CoreDataGeneratedPrimitiveAccessors)
+
+
+-(NSString*)primitiveEmail;
+-(void)setPrimitiveEmail:(NSString*)value;
+
+
 
 
 -(NSNumber*)primitiveIsDefault;

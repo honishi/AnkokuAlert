@@ -91,10 +91,10 @@
 		ED4E6AF017B0E94200B008CB /* MagicalRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E6ABB17B0E94200B008CB /* MagicalRecord.m */; };
 		ED4E6AF117B0E94200B008CB /* MagicalRecord.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E6ABB17B0E94200B008CB /* MagicalRecord.m */; };
 		ED4E6AF217B0EBC700B008CB /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD33B9C179C3706003A41F9 /* CoreData.framework */; };
-		ED7DC33C17B2204E007A9D8F /* _MOUser.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC33917B2204E007A9D8F /* _MOUser.m */; };
-		ED7DC33D17B2204E007A9D8F /* _MOUser.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC33917B2204E007A9D8F /* _MOUser.m */; };
-		ED7DC33E17B2204E007A9D8F /* MOUser.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC33B17B2204E007A9D8F /* MOUser.m */; };
-		ED7DC33F17B2204E007A9D8F /* MOUser.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC33B17B2204E007A9D8F /* MOUser.m */; };
+		ED7DC34417B225C1007A9D8F /* _MOAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC34117B225C1007A9D8F /* _MOAccount.m */; };
+		ED7DC34517B225C1007A9D8F /* _MOAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC34117B225C1007A9D8F /* _MOAccount.m */; };
+		ED7DC34617B225C1007A9D8F /* MOAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC34317B225C1007A9D8F /* MOAccount.m */; };
+		ED7DC34717B225C1007A9D8F /* MOAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC34317B225C1007A9D8F /* MOAccount.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -201,10 +201,10 @@
 		ED4E6ABB17B0E94200B008CB /* MagicalRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicalRecord.m; sourceTree = "<group>"; };
 		ED4E6ABC17B0E94200B008CB /* MagicalRecordShorthand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicalRecordShorthand.h; sourceTree = "<group>"; };
 		ED4E6ABD17B0E94200B008CB /* CoreData+MagicalRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CoreData+MagicalRecord.h"; path = "Vendor/MagicalRecord/MagicalRecord/CoreData+MagicalRecord.h"; sourceTree = SOURCE_ROOT; };
-		ED7DC33817B2204E007A9D8F /* _MOUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _MOUser.h; path = Models/_MOUser.h; sourceTree = "<group>"; };
-		ED7DC33917B2204E007A9D8F /* _MOUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _MOUser.m; path = Models/_MOUser.m; sourceTree = "<group>"; };
-		ED7DC33A17B2204E007A9D8F /* MOUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOUser.h; path = Models/MOUser.h; sourceTree = "<group>"; };
-		ED7DC33B17B2204E007A9D8F /* MOUser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOUser.m; path = Models/MOUser.m; sourceTree = "<group>"; };
+		ED7DC34017B225C1007A9D8F /* _MOAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _MOAccount.h; path = Models/_MOAccount.h; sourceTree = "<group>"; };
+		ED7DC34117B225C1007A9D8F /* _MOAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _MOAccount.m; path = Models/_MOAccount.m; sourceTree = "<group>"; };
+		ED7DC34217B225C1007A9D8F /* MOAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOAccount.h; path = Models/MOAccount.h; sourceTree = "<group>"; };
+		ED7DC34317B225C1007A9D8F /* MOAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOAccount.m; path = Models/MOAccount.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -295,19 +295,18 @@
 		DBD33B9E179C3706003A41F9 /* AnkokuAlert */ = {
 			isa = PBXGroup;
 			children = (
+				DBD33BB0179C3707003A41F9 /* AnkokuAlert.xcdatamodeld */,
 				ED4E6A7917B0E44F00B008CB /* Model */,
+				ED7DC34817B2339F007A9D8F /* Manager */,
+				DBD33BAD179C3707003A41F9 /* MainMenu.xib */,
 				DBD33BAA179C3706003A41F9 /* AppDelegate.h */,
 				DBD33BAB179C3706003A41F9 /* AppDelegate.m */,
-				DBD33BAD179C3707003A41F9 /* MainMenu.xib */,
-				DBD33BB0179C3707003A41F9 /* AnkokuAlert.xcdatamodeld */,
-				DBD2AB1117A2D625005AA7EF /* PreferencesWindowController.h */,
-				DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */,
-				DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */,
+				DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */,
 				DB2D1F9517A3FF4900183A59 /* MainWindowController.h */,
 				DB2D1F9617A3FF4900183A59 /* MainWindowController.m */,
-				DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */,
-				DB650FD417A15A1100B46806 /* AlertManager.h */,
-				DB650FD517A15A1100B46806 /* AlertManager.m */,
+				DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */,
+				DBD2AB1117A2D625005AA7EF /* PreferencesWindowController.h */,
+				DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */,
 				DBD33B9F179C3706003A41F9 /* Supporting Files */,
 			);
 			path = AnkokuAlert;
@@ -349,10 +348,10 @@
 		ED4E6A7917B0E44F00B008CB /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				ED7DC33817B2204E007A9D8F /* _MOUser.h */,
-				ED7DC33917B2204E007A9D8F /* _MOUser.m */,
-				ED7DC33A17B2204E007A9D8F /* MOUser.h */,
-				ED7DC33B17B2204E007A9D8F /* MOUser.m */,
+				ED7DC34017B225C1007A9D8F /* _MOAccount.h */,
+				ED7DC34117B225C1007A9D8F /* _MOAccount.m */,
+				ED7DC34217B225C1007A9D8F /* MOAccount.h */,
+				ED7DC34317B225C1007A9D8F /* MOAccount.m */,
 				ED4E6A7A17B0E5A900B008CB /* _MOCommunity.h */,
 				ED4E6A7B17B0E5A900B008CB /* _MOCommunity.m */,
 				ED4E6A7C17B0E5A900B008CB /* MOCommunity.h */,
@@ -463,6 +462,15 @@
 			name = Core;
 			path = Vendor/MagicalRecord/MagicalRecord/Core;
 			sourceTree = SOURCE_ROOT;
+		};
+		ED7DC34817B2339F007A9D8F /* Manager */ = {
+			isa = PBXGroup;
+			children = (
+				DB650FD417A15A1100B46806 /* AlertManager.h */,
+				DB650FD517A15A1100B46806 /* AlertManager.m */,
+			);
+			name = Manager;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -613,8 +621,8 @@
 				ED4E6AEC17B0E94200B008CB /* MagicalRecord+Setup.m in Sources */,
 				ED4E6AEE17B0E94200B008CB /* MagicalRecord+ShorthandSupport.m in Sources */,
 				ED4E6AF017B0E94200B008CB /* MagicalRecord.m in Sources */,
-				ED7DC33C17B2204E007A9D8F /* _MOUser.m in Sources */,
-				ED7DC33E17B2204E007A9D8F /* MOUser.m in Sources */,
+				ED7DC34417B225C1007A9D8F /* _MOAccount.m in Sources */,
+				ED7DC34617B225C1007A9D8F /* MOAccount.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -656,8 +664,8 @@
 				ED4E6AED17B0E94200B008CB /* MagicalRecord+Setup.m in Sources */,
 				ED4E6AEF17B0E94200B008CB /* MagicalRecord+ShorthandSupport.m in Sources */,
 				ED4E6AF117B0E94200B008CB /* MagicalRecord.m in Sources */,
-				ED7DC33D17B2204E007A9D8F /* _MOUser.m in Sources */,
-				ED7DC33F17B2204E007A9D8F /* MOUser.m in Sources */,
+				ED7DC34517B225C1007A9D8F /* _MOAccount.m in Sources */,
+				ED7DC34717B225C1007A9D8F /* MOAccount.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

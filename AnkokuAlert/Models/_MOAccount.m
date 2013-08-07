@@ -1,46 +1,47 @@
 // DO NOT EDIT. This file is machine-generated and constantly overwritten.
-// Make changes to MOUser.m instead.
+// Make changes to MOAccount.m instead.
 
-#import "_MOUser.h"
+#import "_MOAccount.h"
 
-const struct MOUserAttributes MOUserAttributes = {
+const struct MOAccountAttributes MOAccountAttributes = {
+    .email = @"email",
     .isDefault = @"isDefault",
     .userId = @"userId",
     .userName = @"userName",
 };
 
-const struct MOUserRelationships MOUserRelationships = {
+const struct MOAccountRelationships MOAccountRelationships = {
     .communities = @"communities",
 };
 
-const struct MOUserFetchedProperties MOUserFetchedProperties = {
+const struct MOAccountFetchedProperties MOAccountFetchedProperties = {
 };
 
-@implementation MOUserID
+@implementation MOAccountID
 @end
 
-@implementation _MOUser
+@implementation _MOAccount
 
 +(id)insertInManagedObjectContext:(NSManagedObjectContext*)moc_
 {
     NSParameterAssert(moc_);
-    return [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:moc_];
+    return [NSEntityDescription insertNewObjectForEntityForName:@"Account" inManagedObjectContext:moc_];
 }
 
 +(NSString*)entityName
 {
-    return @"User";
+    return @"Account";
 }
 
 +(NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_
 {
     NSParameterAssert(moc_);
-    return [NSEntityDescription entityForName:@"User" inManagedObjectContext:moc_];
+    return [NSEntityDescription entityForName:@"Account" inManagedObjectContext:moc_];
 }
 
--(MOUserID*)objectID
+-(MOAccountID*)objectID
 {
-    return (MOUserID*)[super objectID];
+    return (MOAccountID*)[super objectID];
 }
 
 +(NSSet*)keyPathsForValuesAffectingValueForKey:(NSString*)key
@@ -55,6 +56,13 @@ const struct MOUserFetchedProperties MOUserFetchedProperties = {
 
     return keyPaths;
 }
+
+
+
+
+@dynamic email;
+
+
 
 
 

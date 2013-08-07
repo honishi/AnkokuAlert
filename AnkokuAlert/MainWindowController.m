@@ -10,14 +10,50 @@
 #import "PreferencesWindowController.h"
 #import "AlertManager.h"
 #import "SSKeychain.h"
+#import "MOAccount.h"
 #import "MOCommunity.h"
 
-#define DEBUG_CLEAR_AND_FEED_DUMMY_COMMUNITIES
+#define DEBUG_TRUNCATE_ALL_ACCOUNTS
+#define DEBUG_CREATE_DUMMY_ACCOUNTS
+#define DEBUG_TRUNCATE_AND_CREATE_DUMMY_COMMUNITIES
+
+#define DUMMY_ACCOUNT_COUNT 5
+#define DUMMY_COMMUNITY_COUNT 5
 
 float const kLiveStatTimerInterval = 0.5f;
 int const kLiveStatSamplingCount = 20;
 
+
 #pragma mark - Value Transformer
+
+@interface WindowTitleValueTransformer : NSValueTransformer {}
+@end
+
+@implementation WindowTitleValueTransformer
+
++(Class)transformedValueClass
+{
+    return [NSString class];
+}
+
++(BOOL)allowsReverseTransformation
+{
+    return NO;
+}
+
+-(id)transformedValue:(id)value
+{
+    NSString* title = nil;
+    MOAccount* account = value;
+
+    if (account) {
+        title = [NSString stringWithFormat:@"Ankoku Alert: %@", account.userName];
+    }
+
+    return title;
+}
+
+@end
 
 @interface LivePerSecondValueTransformer : NSValueTransformer {}
 @end
@@ -46,13 +82,18 @@ int const kLiveStatSamplingCount = 20;
 
 @interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource>
 
+@property (nonatomic, readwrite) NSManagedObjectContext* managedObjectContext;
+@property (nonatomic, readwrite) NSPredicate* accountFilterPredicate;
+
 @property (weak) IBOutlet NSTableView* communityTableView;
 // NSTextVIew doesn't support weak reference in arc.
 @property (strong) IBOutlet NSTextView* logTextView;
 @property (weak) IBOutlet NSScrollView* logScrollView;
 @property (weak) IBOutlet NSLevelIndicatorCell* liveLevelIndicatorCell;
 @property (weak) IBOutlet NSTextFieldCell* liveTextFieldCell;
-@property (weak) IBOutlet NSArrayController* communityArrayController;
+@property (weak) IBOutlet NSArrayController* communitiesArrayController;
+
+@property (weak) IBOutlet NSObjectController* defaultAccountObjectController;
 
 @property (unsafe_unretained) IBOutlet NSPanel* communityInputSheet;
 
@@ -71,24 +112,14 @@ int const kLiveStatSamplingCount = 20;
     if (self) {
         // Initialization code here.
         self.liveStats = NSMutableArray.new;
-
-#ifdef DEBUG_CLEAR_AND_FEED_DUMMY_COMMUNITIES
-        for (MOCommunity* community in [MOCommunity MR_findAll]) {
-            [community deleteEntity];
-        }
-
-        for (NSInteger i = 0; i < 20; i++) {
-            MOCommunity* community = [MOCommunity MR_createEntity];
-            community.displayOrder = [NSNumber numberWithInt:i];
-            community.community = [NSString stringWithFormat:@"co%05ld", i];
-            community.communityName = [NSString stringWithFormat:@"テストコミュニティ(%ld).", i];
-        }
-
-        [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
-#endif
     }
 
     return self;
+}
+
+-(void)dealloc
+{
+    [self.defaultAccountObjectController removeObserver:self forKeyPath:@"content"];
 }
 
 -(void)awakeFromNib
@@ -102,8 +133,11 @@ int const kLiveStatSamplingCount = 20;
     [super windowDidLoad];
 
     // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+    self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
+    [self.defaultAccountObjectController addObserver:self forKeyPath:@"content" options:NSKeyValueObservingOptionNew context:nil];
+
     NSSortDescriptor* defaultSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-    [self.communityArrayController setSortDescriptors:@[defaultSortDescriptor]];
+    [self.communitiesArrayController setSortDescriptors:@[defaultSortDescriptor]];
 
     // NSArray* array = [NSArray arrayWithObject:NSFilenamesPboardType];
     // [self.communityTableView registerForDraggedTypes:array];
@@ -111,6 +145,51 @@ int const kLiveStatSamplingCount = 20;
     [self.communityTableView setDraggingSourceOperationMask:NSDragOperationAll forLocal:NO];
 
     [NSTimer scheduledTimerWithTimeInterval:kLiveStatTimerInterval target:self selector:@selector(liveCounterTimerFired:) userInfo:nil repeats:YES];
+
+#ifdef DEBUG_TRUNCATE_ALL_ACCOUNTS
+    [MOAccount truncateAll];
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
+#endif
+
+#ifdef DEBUG_CREATE_DUMMY_ACCOUNTS
+    for (NSUInteger i = 0; i < DUMMY_ACCOUNT_COUNT; i++) {
+        MOAccount* account = [MOAccount MR_createEntity];
+        account.userId = [NSString stringWithFormat:@"1%05ld", i];
+        account.userName = [NSString stringWithFormat:@"テストユーザー(%ld).", i];
+        account.email = [NSString stringWithFormat:@"%03ld@example.com", i];
+        account.isDefault = [NSNumber numberWithBool:(i == 0)];
+
+        [self.managedObjectContext MR_saveOnlySelfAndWait];
+    }
+#endif
+
+#ifdef DEBUG_TRUNCATE_AND_CREATE_DUMMY_COMMUNITIES
+    [MOCommunity MR_truncateAll];
+
+    NSUInteger j = 0;
+    for (MOAccount* account in [MOAccount findAll]) {
+        for (NSInteger i = 0; i < DUMMY_COMMUNITY_COUNT; i++) {
+            MOCommunity* community = [MOCommunity MR_createEntity];
+            community.displayOrder = [NSNumber numberWithInt:i];
+            community.community = [NSString stringWithFormat:@"co%05ld", j];
+            community.communityName = [NSString stringWithFormat:@"テストコミュニティ(%ld).", j];
+
+            [account addCommunitiesObject:community];
+            j++;
+        }
+    }
+
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
+#endif
+
+
+    if (![MOAccount findAll].count) {
+        double delayInSeconds = 1.0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+                [self showPreferences:self];
+            });
+    }
 }
 
 //-(void)
@@ -133,7 +212,7 @@ int const kLiveStatSamplingCount = 20;
          LOG(@"communityInfo: %@", communityInfo[AlertManagerCommunityInfoKeyCommunityName]);
      }];
 
-    NSArray* alertCommunities = self.communityArrayController.arrangedObjects;
+    NSArray* alertCommunities = self.communitiesArrayController.arrangedObjects;
     for (MOCommunity* alertCommunity in alertCommunities) {
         if ([community isEqualToString:alertCommunity.community]) {
             // alert!
@@ -185,8 +264,8 @@ int const kLiveStatSamplingCount = 20;
     fromCommunity.displayOrder = [NSNumber numberWithInteger:toIndex];
     toCommunity.displayOrder = [NSNumber numberWithInteger:fromIndex];
 
-    [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
-    [self.communityArrayController fetch:self];
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
+    [self.communitiesArrayController fetch:self];
     // [self.communityTableView reloadData];
 
     // LOG(@"from %ld --> to %ld", fromIndex, toIndex);
@@ -200,20 +279,6 @@ int const kLiveStatSamplingCount = 20;
 // #pragma mark - Public Interface
 
 #pragma mark - Internal Methods
-
--(void)loginWithDefaultAccount
-{
-    NSDictionary* account = [PreferencesWindowController sharedController].defaultAccount;
-    if (account) {
-        NSString* email = account[kUserDefaultsAccountsEmail];
-        NSString* password = [SSKeychain passwordForService:[[NSBundle mainBundle] bundleIdentifier] account:email];
-        [[AlertManager sharedManager] loginWithEmail:email password:password completion:^(NSDictionary* alertStatus, NSError* error) {
-             if (!error) {
-                 [[AlertManager sharedManager] openStreamWithAlertStatus:alertStatus streamListener:self];
-             }
-         }];
-    }
-}
 
 #pragma mark Log View
 
@@ -257,14 +322,45 @@ int const kLiveStatSamplingCount = 20;
     }
 }
 
+#pragma mark Default Account Predicate
+
+-(void)observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
+{
+    if ([keyPath isEqualToString:@"content"] && object == self.defaultAccountObjectController) {
+        [self updateDefaultAccountPredicate];
+    }
+}
+
+-(void)updateDefaultAccountPredicate
+{
+    MOAccount* account = [MOAccount defaultAccount];
+    if (account) {
+        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"account.objectID == %@", account.objectID];
+        self.accountFilterPredicate = predicate;
+    }
+}
+
 #pragma mark - Button Actions
 
 #pragma mark Start/Stop Stream
 
 -(IBAction)startAlert:(id)sender
 {
-    [self loginWithDefaultAccount];
-    self.isStreamOpened = YES;
+    MOAccount* account = [MOAccount defaultAccount];
+    if (account) {
+        self.isStreamOpened = YES;
+
+        NSString* email = account.email;
+        NSString* password = [SSKeychain passwordForService:[[NSBundle mainBundle] bundleIdentifier] account:account.email];
+
+        [[AlertManager sharedManager] loginWithEmail:email password:password completion:^(NSDictionary* alertStatus, NSError* error) {
+             if (error) {
+                 self.isStreamOpened = NO;
+             } else {
+                 [[AlertManager sharedManager] openStreamWithAlertStatus:alertStatus streamListener:self];
+             }
+         }];
+    }
 }
 
 -(IBAction)stopAlert:(id)sender
@@ -301,6 +397,11 @@ int const kLiveStatSamplingCount = 20;
 
 -(IBAction)removeCommunity:(id)sender
 {
+}
+
+-(IBAction)showPreferences:(id)sender
+{
+    [[PreferencesWindowController sharedController] showWindow:nil];
 }
 
 #pragma mark Actions in Community Table View
