@@ -37,7 +37,7 @@
 
 -(IBAction)showPreferencesWindow:(id)sender
 {
-    [[PreferencesWindowController sharedController] showWindow:nil];
+    [self.mainWindowController showPreferences:self];
 }
 
 @end

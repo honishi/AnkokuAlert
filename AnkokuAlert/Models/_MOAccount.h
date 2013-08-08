@@ -5,6 +5,7 @@
 
 
 extern const struct MOAccountAttributes {
+    __unsafe_unretained NSString* displayOrder;
     __unsafe_unretained NSString* email;
     __unsafe_unretained NSString* isDefault;
     __unsafe_unretained NSString* userId;
@@ -25,6 +26,7 @@ extern const struct MOAccountFetchedProperties {
 
 
 
+
 @interface MOAccountID : NSManagedObjectID {}
 @end
 
@@ -33,6 +35,20 @@ extern const struct MOAccountFetchedProperties {
 +(NSString*)entityName;
 +(NSEntityDescription*)entityInManagedObjectContext:(NSManagedObjectContext*)moc_;
 -(MOAccountID*)objectID;
+
+
+
+
+
+@property (nonatomic, strong) NSNumber* displayOrder;
+
+
+
+@property int32_t displayOrderValue;
+-(int32_t)displayOrderValue;
+-(void)setDisplayOrderValue:(int32_t)value_;
+
+//- (BOOL)validateDisplayOrder:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -102,6 +118,15 @@ extern const struct MOAccountFetchedProperties {
 @end
 
 @interface _MOAccount (CoreDataGeneratedPrimitiveAccessors)
+
+
+-(NSNumber*)primitiveDisplayOrder;
+-(void)setPrimitiveDisplayOrder:(NSNumber*)value;
+
+-(int32_t)primitiveDisplayOrderValue;
+-(void)setPrimitiveDisplayOrderValue:(int32_t)value_;
+
+
 
 
 -(NSString*)primitiveEmail;

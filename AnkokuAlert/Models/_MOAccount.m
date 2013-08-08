@@ -4,6 +4,7 @@
 #import "_MOAccount.h"
 
 const struct MOAccountAttributes MOAccountAttributes = {
+    .displayOrder = @"displayOrder",
     .email = @"email",
     .isDefault = @"isDefault",
     .userId = @"userId",
@@ -48,6 +49,11 @@ const struct MOAccountFetchedProperties MOAccountFetchedProperties = {
 {
     NSSet* keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
+    if ([key isEqualToString:@"displayOrderValue"]) {
+        NSSet* affectingKey = [NSSet setWithObject:@"displayOrder"];
+        keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
+        return keyPaths;
+    }
     if ([key isEqualToString:@"isDefaultValue"]) {
         NSSet* affectingKey = [NSSet setWithObject:@"isDefault"];
         keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
@@ -56,6 +62,36 @@ const struct MOAccountFetchedProperties MOAccountFetchedProperties = {
 
     return keyPaths;
 }
+
+
+
+
+@dynamic displayOrder;
+
+
+
+-(int32_t)displayOrderValue
+{
+    NSNumber* result = [self displayOrder];
+    return [result intValue];
+}
+
+-(void)setDisplayOrderValue:(int32_t)value_
+{
+    [self setDisplayOrder:[NSNumber numberWithInt:value_]];
+}
+
+-(int32_t)primitiveDisplayOrderValue
+{
+    NSNumber* result = [self primitiveDisplayOrder];
+    return [result intValue];
+}
+
+-(void)setPrimitiveDisplayOrderValue:(int32_t)value_
+{
+    [self setPrimitiveDisplayOrder:[NSNumber numberWithInt:value_]];
+}
+
 
 
 

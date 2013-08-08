@@ -11,9 +11,14 @@
 @interface PreferencesWindowController : NSWindowController
 
 @property (nonatomic, readonly) NSManagedObjectContext* managedObjectContext;
+//@property (nonatomic) NSArray* accountSortDescriptors;
 @property (nonatomic, readonly, getter = isAddingAccountInProgress) BOOL addingAccountInProgress;
 
-+(PreferencesWindowController*)sharedController;
--(NSDictionary*)defaultAccount;
+@property (nonatomic, weak) IBOutlet NSTableView* accountTableView;
+@property (nonatomic, weak) IBOutlet NSTextField* emailTextField;
+@property (nonatomic, weak) IBOutlet NSSecureTextField* passwordTextField;
+@property (nonatomic) BOOL hasValidEmailAndPassword;
+
++(PreferencesWindowController*)preferenceWindowController;
 
 @end

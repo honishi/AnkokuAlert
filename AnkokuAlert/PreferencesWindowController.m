@@ -18,19 +18,16 @@
 #define DUMMY_EMAIL     @"dummy@example.com"
 #define DUMMY_PASSWORD  @"dummy_password"
 
-@interface PreferencesWindowController ()
+@interface PreferencesWindowController ()<NSTextFieldDelegate>
 
 @property (nonatomic, readwrite) NSManagedObjectContext* managedObjectContext;
 @property (nonatomic, readwrite) BOOL addingAccountInProgress;
 
-@property (nonatomic, weak) IBOutlet NSTableView* accountTableView;
-@property (nonatomic, weak) IBOutlet NSPanel* accountInputSheet;
-@property (weak) IBOutlet NSTextField* messageTextField;
-@property (weak) IBOutlet NSTextField* emailTextField;
-@property (weak) IBOutlet NSSecureTextField* passwordTextField;
-@property (weak) IBOutlet NSButton* loginButton;
+@property (nonatomic, weak) IBOutlet NSPanel* accountInputPanel;
+@property (nonatomic, weak) IBOutlet NSTextField* messageTextField;
+@property (nonatomic, weak) IBOutlet NSPanel* confirmAccountRemovalPanel;
 
-@property (weak) IBOutlet NSArrayController* accountsArrayController;
+@property (nonatomic, weak) IBOutlet NSArrayController* accountArrayController;
 
 @end
 
@@ -38,38 +35,27 @@
 
 #pragma mark - Object Lifecycle
 
-+(PreferencesWindowController*)sharedController
++(PreferencesWindowController*)preferenceWindowController
 {
-    static PreferencesWindowController* sharedController;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-            sharedController = [[PreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindowController"];
-        });
-    return sharedController;
+    return [[PreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindowController"];
 }
 
 -(id)initWithWindow:(NSWindow*)window
 {
-    // TODO: delete later
-    //NSAssert(NO, @"this method should not be called");
-
     self = [super initWithWindow:window];
+
     if (self) {
-        // Initialization code here.
+        // do nothing
     }
 
     return self;
 }
 
--(void)awakeFromNib
-{
-}
-
+// use windowDidLoad instead of awakeFromNib. http://stackoverflow.com/a/15780876
 -(void)windowDidLoad
 {
     [super windowDidLoad];
 
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
 
     if (![MOAccount findAll].count) {
@@ -84,27 +70,11 @@
 // #pragma mark - Property Methods
 // #pragma mark - [ClassName] Overrides
 // #pragma mark - [ProtocolName] Methods
+// #pragma mark - Public Interface
 
-#pragma mark - Public Interface
+#pragma mark - Internal Methods, Action
 
--(NSDictionary*)defaultAccount
-{
-//    NSArray* accounts = [[NSUserDefaults standardUserDefaults] objectForKey:kUserDefaultsAccounts];
-//
-//    for (NSDictionary* account in accounts) {
-//        if ([account[kUserDefaultsAccountsIsDefault] isEqualToNumber:[NSNumber numberWithBool:YES]]) {
-//            return account;
-//        }
-//    }
-//
-    return nil;
-}
-
-#pragma mark - Internal Methods
-
-#pragma mark - Action
-
-#pragma mark Add/Remove Account
+#pragma mark Add Account (Utility)
 
 -(IBAction)inputAccount:(id)sender
 {
@@ -119,14 +89,43 @@
 -(void)beginAccountInputSheetWithMessage:(NSString*)message
 {
     self.messageTextField.stringValue = message;
-    [NSApp beginSheet:self.accountInputSheet modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
+    self.emailTextField.stringValue = @"";
+    self.passwordTextField.stringValue = @"";
+    [self validateEmailAndPassword];
+    [self.emailTextField becomeFirstResponder];
+    [NSApp beginSheet:self.accountInputPanel modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
 }
 
 -(void)endAccountInputSheet
 {
-    [NSApp endSheet:self.accountInputSheet];
-    [self.accountInputSheet orderOut:self];
+    [NSApp endSheet:self.accountInputPanel];
+    [self.accountInputPanel orderOut:self];
 }
+
+-(void)validateEmailAndPassword
+{
+    BOOL hasValidEmail = NO;
+    NSString* email = self.emailTextField.stringValue;
+    NSError* error = nil;
+    NSRegularExpression* emailRegexp = [NSRegularExpression regularExpressionWithPattern:@".+@.+\\..+" options:0 error:&error];
+
+    if ([emailRegexp numberOfMatchesInString:email options:0 range:NSMakeRange(0, email.length)]) {
+        hasValidEmail = YES;
+    }
+
+    if (hasValidEmail && 0 < self.passwordTextField.stringValue.length) {
+        self.hasValidEmailAndPassword = YES;
+    } else {
+        self.hasValidEmailAndPassword = NO;
+    }
+}
+
+-(void)controlTextDidChange:(NSNotification*)obj
+{
+    [self validateEmailAndPassword];
+}
+
+#pragma mark Add Account (Main)
 
 -(IBAction)addAccount:(id)sender
 {
@@ -162,7 +161,7 @@
          account.isDefault = [NSNumber numberWithBool:isDefault];
          [SSKeychain setPassword:password forService:[[NSBundle mainBundle] bundleIdentifier] account:email];
 
-         [self.accountsArrayController addObject:account];
+         [self.accountArrayController addObject:account];
          [self.managedObjectContext MR_saveOnlySelfAndWait];
 
          [self.accountTableView scrollRowToVisible:(self.accountTableView.numberOfRows-1)];
@@ -172,19 +171,42 @@
      }];
 }
 
+#pragma mark Remove Account
+
+-(IBAction)confirmAccountRemoval:(id)sender
+{
+    // [NSApp beginSheet:self.confirmAccountRemovalPanel modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
+    [self removeAccount:self];
+}
+
+-(IBAction)cancelAccountRemoval:(id)sender
+{
+    [self endConfirmAccountRemovalSheet];
+}
+
+-(void)endConfirmAccountRemovalSheet
+{
+    [NSApp endSheet:self.confirmAccountRemovalPanel];
+    [self.confirmAccountRemovalPanel orderOut:self];
+}
+
 -(IBAction)removeAccount:(id)sender
 {
-    [self.accountsArrayController removeObjectsAtArrangedObjectIndexes:self.accountsArrayController.selectionIndexes];
+    //[self endConfirmAccountRemovalSheet];
+    [self.accountArrayController removeObjectsAtArrangedObjectIndexes:self.accountArrayController.selectionIndexes];
     [self.managedObjectContext MR_saveOnlySelfAndWait];
+    // [self.accountTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 }
+
+#pragma mark Change Default Account
 
 -(IBAction)changeDefaultAccount:(id)sender
 {
-    NSUInteger defaultRow = [self.accountTableView rowForView:sender];
+    NSUInteger selectedRow = [self.accountTableView rowForView:sender];
 
     NSUInteger index = 0;
-    for (MOAccount* account in self.accountsArrayController.arrangedObjects) {
-        account.isDefault = [NSNumber numberWithBool:(index == defaultRow ? YES : NO)];
+    for (MOAccount* account in self.accountArrayController.arrangedObjects) {
+        account.isDefault = [NSNumber numberWithBool:(index == selectedRow ? YES : NO)];
         index++;
     }
 

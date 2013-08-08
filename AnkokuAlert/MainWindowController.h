@@ -13,7 +13,11 @@
 @property (nonatomic, readonly) NSManagedObjectContext* managedObjectContext;
 @property (nonatomic, readonly) NSPredicate* accountFilterPredicate;
 
+@property (weak) IBOutlet NSTableView* communityTableView;
+
 @property (nonatomic) NSNumber* livePerSecond;
 @property (nonatomic) BOOL isStreamOpened;
+
+-(IBAction)showPreferences:(id)sender;
 
 @end

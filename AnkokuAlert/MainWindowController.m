@@ -17,7 +17,7 @@
 #define DEBUG_CREATE_DUMMY_ACCOUNTS
 #define DEBUG_TRUNCATE_AND_CREATE_DUMMY_COMMUNITIES
 
-#define DUMMY_ACCOUNT_COUNT 5
+#define DUMMY_ACCOUNT_COUNT 200
 #define DUMMY_COMMUNITY_COUNT 5
 
 float const kLiveStatTimerInterval = 0.5f;
@@ -43,13 +43,8 @@ int const kLiveStatSamplingCount = 20;
 
 -(id)transformedValue:(id)value
 {
-    NSString* title = nil;
     MOAccount* account = value;
-
-    if (account) {
-        title = [NSString stringWithFormat:@"Ankoku Alert: %@", account.userName];
-    }
-
+    NSString* title = [NSString stringWithFormat:@"Ankoku Alert: %@", account ? account.userName:@"No user selected."];
     return title;
 }
 
@@ -85,13 +80,12 @@ int const kLiveStatSamplingCount = 20;
 @property (nonatomic, readwrite) NSManagedObjectContext* managedObjectContext;
 @property (nonatomic, readwrite) NSPredicate* accountFilterPredicate;
 
-@property (weak) IBOutlet NSTableView* communityTableView;
 // NSTextVIew doesn't support weak reference in arc.
 @property (strong) IBOutlet NSTextView* logTextView;
 @property (weak) IBOutlet NSScrollView* logScrollView;
 @property (weak) IBOutlet NSLevelIndicatorCell* liveLevelIndicatorCell;
 @property (weak) IBOutlet NSTextFieldCell* liveTextFieldCell;
-@property (weak) IBOutlet NSArrayController* communitiesArrayController;
+@property (weak) IBOutlet NSArrayController* communityArrayController;
 
 @property (weak) IBOutlet NSObjectController* defaultAccountObjectController;
 
@@ -99,6 +93,8 @@ int const kLiveStatSamplingCount = 20;
 
 @property (nonatomic) NSUInteger liveCount;
 @property (nonatomic) NSMutableArray* liveStats;
+
+@property (nonatomic) PreferencesWindowController* preferenceWindowController;
 
 @end
 
@@ -132,12 +128,11 @@ int const kLiveStatSamplingCount = 20;
 {
     [super windowDidLoad];
 
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
     self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
     [self.defaultAccountObjectController addObserver:self forKeyPath:@"content" options:NSKeyValueObservingOptionNew context:nil];
 
-    NSSortDescriptor* defaultSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
-    [self.communitiesArrayController setSortDescriptors:@[defaultSortDescriptor]];
+//    NSSortDescriptor* defaultSortDescriptor = [[NSSortDescriptor alloc] initWithKey:@"displayOrder" ascending:YES];
+//    [self.communitiesArrayController setSortDescriptors:@[defaultSortDescriptor]];
 
     // NSArray* array = [NSArray arrayWithObject:NSFilenamesPboardType];
     // [self.communityTableView registerForDraggedTypes:array];
@@ -154,6 +149,7 @@ int const kLiveStatSamplingCount = 20;
 #ifdef DEBUG_CREATE_DUMMY_ACCOUNTS
     for (NSUInteger i = 0; i < DUMMY_ACCOUNT_COUNT; i++) {
         MOAccount* account = [MOAccount MR_createEntity];
+        account.displayOrder = [NSNumber numberWithInteger:i];
         account.userId = [NSString stringWithFormat:@"1%05ld", i];
         account.userName = [NSString stringWithFormat:@"テストユーザー(%ld).", i];
         account.email = [NSString stringWithFormat:@"%03ld@example.com", i];
@@ -212,7 +208,7 @@ int const kLiveStatSamplingCount = 20;
          LOG(@"communityInfo: %@", communityInfo[AlertManagerCommunityInfoKeyCommunityName]);
      }];
 
-    NSArray* alertCommunities = self.communitiesArrayController.arrangedObjects;
+    NSArray* alertCommunities = self.communityArrayController.arrangedObjects;
     for (MOCommunity* alertCommunity in alertCommunities) {
         if ([community isEqualToString:alertCommunity.community]) {
             // alert!
@@ -252,8 +248,6 @@ int const kLiveStatSamplingCount = 20;
 
 -(BOOL)tableView:(NSTableView*)tableView acceptDrop:(id<NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation
 {
-    // LOG_CURRENT_METHOD;
-
     NSPasteboard* pboard = info.draggingPasteboard;
     NSInteger fromIndex = [pboard stringForType:@"aRow"].integerValue;
     NSInteger toIndex = row;
@@ -265,18 +259,19 @@ int const kLiveStatSamplingCount = 20;
     toCommunity.displayOrder = [NSNumber numberWithInteger:fromIndex];
 
     [self.managedObjectContext MR_saveOnlySelfAndWait];
-    [self.communitiesArrayController fetch:self];
-    // [self.communityTableView reloadData];
-
-    // LOG(@"from %ld --> to %ld", fromIndex, toIndex);
-
-//    [appDelegate_ moveAccountFrom:fromIndex to:toIndex];
-//    [accountTableView_ reloadData];
+    [self.communityArrayController fetch:self];
 
     return YES;
 }
 
-// #pragma mark - Public Interface
+#pragma mark - Public Interface
+
+-(IBAction)showPreferences:(id)sender
+{
+    self.preferenceWindowController = [PreferencesWindowController preferenceWindowController];
+    [self.preferenceWindowController.window center];
+    [self.preferenceWindowController.window makeKeyAndOrderFront:self];
+}
 
 #pragma mark - Internal Methods
 
@@ -303,7 +298,7 @@ int const kLiveStatSamplingCount = 20;
 
 -(void)liveCounterTimerFired:(NSTimer*)timer
 {
-    NSDictionary* stat = @{@"date":[NSDate date], @"liveCount": [NSNumber numberWithInteger:self.liveCount]};
+    NSDictionary* stat = @{@"date" : [NSDate date], @"liveCount": [NSNumber numberWithInteger:self.liveCount]};
     [self.liveStats addObject:stat];
 
     if (2 < self.liveStats.count) {
@@ -397,11 +392,8 @@ int const kLiveStatSamplingCount = 20;
 
 -(IBAction)removeCommunity:(id)sender
 {
-}
-
--(IBAction)showPreferences:(id)sender
-{
-    [[PreferencesWindowController sharedController] showWindow:nil];
+    [self.communityArrayController removeObjectsAtArrangedObjectIndexes:self.communityArrayController.selectionIndexes];
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
 }
 
 #pragma mark Actions in Community Table View
@@ -410,5 +402,7 @@ int const kLiveStatSamplingCount = 20;
 {
     [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
 }
+
+#pragma mark Misc
 
 @end
