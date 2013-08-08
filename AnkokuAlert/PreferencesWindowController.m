@@ -7,11 +7,13 @@
 //
 
 #import "PreferencesWindowController.h"
+#import "ConfirmationWindowController.h"
 #import "AlertManager.h"
 #import "SSKeychain.h"
 #import "MOAccount.h"
 
 // #define DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
+// #define DEBUG_SKIP_CONFIRMATION_WHEN_ACCOUNT_REMOVED
 
 #define DUMMY_USERID    @"12345"
 #define DUMMY_USERNAME  @"DUMMY_USER"
@@ -25,8 +27,7 @@
 
 @property (nonatomic, weak) IBOutlet NSPanel* accountInputPanel;
 @property (nonatomic, weak) IBOutlet NSTextField* messageTextField;
-@property (nonatomic, weak) IBOutlet NSPanel* confirmAccountRemovalPanel;
-
+@property (nonatomic) ConfirmationWindowController* confirmationWindowController;
 @property (nonatomic, weak) IBOutlet NSArrayController* accountArrayController;
 
 @end
@@ -59,7 +60,7 @@
     self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
 
     if (![MOAccount findAll].count) {
-        double delayInSeconds = 1.0;
+        double delayInSeconds = 0.5f;
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
                 [self inputAccount:self];
@@ -140,11 +141,11 @@
          self.addingAccountInProgress = NO;
 #ifndef DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
          if (error) {
-             NSLog(@"login error.");
+             LOG(@"login error.");
              [self beginAccountInputSheetWithMessage:@"Login failed. Please try again..."];
          } else {
 #endif
-         NSLog(@"login completed: %@", alertStatus);
+         LOG(@"login completed: %@", alertStatus);
 
          BOOL isDefault = [MOAccount findAll].count ? NO : YES;
 
@@ -175,24 +176,24 @@
 
 -(IBAction)confirmAccountRemoval:(id)sender
 {
-    // [NSApp beginSheet:self.confirmAccountRemovalPanel modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
-    [self removeAccount:self];
+#ifndef DEBUG_SKIP_CONFIRMATION_WHEN_ACCOUNT_REMOVED
+    self.confirmationWindowController = [ConfirmationWindowController confirmationWindowControllerWithMessage:@"Are you really sure to remove selected account(s)?" completion:^
+                                             (BOOL isCancelled) {
+                                             [NSApp endSheet:self.confirmationWindowController.window];
+                                             [self.confirmationWindowController.window orderOut:self];
+                                             if (!isCancelled) {
+                                                 [self removeAccount];
+                                             }
+                                         }];
+    self.confirmationWindowController.titleOfOkButton = @"Remove";
+    [NSApp beginSheet:self.confirmationWindowController.window modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
+#else
+    [self removeAccount];
+#endif
 }
 
--(IBAction)cancelAccountRemoval:(id)sender
+-(void)removeAccount
 {
-    [self endConfirmAccountRemovalSheet];
-}
-
--(void)endConfirmAccountRemovalSheet
-{
-    [NSApp endSheet:self.confirmAccountRemovalPanel];
-    [self.confirmAccountRemovalPanel orderOut:self];
-}
-
--(IBAction)removeAccount:(id)sender
-{
-    //[self endConfirmAccountRemovalSheet];
     [self.accountArrayController removeObjectsAtArrangedObjectIndexes:self.accountArrayController.selectionIndexes];
     [self.managedObjectContext MR_saveOnlySelfAndWait];
     // [self.accountTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];

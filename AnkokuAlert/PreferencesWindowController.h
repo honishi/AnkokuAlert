@@ -11,7 +11,6 @@
 @interface PreferencesWindowController : NSWindowController
 
 @property (nonatomic, readonly) NSManagedObjectContext* managedObjectContext;
-//@property (nonatomic) NSArray* accountSortDescriptors;
 @property (nonatomic, readonly, getter = isAddingAccountInProgress) BOOL addingAccountInProgress;
 
 @property (nonatomic, weak) IBOutlet NSTableView* accountTableView;

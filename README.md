@@ -14,3 +14,10 @@ setup coredata
 $ brew install mogenerator
 $ mogenerator -m AnkokuAlert.xcdatamodeld/AnkokuAlert.xcdatamodel -O Models/ --template-var arc=true
 ````
+
+license
+-
+copyright &copy; 2013- honishi, hiroyuki onishi.
+
+distributed under the [MIT license][mit].
+[mit]: http://www.opensource.org/licenses/mit-license.php

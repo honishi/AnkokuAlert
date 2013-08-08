@@ -16,9 +16,19 @@
 		DB2D1F9917A3FF4900183A59 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2D1F9617A3FF4900183A59 /* MainWindowController.m */; };
 		DB2D1F9A17A3FF4900183A59 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */; };
 		DB2D1F9B17A3FF4900183A59 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */; };
+		DB5BA5AC17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */; };
+		DB5BA5AD17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */; };
+		DB5BA5AE17B3B115004B8B0A /* ConfirmationWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */; };
+		DB5BA5AF17B3B115004B8B0A /* ConfirmationWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */; };
 		DB650FD617A15A1100B46806 /* AlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DB650FD517A15A1100B46806 /* AlertManager.m */; };
 		DB650FD717A15A1100B46806 /* AlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DB650FD517A15A1100B46806 /* AlertManager.m */; };
 		DB650FDC17A16A5500B46806 /* TestAccount.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB650FD817A1650900B46806 /* TestAccount.plist */; };
+		DB69268317B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB69268117B3BFE400027BBC /* ImportCommunityWindowController.m */; };
+		DB69268417B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB69268117B3BFE400027BBC /* ImportCommunityWindowController.m */; };
+		DB69268517B3BFE400027BBC /* ImportCommunityWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB69268217B3BFE400027BBC /* ImportCommunityWindowController.xib */; };
+		DB69268617B3BFE400027BBC /* ImportCommunityWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB69268217B3BFE400027BBC /* ImportCommunityWindowController.xib */; };
+		DB69268C17B3F58800027BBC /* DefaultSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB69268B17B3F58800027BBC /* DefaultSound.mp3 */; };
+		DB69268D17B3F58800027BBC /* DefaultSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB69268B17B3F58800027BBC /* DefaultSound.mp3 */; };
 		DBD2AB1417A2D625005AA7EF /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */; };
 		DBD2AB1517A2D625005AA7EF /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */; };
 		DBD2AB1617A2D625005AA7EF /* PreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */; };
@@ -116,10 +126,17 @@
 		DB2D1F9517A3FF4900183A59 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		DB2D1F9617A3FF4900183A59 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
 		DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainWindowController.xib; sourceTree = "<group>"; };
+		DB5BA5A917B3B115004B8B0A /* ConfirmationWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfirmationWindowController.h; sourceTree = "<group>"; };
+		DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfirmationWindowController.m; sourceTree = "<group>"; };
+		DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfirmationWindowController.xib; sourceTree = "<group>"; };
 		DB650FD417A15A1100B46806 /* AlertManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertManager.h; sourceTree = "<group>"; };
 		DB650FD517A15A1100B46806 /* AlertManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertManager.m; sourceTree = "<group>"; };
 		DB650FD817A1650900B46806 /* TestAccount.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = TestAccount.plist; sourceTree = "<group>"; };
 		DB650FDA17A165B000B46806 /* TestAccount.plist.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestAccount.plist.sample; sourceTree = "<group>"; };
+		DB69268017B3BFE400027BBC /* ImportCommunityWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportCommunityWindowController.h; sourceTree = "<group>"; };
+		DB69268117B3BFE400027BBC /* ImportCommunityWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImportCommunityWindowController.m; sourceTree = "<group>"; };
+		DB69268217B3BFE400027BBC /* ImportCommunityWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImportCommunityWindowController.xib; sourceTree = "<group>"; };
+		DB69268B17B3F58800027BBC /* DefaultSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = DefaultSound.mp3; path = Resources/DefaultSound.mp3; sourceTree = "<group>"; };
 		DBD2AB1117A2D625005AA7EF /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
 		DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
 		DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowController.xib; sourceTree = "<group>"; };
@@ -251,6 +268,33 @@
 			name = SSKeychain;
 			sourceTree = "<group>";
 		};
+		DB5BA5A817B3B0DB004B8B0A /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				DB2D1F9517A3FF4900183A59 /* MainWindowController.h */,
+				DB2D1F9617A3FF4900183A59 /* MainWindowController.m */,
+				DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */,
+				DB69268017B3BFE400027BBC /* ImportCommunityWindowController.h */,
+				DB69268117B3BFE400027BBC /* ImportCommunityWindowController.m */,
+				DB69268217B3BFE400027BBC /* ImportCommunityWindowController.xib */,
+				DBD2AB1117A2D625005AA7EF /* PreferencesWindowController.h */,
+				DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */,
+				DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */,
+				DB5BA5A917B3B115004B8B0A /* ConfirmationWindowController.h */,
+				DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */,
+				DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */,
+			);
+			name = Controllers;
+			sourceTree = "<group>";
+		};
+		DB69268717B3F4CB00027BBC /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				DB69268B17B3F58800027BBC /* DefaultSound.mp3 */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
 		DBD33B8C179C3706003A41F9 = {
 			isa = PBXGroup;
 			children = (
@@ -296,18 +340,14 @@
 			isa = PBXGroup;
 			children = (
 				DBD33BB0179C3707003A41F9 /* AnkokuAlert.xcdatamodeld */,
-				ED4E6A7917B0E44F00B008CB /* Model */,
-				ED7DC34817B2339F007A9D8F /* Manager */,
+				ED4E6A7917B0E44F00B008CB /* Models */,
+				ED7DC34817B2339F007A9D8F /* Managers */,
+				DB5BA5A817B3B0DB004B8B0A /* Controllers */,
 				DBD33BAD179C3707003A41F9 /* MainMenu.xib */,
 				DBD33BAA179C3706003A41F9 /* AppDelegate.h */,
 				DBD33BAB179C3706003A41F9 /* AppDelegate.m */,
-				DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */,
-				DB2D1F9517A3FF4900183A59 /* MainWindowController.h */,
-				DB2D1F9617A3FF4900183A59 /* MainWindowController.m */,
-				DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */,
-				DBD2AB1117A2D625005AA7EF /* PreferencesWindowController.h */,
-				DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */,
 				DBD33B9F179C3706003A41F9 /* Supporting Files */,
+				DB69268717B3F4CB00027BBC /* Resources */,
 			);
 			path = AnkokuAlert;
 			sourceTree = "<group>";
@@ -345,7 +385,7 @@
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		ED4E6A7917B0E44F00B008CB /* Model */ = {
+		ED4E6A7917B0E44F00B008CB /* Models */ = {
 			isa = PBXGroup;
 			children = (
 				ED7DC34017B225C1007A9D8F /* _MOAccount.h */,
@@ -357,7 +397,7 @@
 				ED4E6A7C17B0E5A900B008CB /* MOCommunity.h */,
 				ED4E6A7D17B0E5A900B008CB /* MOCommunity.m */,
 			);
-			name = Model;
+			name = Models;
 			sourceTree = "<group>";
 		};
 		ED4E6A8217B0E91400B008CB /* MagicalRecord */ = {
@@ -463,13 +503,13 @@
 			path = Vendor/MagicalRecord/MagicalRecord/Core;
 			sourceTree = SOURCE_ROOT;
 		};
-		ED7DC34817B2339F007A9D8F /* Manager */ = {
+		ED7DC34817B2339F007A9D8F /* Managers */ = {
 			isa = PBXGroup;
 			children = (
 				DB650FD417A15A1100B46806 /* AlertManager.h */,
 				DB650FD517A15A1100B46806 /* AlertManager.m */,
 			);
-			name = Manager;
+			name = Managers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -548,6 +588,9 @@
 				DBD33BAF179C3707003A41F9 /* MainMenu.xib in Resources */,
 				DBD2AB1617A2D625005AA7EF /* PreferencesWindowController.xib in Resources */,
 				DB2D1F9A17A3FF4900183A59 /* MainWindowController.xib in Resources */,
+				DB5BA5AE17B3B115004B8B0A /* ConfirmationWindowController.xib in Resources */,
+				DB69268517B3BFE400027BBC /* ImportCommunityWindowController.xib in Resources */,
+				DB69268C17B3F58800027BBC /* DefaultSound.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -559,6 +602,9 @@
 				DB650FDC17A16A5500B46806 /* TestAccount.plist in Resources */,
 				DBD2AB1717A2D625005AA7EF /* PreferencesWindowController.xib in Resources */,
 				DB2D1F9B17A3FF4900183A59 /* MainWindowController.xib in Resources */,
+				DB5BA5AF17B3B115004B8B0A /* ConfirmationWindowController.xib in Resources */,
+				DB69268617B3BFE400027BBC /* ImportCommunityWindowController.xib in Resources */,
+				DB69268D17B3F58800027BBC /* DefaultSound.mp3 in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -623,6 +669,8 @@
 				ED4E6AF017B0E94200B008CB /* MagicalRecord.m in Sources */,
 				ED7DC34417B225C1007A9D8F /* _MOAccount.m in Sources */,
 				ED7DC34617B225C1007A9D8F /* MOAccount.m in Sources */,
+				DB5BA5AC17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */,
+				DB69268317B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -666,6 +714,8 @@
 				ED4E6AF117B0E94200B008CB /* MagicalRecord.m in Sources */,
 				ED7DC34517B225C1007A9D8F /* _MOAccount.m in Sources */,
 				ED7DC34717B225C1007A9D8F /* MOAccount.m in Sources */,
+				DB5BA5AD17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */,
+				DB69268417B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -56,7 +56,7 @@ typedef void (^ CommunityInfoCompletionBlock)(NSDictionary* communityInfo, NSErr
 @optional
 -(void)alertManagerdidOpenStream:(AlertManager*)alertManager;
 -(void)alertManager:(AlertManager*)alertManager didFailToOpenStreamWithError:(NSError*)error;
--(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)live community:(NSString*)community user:(NSString*)user;
+-(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)live community:(NSString*)community user:(NSString*)user url:(NSString*)url;
 -(void)alertManagerDidCloseStream:(AlertManager*)alertManager;
 
 @end

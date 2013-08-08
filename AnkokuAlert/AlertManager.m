@@ -396,8 +396,10 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
                     NSArray* live = [self parseChat:data];
 
                     if (live) {
-                        if ([self.streamListener respondsToSelector:@selector(alertManager:didReceiveLive:community:user:)]) {
-                            [self.streamListener alertManager:self didReceiveLive:live[0] community:live[1] user:live[2]];
+                        if ([self.streamListener respondsToSelector:@selector(alertManager:didReceiveLive:community:user:url:)]) {
+                            // TODO: magic string "lv", should declare kBaseUrlLive & kUrlLive.
+                            NSString* url = [kUrlLive stringByAppendingFormat:@"lv%@", live[0]];
+                            [self.streamListener alertManager:self didReceiveLive:live[0] community:live[1] user:live[2] url:url];
                         }
                     }
                 }
