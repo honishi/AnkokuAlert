@@ -199,27 +199,23 @@ int const kLiveStatSamplingCount = 20;
 
 -(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)live community:(NSString*)community user:(NSString*)user url:(NSString*)url
 {
-    // NSString* message = [NSString stringWithFormat:@"live:%@, co:%@, user:%@\n", live, community, user];
-    // [self logMessage:message];
-
     [[AlertManager sharedManager] streamInfoForLive:live completion:^(NSDictionary* streamInfo, NSError* error) {
          NSString* info = [NSString stringWithFormat:@"community:%@, title:%@\n", streamInfo[AlertManagerStreamInfoKeyCommunityName], streamInfo[AlertManagerStreamInfoKeyLiveTitle]];
          [self logMessage:info];
      }];
 
-//    [[AlertManager sharedManager] communityInfoForCommunity:community completion:^(NSDictionary* communityInfo, NSError* error) {
-//         // LOG(@"communityInfo: %@", communityInfo[AlertManagerCommunityInfoKeyCommunityName]);
-//     }];
-
+    static NSString* lastAlertLive;
     NSArray* alertCommunities = self.communityArrayController.arrangedObjects;
     BOOL isForceAlerting = NO;  // for debug purpose
     for (MOCommunity* alertCommunity in alertCommunities) {
 #ifdef DEBUG_FORCE_ALERTING
         isForceAlerting = (self.liveCount % FORCE_ALERTING_INTERVAL) == 0;
 #endif
-        if (isForceAlerting || [community isEqualToString:alertCommunity.community]) {
+        if (isForceAlerting ||
+            (![live isEqualToString:lastAlertLive] && [community isEqualToString:alertCommunity.community])) {
             [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];
             [self playChimeSound];
+            lastAlertLive = live;
             break;
         }
     }
