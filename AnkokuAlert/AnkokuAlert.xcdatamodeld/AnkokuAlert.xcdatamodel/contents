@@ -6,7 +6,7 @@
         <attribute name="order" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="userId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="userName" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="communities" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Community" inverseName="account" inverseEntity="Community" syncable="YES"/>
+        <relationship name="communities" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Community" inverseName="account" inverseEntity="Community" syncable="YES"/>
     </entity>
     <entity name="Community" representedClassName="MOCommunity" syncable="YES">
         <attribute name="communityId" optional="YES" attributeType="String" syncable="YES"/>
@@ -17,7 +17,7 @@
         <relationship name="account" optional="YES" minCount="1" maxCount="1" deletionRule="Nullify" destinationEntity="Account" inverseName="communities" inverseEntity="Account" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Account" positionX="0" positionY="0" width="0" height="0"/>
-        <element name="Community" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Account" positionX="0" positionY="0" width="128" height="135"/>
+        <element name="Community" positionX="0" positionY="0" width="128" height="135"/>
     </elements>
 </model>

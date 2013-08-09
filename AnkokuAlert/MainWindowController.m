@@ -16,43 +16,20 @@
 #import "MOCommunity.h"
 
 #define DEBUG_TRUNCATE_ALL_ACCOUNTS
-#define DEBUG_CREATE_DUMMY_ACCOUNTS
+//#define DEBUG_CREATE_DUMMY_ACCOUNTS
 #define DEBUG_TRUNCATE_ALL_COMMUNITIES
-#define DEBUG_CREATE_DUMMY_COMMUNITIES
+//#define DEBUG_CREATE_DUMMY_COMMUNITIES
 #define DEBUG_FORCE_ALERTING
 
-#define DUMMY_ACCOUNT_COUNT 5
-#define DUMMY_COMMUNITY_COUNT 5
+#define DUMMY_ACCOUNT_COUNT 3
+#define DUMMY_COMMUNITY_COUNT 20
 #define FORCE_ALERTING_INTERVAL 20
 
 float const kLiveStatTimerInterval = 0.5f;
 int const kLiveStatSamplingCount = 20;
+NSUInteger const kDefaultRatingValue = 3;
 
 #pragma mark - Value Transformer
-
-@interface WindowTitleValueTransformer : NSValueTransformer {}
-@end
-
-@implementation WindowTitleValueTransformer
-
-+(Class)transformedValueClass
-{
-    return [NSString class];
-}
-
-+(BOOL)allowsReverseTransformation
-{
-    return NO;
-}
-
--(id)transformedValue:(id)value
-{
-    MOAccount* account = value;
-    NSString* title = [NSString stringWithFormat:@"Ankoku Alert: %@", account ? account.userName:@"No user selected."];
-    return title;
-}
-
-@end
 
 @interface LivePerSecondValueTransformer : NSValueTransformer {}
 @end
@@ -81,9 +58,6 @@ int const kLiveStatSamplingCount = 20;
 
 @interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource>
 
-@property (nonatomic, readwrite) NSManagedObjectContext* managedObjectContext;
-@property (nonatomic, readwrite) NSPredicate* accountFilterPredicate;
-
 // NSTextVIew doesn't support weak reference in arc.
 @property (strong) IBOutlet NSTextView* logTextView;
 @property (weak) IBOutlet NSScrollView* logScrollView;
@@ -110,6 +84,7 @@ int const kLiveStatSamplingCount = 20;
 -(id)initWithWindow:(NSWindow*)window
 {
     self = [super initWithWindow:window];
+
     if (self) {
         // Initialization code here.
         self.liveStats = NSMutableArray.new;
@@ -128,15 +103,27 @@ int const kLiveStatSamplingCount = 20;
     [super windowDidLoad];
 
     self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
+    [self setupDebugData];
     [self.defaultAccountObjectController addObserver:self forKeyPath:@"content" options:NSKeyValueObservingOptionNew context:nil];
 
-    // NSArray* array = [NSArray arrayWithObject:NSFilenamesPboardType];
-    // [self.communityTableView registerForDraggedTypes:array];
     [self.communityTableView registerForDraggedTypes:@[@"aRow"]];
     [self.communityTableView setDraggingSourceOperationMask:NSDragOperationAll forLocal:NO];
 
+    [self updateWindowTitleAndPredicate];
+
     [NSTimer scheduledTimerWithTimeInterval:kLiveStatTimerInterval target:self selector:@selector(liveCounterTimerFired:) userInfo:nil repeats:YES];
 
+    if (!MOAccount.hasAccounts) {
+        double delayInSeconds = 0.5f;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+                [self showPreferences:self];
+            });
+    }
+}
+
+-(void)setupDebugData
+{
 #ifdef DEBUG_TRUNCATE_ALL_ACCOUNTS
     [MOAccount truncateAll];
     [self.managedObjectContext MR_saveOnlySelfAndWait];
@@ -165,25 +152,16 @@ int const kLiveStatSamplingCount = 20;
             MOCommunity* community = [account communityWithNumberedOrderAttribute];
             community.communityId = [NSString stringWithFormat:@"co%05ld", j];
             community.communityName = [NSString stringWithFormat:@"テストコミュニティ(%ld).", j];
+            community.rating = [NSNumber numberWithInteger:(i%6)];
 
             [account addCommunitiesObject:community];
             j++;
         }
     }
-
     [self.managedObjectContext MR_saveOnlySelfAndWait];
 #endif
-
-    if (!MOAccount.hasAccounts) {
-        double delayInSeconds = 0.5f;
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-                [self showPreferences:self];
-            });
-    }
 }
 
-//-(void)
 // #pragma mark - Property Methods
 // #pragma mark - [ClassName] Overrides
 
@@ -302,6 +280,9 @@ int const kLiveStatSamplingCount = 20;
 
 -(void)liveCounterTimerFired:(NSTimer*)timer
 {
+    // LOG(@"target rating: %ld", self.targetRating);
+    LOG(@"target rating: %@", self.targetRating);
+
     NSDictionary* stat = @{@"date" : [NSDate date], @"liveCount": [NSNumber numberWithInteger:self.liveCount]};
     [self.liveStats addObject:stat];
 
@@ -326,13 +307,15 @@ int const kLiveStatSamplingCount = 20;
 -(void)observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
 {
     if ([keyPath isEqualToString:@"content"] && object == self.defaultAccountObjectController) {
-        [self updateDefaultAccountPredicate];
+        [self updateWindowTitleAndPredicate];
     }
 }
 
--(void)updateDefaultAccountPredicate
+-(void)updateWindowTitleAndPredicate
 {
     MOAccount* account = [MOAccount defaultAccount];
+    self.windowTitle = [NSString stringWithFormat:@"Ankoku Alert: %@", account.userName ? account.userName:@"<No user selected.>"];
+
     if (account) {
         NSPredicate* predicate = [NSPredicate predicateWithFormat:@"account.objectID == %@", account.objectID];
         self.accountFilterPredicate = predicate;
@@ -434,6 +417,7 @@ int const kLiveStatSamplingCount = 20;
                                                         MOCommunity* community = [defaultAccount communityWithNumberedOrderAttribute];
                                                         community.communityId = importedCommunity[@"communityId"];
                                                         community.communityName = importedCommunity[@"communityName"];
+                                                        community.rating = [NSNumber numberWithInteger:kDefaultRatingValue];
                                                         [defaultAccount addCommunitiesObject:community];
                                                     }
                                                     [self.managedObjectContext MR_saveOnlySelfAndWait];
@@ -447,8 +431,30 @@ int const kLiveStatSamplingCount = 20;
 
 #pragma mark Actions in Community Table View
 
--(IBAction)enableCommunityButtonClicked:(id)sender
+-(IBAction)changeCommunityEnabled:(id)sender
 {
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
+}
+
+-(IBAction)enableAllCommunity:(id)sender
+{
+    for (MOCommunity* community in self.communityArrayController.arrangedObjects) {
+        community.isEnabled = [NSNumber numberWithBool:YES];
+    }
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
+}
+
+-(IBAction)disableAllCommunity:(id)sender
+{
+    for (MOCommunity* community in self.communityArrayController.arrangedObjects) {
+        community.isEnabled = [NSNumber numberWithBool:NO];
+    }
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
+}
+
+-(IBAction)changeCommunityRating:(id)sender
+{
+    // [self.communityArrayController rearrangeObjects];
     [self.managedObjectContext MR_saveOnlySelfAndWait];
 }
 
@@ -459,6 +465,10 @@ int const kLiveStatSamplingCount = 20;
 
     NSString* url = [AlertManager communityUrlStringWithCommunithId:selectedCommunity.communityId];
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];
+}
+
+-(IBAction)selectTargetRating:(id)sender
+{
 }
 
 #pragma mark Misc

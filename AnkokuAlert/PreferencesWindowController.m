@@ -20,6 +20,8 @@
 #define DUMMY_EMAIL     @"dummy@example.com"
 #define DUMMY_PASSWORD  @"dummy_password"
 
+NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
+
 @interface PreferencesWindowController ()<NSTextFieldDelegate>
 
 @property (nonatomic, readwrite) NSManagedObjectContext* managedObjectContext;
@@ -41,6 +43,7 @@
     return [[PreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindowController"];
 }
 
+// TODO: delete this.
 -(id)initWithWindow:(NSWindow*)window
 {
     self = [super initWithWindow:window];
@@ -59,6 +62,13 @@
 
     self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
 
+    NSSortDescriptor* sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"order" ascending:YES];
+    self.accountSortDescriptors = @[sortDescriptor];
+    [self.accountArrayController setSortDescriptors:self.accountSortDescriptors];
+
+    [self.accountTableView registerForDraggedTypes:@[kAccountTableViewDraggedType]];
+    [self.accountTableView setDraggingSourceOperationMask:NSDragOperationMove forLocal:YES];
+
     if (!MOAccount.hasAccounts) {
         double delayInSeconds = 0.5f;
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
@@ -71,6 +81,47 @@
 // #pragma mark - Property Methods
 // #pragma mark - [ClassName] Overrides
 // #pragma mark - [ProtocolName] Methods
+
+#pragma mark NSTableViewDataSource Methods
+
+#pragma mark Drag & Drop Reordering Support
+
+-(BOOL)tableView:(NSTableView*)tableView writeRowsWithIndexes:(NSIndexSet*)rowIndexes toPasteboard:(NSPasteboard*)pboard
+{
+    // LOG(@"fromIndex: %ld", rowIndexes.firstIndex);
+
+    NSString* fromIndex = [NSNumber numberWithInteger:rowIndexes.firstIndex].stringValue;
+    [pboard declareTypes:@[kAccountTableViewDraggedType] owner:self];
+    [pboard setString:fromIndex forType:kAccountTableViewDraggedType];
+
+    return YES;
+}
+
+-(NSDragOperation)tableView:(NSTableView*)tableView validateDrop:(id<NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)dropOperation
+{
+    return NSDragOperationMove;
+}
+
+-(BOOL)tableView:(NSTableView*)tableView acceptDrop:(id<NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation
+{
+    NSPasteboard* pboard = info.draggingPasteboard;
+    NSInteger fromIndex = [pboard stringForType:kAccountTableViewDraggedType].integerValue;
+    NSInteger toIndex = row;
+    // LOG(@"fromIndex: %ld, toIndex: %ld", fromIndex, toIndex);
+
+    MOAccount* fromAccount = self.accountArrayController.arrangedObjects[fromIndex];
+    MOAccount* toAccount = self.accountArrayController.arrangedObjects[toIndex];
+
+    NSNumber* anOrder = fromAccount.order;
+    fromAccount.order = toAccount.order;
+    toAccount.order = anOrder;
+    [self.accountArrayController rearrangeObjects];
+
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
+
+    return YES;
+}
+
 // #pragma mark - Public Interface
 
 #pragma mark - Internal Methods, Action
@@ -196,7 +247,6 @@
 {
     [self.accountArrayController removeObjectsAtArrangedObjectIndexes:self.accountArrayController.selectionIndexes];
     [self.managedObjectContext MR_saveOnlySelfAndWait];
-    // [self.accountTableView selectRowIndexes:[NSIndexSet indexSetWithIndex:0] byExtendingSelection:NO];
 }
 
 #pragma mark Change Default Account
@@ -205,11 +255,12 @@
 {
     NSUInteger selectedRow = [self.accountTableView rowForView:sender];
 
-    NSUInteger index = 0;
     for (MOAccount* account in self.accountArrayController.arrangedObjects) {
-        account.isDefault = [NSNumber numberWithBool:(index == selectedRow ? YES : NO)];
-        index++;
+        account.isDefault = [NSNumber numberWithBool:NO];
     }
+
+    MOAccount* account = self.accountArrayController.arrangedObjects[selectedRow];
+    account.isDefault = [NSNumber numberWithBool:YES];
 
     [self.managedObjectContext MR_saveOnlySelfAndWait];
 }

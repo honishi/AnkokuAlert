@@ -302,7 +302,6 @@
 		DBD33B8C179C3706003A41F9 = {
 			isa = PBXGroup;
 			children = (
-				DB1088E917AFD5F00086BC71 /* Security.framework */,
 				DB1088DF17AFD59E0086BC71 /* Vendor */,
 				DBD33B9E179C3706003A41F9 /* AnkokuAlert */,
 				DBD33BBE179C3707003A41F9 /* AnkokuAlertTests */,
@@ -324,6 +323,7 @@
 			isa = PBXGroup;
 			children = (
 				DBD33B98179C3706003A41F9 /* Cocoa.framework */,
+				DB1088E917AFD5F00086BC71 /* Security.framework */,
 				DBD33BB9179C3707003A41F9 /* SenTestingKit.framework */,
 				DBD33B9A179C3706003A41F9 /* Other Frameworks */,
 			);

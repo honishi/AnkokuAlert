@@ -10,10 +10,13 @@
 
 @interface MainWindowController : NSWindowController
 
-@property (nonatomic, readonly) NSManagedObjectContext* managedObjectContext;
-@property (nonatomic, readonly) NSPredicate* accountFilterPredicate;
+@property (nonatomic) NSManagedObjectContext* managedObjectContext;
+@property (nonatomic) NSString* windowTitle;
+@property (nonatomic) NSPredicate* accountFilterPredicate;
 
-@property (weak) IBOutlet NSTableView* communityTableView;
+@property (nonatomic, weak) IBOutlet NSTableView* communityTableView;
+//@property (nonatomic) NSInteger targetRating;
+@property (nonatomic) NSString* targetRating;
 
 @property (nonatomic) NSNumber* livePerSecond;
 @property (nonatomic) BOOL isStreamOpened;
