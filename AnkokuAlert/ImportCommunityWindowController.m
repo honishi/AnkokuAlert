@@ -9,21 +9,6 @@
 #import "ImportCommunityWindowController.h"
 #import "AlertManager.h"
 
-#pragma mark - One-shot Representaion of "Community"
-
-@interface Community : NSObject
-
-@property (nonatomic) NSUInteger order;
-@property (nonatomic) NSString* communityId;
-@property (nonatomic) NSString* communityName;
-
-@end
-
-@implementation Community
-@end
-
-#pragma mark - Main
-
 @interface ImportCommunityWindowController ()<NSWindowDelegate>
 
 @property (nonatomic, copy) NSString* email;
@@ -62,10 +47,10 @@
          if (alertStatus) {
              NSUInteger order = 0;
              for (NSString* communityId in alertStatus[AlertManagerAlertStatusKeyCommunities]) {
-                 Community* community = Community.new;
-                 community.order = order++;
-                 community.communityId = communityId;
-                 community.communityName = @"N/A";
+                 NSMutableDictionary* community = NSMutableDictionary.new;
+                 community[@"order"] = [NSNumber numberWithInteger:order];
+                 community[@"communityId"] = communityId;
+                 community[@"communityName"] = @"n/a";
                  [self.communityArrayController addObject:community];
              }
              LOG(@"%@", self.communityArrayController.arrangedObjects);
@@ -85,14 +70,14 @@
 
 -(void)updateCommunityName
 {
-    for (Community* community in self.communityArrayController.arrangedObjects) {
+    for (NSMutableDictionary* community in self.communityArrayController.arrangedObjects) {
         NSBlockOperation* operation = [NSBlockOperation blockOperationWithBlock:^(void) {
-                                           LOG(@"go...");
                                            [self.fetchCommunityNameOperationQueue setSuspended:YES];
-                                           [[AlertManager sharedManager] requestCommunityInfoForCommunity:community.communityId completion:^(NSDictionary* communityInfo, NSError* error) {
+                                           [[AlertManager sharedManager] requestCommunityInfoForCommunity:community[@"communityId"] completion:^(NSDictionary* communityInfo, NSError* error) {
                                                 if (!error) {
-                                                    community.communityName = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
-                                                    LOG(@"%@", community.communityName);
+                                                    community[@"communityName"] = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
+                                                } else {
+                                                    community[@"communityName"] = @"(request failed.)";
                                                 }
                                                 [self.fetchCommunityNameOperationQueue setSuspended:NO];
                                             }];
@@ -107,13 +92,8 @@
 {
     [self.fetchCommunityNameOperationQueue cancelAllOperations];
 
-    NSMutableArray* communities = NSMutableArray.new;
-    for (Community* community in self.communityArrayController.arrangedObjects) {
-        [communities addObject:community.communityId];
-    }
-
     if (self.completion) {
-        self.completion(NO, communities);
+        self.completion(NO, self.communityArrayController.arrangedObjects);
         // TODO: self.completion = nil;
     }
 }

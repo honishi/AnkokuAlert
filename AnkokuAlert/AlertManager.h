@@ -12,9 +12,11 @@ extern NSString* const AlertManagerErrorDomain;
 
 typedef NS_ENUM (NSInteger, AlertManagerErrorCode) {
     AlertManagerErrorCodeUnknownError,
-    AlertManagerErrorCodeLoginFailed,
-    AlertManagerErrorCodeStreamInfoFailed,
-    AlertManagerErrorCodeCommunityInfoFailed
+    AlertManagerErrorCodeLoginRequestFailed,
+    AlertManagerErrorCodeStreamInfoRequestFailed,
+    AlertManagerErrorCodeStreamInfoParseFailed,
+    AlertManagerErrorCodeCommunityInfoRequestFailed,
+    AlertManagerErrorCodeCommunityInfoParseFailed
 };
 
 extern NSString* const AlertManagerAlertStatusKeyUserId;
@@ -40,6 +42,9 @@ typedef void (^ CommunityInfoCompletionBlock)(NSDictionary* communityInfo, NSErr
 @interface AlertManager : NSObject
 
 +(AlertManager*)sharedManager;
+
++(NSString*)communityUrlStringWithCommunithId:(NSString*)communityId;
+
 -(void)loginWithEmail:(NSString*)email
              password:(NSString*)password
            completion:(LoginCompletionBlock)completion;

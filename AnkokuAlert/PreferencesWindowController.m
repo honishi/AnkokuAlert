@@ -59,7 +59,7 @@
 
     self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
 
-    if (![MOAccount findAll].count) {
+    if (!MOAccount.hasAccounts) {
         double delayInSeconds = 0.5f;
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
@@ -147,9 +147,9 @@
 #endif
          LOG(@"login completed: %@", alertStatus);
 
-         BOOL isDefault = [MOAccount findAll].count ? NO : YES;
+         BOOL isDefault = MOAccount.hasAccounts ? NO : YES;
 
-         MOAccount* account = [MOAccount MR_createEntity];
+         MOAccount* account = [MOAccount accountWithNumberedOrderAttribute];
 #ifndef DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
          account.userId = alertStatus[AlertManagerAlertStatusKeyUserId];
          account.userName = alertStatus[AlertManagerAlertStatusKeyUserName];

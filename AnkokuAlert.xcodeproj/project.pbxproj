@@ -105,6 +105,8 @@
 		ED7DC34517B225C1007A9D8F /* _MOAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC34117B225C1007A9D8F /* _MOAccount.m */; };
 		ED7DC34617B225C1007A9D8F /* MOAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC34317B225C1007A9D8F /* MOAccount.m */; };
 		ED7DC34717B225C1007A9D8F /* MOAccount.m in Sources */ = {isa = PBXBuildFile; fileRef = ED7DC34317B225C1007A9D8F /* MOAccount.m */; };
+		EDCE607C17B4C860005B4C67 /* NSString+CompareCommunityId.m in Sources */ = {isa = PBXBuildFile; fileRef = EDCE607B17B4C860005B4C67 /* NSString+CompareCommunityId.m */; };
+		EDCE607D17B4C860005B4C67 /* NSString+CompareCommunityId.m in Sources */ = {isa = PBXBuildFile; fileRef = EDCE607B17B4C860005B4C67 /* NSString+CompareCommunityId.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -222,6 +224,8 @@
 		ED7DC34117B225C1007A9D8F /* _MOAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _MOAccount.m; path = Models/_MOAccount.m; sourceTree = "<group>"; };
 		ED7DC34217B225C1007A9D8F /* MOAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOAccount.h; path = Models/MOAccount.h; sourceTree = "<group>"; };
 		ED7DC34317B225C1007A9D8F /* MOAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOAccount.m; path = Models/MOAccount.m; sourceTree = "<group>"; };
+		EDCE607A17B4C860005B4C67 /* NSString+CompareCommunityId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CompareCommunityId.h"; sourceTree = "<group>"; };
+		EDCE607B17B4C860005B4C67 /* NSString+CompareCommunityId.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CompareCommunityId.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -339,6 +343,7 @@
 		DBD33B9E179C3706003A41F9 /* AnkokuAlert */ = {
 			isa = PBXGroup;
 			children = (
+				EDCE607E17B4C86A005B4C67 /* Categories */,
 				DBD33BB0179C3707003A41F9 /* AnkokuAlert.xcdatamodeld */,
 				ED4E6A7917B0E44F00B008CB /* Models */,
 				ED7DC34817B2339F007A9D8F /* Managers */,
@@ -512,6 +517,15 @@
 			name = Managers;
 			sourceTree = "<group>";
 		};
+		EDCE607E17B4C86A005B4C67 /* Categories */ = {
+			isa = PBXGroup;
+			children = (
+				EDCE607A17B4C860005B4C67 /* NSString+CompareCommunityId.h */,
+				EDCE607B17B4C860005B4C67 /* NSString+CompareCommunityId.m */,
+			);
+			name = Categories;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -671,6 +685,7 @@
 				ED7DC34617B225C1007A9D8F /* MOAccount.m in Sources */,
 				DB5BA5AC17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */,
 				DB69268317B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */,
+				EDCE607C17B4C860005B4C67 /* NSString+CompareCommunityId.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -716,6 +731,7 @@
 				ED7DC34717B225C1007A9D8F /* MOAccount.m in Sources */,
 				DB5BA5AD17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */,
 				DB69268417B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */,
+				EDCE607D17B4C860005B4C67 /* NSString+CompareCommunityId.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

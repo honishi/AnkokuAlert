@@ -15,11 +15,11 @@
 #import "MOAccount.h"
 #import "MOCommunity.h"
 
- #define DEBUG_TRUNCATE_ALL_ACCOUNTS
-// #define DEBUG_CREATE_DUMMY_ACCOUNTS
- #define DEBUG_TRUNCATE_ALL_COMMUNITIES
-// #define DEBUG_CREATE_DUMMY_COMMUNITIES
-// #define DEBUG_FORCE_ALERTING
+#define DEBUG_TRUNCATE_ALL_ACCOUNTS
+#define DEBUG_CREATE_DUMMY_ACCOUNTS
+#define DEBUG_TRUNCATE_ALL_COMMUNITIES
+#define DEBUG_CREATE_DUMMY_COMMUNITIES
+#define DEBUG_FORCE_ALERTING
 
 #define DUMMY_ACCOUNT_COUNT 5
 #define DUMMY_COMMUNITY_COUNT 5
@@ -144,8 +144,7 @@ int const kLiveStatSamplingCount = 20;
 
 #ifdef DEBUG_CREATE_DUMMY_ACCOUNTS
     for (NSUInteger i = 0; i < DUMMY_ACCOUNT_COUNT; i++) {
-        MOAccount* account = [MOAccount MR_createEntity];
-        account.order = [NSNumber numberWithInteger:i];
+        MOAccount* account = [MOAccount accountWithNumberedOrderAttribute];
         account.userId = [NSString stringWithFormat:@"1%05ld", i];
         account.userName = [NSString stringWithFormat:@"テストユーザー(%ld).", i];
         account.email = [NSString stringWithFormat:@"%03ld@example.com", i];
@@ -163,9 +162,8 @@ int const kLiveStatSamplingCount = 20;
     NSUInteger j = 0;
     for (MOAccount* account in [MOAccount findAll]) {
         for (NSInteger i = 0; i < DUMMY_COMMUNITY_COUNT; i++) {
-            MOCommunity* community = [MOCommunity MR_createEntity];
-            community.order = [NSNumber numberWithInt:i];
-            community.community = [NSString stringWithFormat:@"co%05ld", j];
+            MOCommunity* community = [account communityWithNumberedOrderAttribute];
+            community.communityId = [NSString stringWithFormat:@"co%05ld", j];
             community.communityName = [NSString stringWithFormat:@"テストコミュニティ(%ld).", j];
 
             [account addCommunitiesObject:community];
@@ -176,7 +174,7 @@ int const kLiveStatSamplingCount = 20;
     [self.managedObjectContext MR_saveOnlySelfAndWait];
 #endif
 
-    if (![MOAccount findAll].count) {
+    if (!MOAccount.hasAccounts) {
         double delayInSeconds = 0.5f;
         dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
         dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
@@ -251,12 +249,17 @@ int const kLiveStatSamplingCount = 20;
     NSInteger fromIndex = [pboard stringForType:@"aRow"].integerValue;
     NSInteger toIndex = row;
 
-    // TODO: should update every displayOrder in for-loop.
-    MOCommunity* fromCommunity = [MOCommunity MR_findFirstByAttribute:@"order" withValue:[NSNumber numberWithInteger:fromIndex]];
-    MOCommunity* toCommunity = [MOCommunity MR_findFirstByAttribute:@"order" withValue:[NSNumber numberWithInteger:toIndex]];
+    LOG(@"from: %ld, to: %ld", fromIndex, toIndex);
 
-    fromCommunity.order = [NSNumber numberWithInteger:toIndex];
-    toCommunity.order = [NSNumber numberWithInteger:fromIndex];
+    // TODO: should update every displayOrder in for-loop.
+//    MOCommunity* fromCommunity = [MOCommunity MR_findFirstByAttribute:@"order" withValue:[NSNumber numberWithInteger:fromIndex]];
+//    MOCommunity* toCommunity = [MOCommunity MR_findFirstByAttribute:@"order" withValue:[NSNumber numberWithInteger:toIndex]];
+    MOCommunity* fromCommunity = self.communityArrayController.arrangedObjects[fromIndex];
+    MOCommunity* toCommunity = self.communityArrayController.arrangedObjects[toIndex];
+
+    NSNumber* anOrder = fromCommunity.order;
+    fromCommunity.order = toCommunity.order;
+    toCommunity.order = anOrder;
 
     // TODO: should manipulate arrangedObjects, then save. you will have no need to fetch.
     [self.managedObjectContext MR_saveOnlySelfAndWait];
@@ -382,13 +385,11 @@ int const kLiveStatSamplingCount = 20;
     [NSApp endSheet:self.communityInputSheet];
     [self.communityInputSheet orderOut:sender];
 
-    NSManagedObjectContext* context = [NSManagedObjectContext MR_defaultContext];
-
-    MOCommunity* community = [MOCommunity MR_createEntity];
-    community.communityId = @"co12345";
-    community.communityName = @"テストです.";
-
-    [context MR_saveOnlySelfAndWait];
+//    MOCommunity* community = [MOCommunity MR_createEntity];
+//    community.communityId = @"co12345";
+//    community.communityName = @"テストです.";
+//
+//    [self.managedObjectContext MR_saveOnlySelfAndWait];
 }
 
 -(IBAction)confirmCommunityRemoval:(id)sender
@@ -421,7 +422,7 @@ int const kLiveStatSamplingCount = 20;
     NSString* email = account.email;
     NSString* password = [SSKeychain passwordForService:[[NSBundle mainBundle] bundleIdentifier] account:email];
 
-    self.importCommunityWindowController = [ImportCommunityWindowController importCommunityWindowControllerWithEmail:email password:password completion:^(BOOL isCancelled, NSArray* communities) {
+    self.importCommunityWindowController = [ImportCommunityWindowController importCommunityWindowControllerWithEmail:email password:password completion:^(BOOL isCancelled, NSArray* importedCommunities) {
                                                 [NSApp endSheet:self.importCommunityWindowController.window];
                                                 [self.importCommunityWindowController.window orderOut:self];
                                                 if (isCancelled) {
@@ -429,9 +430,10 @@ int const kLiveStatSamplingCount = 20;
                                                 } else {
                                                     LOG(@"import done.");
                                                     MOAccount* defaultAccount = [MOAccount defaultAccount];
-                                                    for (NSString* communityId in communities) {
-                                                        MOCommunity* community = [MOCommunity MR_createEntity];
-                                                        community.communityId = communityId;
+                                                    for (NSDictionary* importedCommunity in importedCommunities) {
+                                                        MOCommunity* community = [defaultAccount communityWithNumberedOrderAttribute];
+                                                        community.communityId = importedCommunity[@"communityId"];
+                                                        community.communityName = importedCommunity[@"communityName"];
                                                         [defaultAccount addCommunitiesObject:community];
                                                     }
                                                     [self.managedObjectContext MR_saveOnlySelfAndWait];
@@ -447,7 +449,7 @@ int const kLiveStatSamplingCount = 20;
 
 -(IBAction)enableCommunityButtonClicked:(id)sender
 {
-    [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
+    [self.managedObjectContext MR_saveOnlySelfAndWait];
 }
 
 -(IBAction)openCommunityHomepage:(id)sender
@@ -455,7 +457,7 @@ int const kLiveStatSamplingCount = 20;
     NSUInteger selectedRow = [self.communityTableView rowForView:sender];
     MOCommunity* selectedCommunity = self.communityArrayController.arrangedObjects[selectedRow];
 
-    NSString* url = [@"http://com.nicovideo.jp/community/" stringByAppendingString : selectedCommunity.communityId];
+    NSString* url = [AlertManager communityUrlStringWithCommunithId:selectedCommunity.communityId];
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];
 }
 

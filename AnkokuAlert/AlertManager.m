@@ -92,6 +92,11 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 #pragma mark - [ProtocolName] Methods
 #pragma mark - Public Interface
 
++(NSString*)communityUrlStringWithCommunithId:(NSString*)communityId
+{
+    return [kUrlCommunity stringByAppendingString:communityId];
+}
+
 -(void)loginWithEmail:(NSString*)email
              password:(NSString*)password
            completion:(LoginCompletionBlock)completion;
@@ -127,24 +132,25 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     asyncRequestCompletionBlock requestCompletion = ^(NSURLResponse* response, NSData* data, NSError* error) {
         if (error) {
             if (completion) {
-                completion(nil,
-                    [NSError errorWithDomain:AlertManagerErrorDomain
-                                        code:AlertManagerErrorCodeStreamInfoFailed
-                                    userInfo:nil]);
+                completion(nil, [NSError errorWithDomain:AlertManagerErrorDomain code:AlertManagerErrorCodeStreamInfoRequestFailed userInfo:nil]);
             }
         } else {
             // LOG(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             NSDictionary* streamInfo = [self parseStreamInfo:data];
 
-            if (completion) {
-                completion(streamInfo, nil);
+            if (!streamInfo) {
+                if (completion) {
+                    completion(nil, [NSError errorWithDomain:AlertManagerErrorDomain code:AlertManagerErrorCodeStreamInfoParseFailed userInfo:nil]);
+                }
+            } else {
+                if (completion) {
+                    completion(streamInfo, nil);
+                }
             }
         }
     };
 
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:NSOperationQueue.mainQueue
-                           completionHandler:requestCompletion];
+    [NSURLConnection sendAsynchronousRequest:request queue:NSOperationQueue.mainQueue completionHandler:requestCompletion];
 }
 
 -(void)requestCommunityInfoForCommunity:(NSString*)communityId completion:(CommunityInfoCompletionBlock)completion
@@ -155,24 +161,25 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     asyncRequestCompletionBlock requestCompletion = ^(NSURLResponse* response, NSData* data, NSError* error) {
         if (error) {
             if (completion) {
-                completion(nil,
-                    [NSError errorWithDomain:AlertManagerErrorDomain
-                                        code:AlertManagerErrorCodeCommunityInfoFailed
-                                    userInfo:nil]);
+                completion(nil, [NSError errorWithDomain:AlertManagerErrorDomain code:AlertManagerErrorCodeCommunityInfoRequestFailed userInfo:nil]);
             }
         } else {
             // LOG(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
             NSDictionary* communityInfo = [self parseCommunityInfo:data];
 
-            if (completion) {
-                completion(communityInfo, nil);
+            if (!communityInfo) {
+                if (completion) {
+                    completion(nil, [NSError errorWithDomain:AlertManagerErrorDomain code:AlertManagerErrorCodeCommunityInfoParseFailed userInfo:nil]);
+                }
+            } else {
+                if (completion) {
+                    completion(communityInfo, nil);
+                }
             }
         }
     };
 
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:NSOperationQueue.mainQueue
-                           completionHandler:requestCompletion];
+    [NSURLConnection sendAsynchronousRequest:request queue:NSOperationQueue.mainQueue completionHandler:requestCompletion];
 }
 
 #pragma mark - Internal Methods
@@ -201,10 +208,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
             NSString* ticket = [self parseTicket:data];
             if (!ticket) {
                 if (self.loginCompletionBlock) {
-                    self.loginCompletionBlock(nil,
-                        [NSError errorWithDomain:AlertManagerErrorDomain
-                                            code:AlertManagerErrorCodeLoginFailed
-                                        userInfo:nil]);
+                    self.loginCompletionBlock(nil, [NSError errorWithDomain:AlertManagerErrorDomain code:AlertManagerErrorCodeLoginRequestFailed userInfo:nil]);
                     self.loginCompletionBlock = nil;
                 }
             } else {
@@ -213,9 +217,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
         }
     };
 
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:NSOperationQueue.mainQueue
-                           completionHandler:requestCompletion];
+    [NSURLConnection sendAsynchronousRequest:request queue:NSOperationQueue.mainQueue completionHandler:requestCompletion];
 }
 
 -(NSString*)parseTicket:(NSData*)data
@@ -266,9 +268,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
         self.loginCompletionBlock = nil;
     };
 
-    [NSURLConnection sendAsynchronousRequest:request
-                                       queue:NSOperationQueue.mainQueue
-                           completionHandler:requestCompletion];
+    [NSURLConnection sendAsynchronousRequest:request queue:NSOperationQueue.mainQueue completionHandler:requestCompletion];
 }
 
 -(NSDictionary*)parseAlertStatus:(NSData*)data
