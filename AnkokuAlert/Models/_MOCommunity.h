@@ -5,12 +5,11 @@
 
 
 extern const struct MOCommunityAttributes {
-    __unsafe_unretained NSString* community;
+    __unsafe_unretained NSString* communityId;
     __unsafe_unretained NSString* communityName;
-    __unsafe_unretained NSString* displayOrder;
-    __unsafe_unretained NSString* enabled;
-    __unsafe_unretained NSString* useBrowser;
-    __unsafe_unretained NSString* useSound;
+    __unsafe_unretained NSString* isEnabled;
+    __unsafe_unretained NSString* order;
+    __unsafe_unretained NSString* rating;
 } MOCommunityAttributes;
 
 extern const struct MOCommunityRelationships {
@@ -21,7 +20,6 @@ extern const struct MOCommunityFetchedProperties {
 } MOCommunityFetchedProperties;
 
 @class MOAccount;
-
 
 
 
@@ -42,11 +40,11 @@ extern const struct MOCommunityFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSString* community;
+@property (nonatomic, strong) NSString* communityId;
 
 
 
-//- (BOOL)validateCommunity:(id*)value_ error:(NSError**)error_;
+//- (BOOL)validateCommunityId:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -62,57 +60,43 @@ extern const struct MOCommunityFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSNumber* displayOrder;
+@property (nonatomic, strong) NSNumber* isEnabled;
 
 
 
-@property int32_t displayOrderValue;
--(int32_t)displayOrderValue;
--(void)setDisplayOrderValue:(int32_t)value_;
+@property BOOL isEnabledValue;
+-(BOOL)isEnabledValue;
+-(void)setIsEnabledValue:(BOOL)value_;
 
-//- (BOOL)validateDisplayOrder:(id*)value_ error:(NSError**)error_;
-
-
-
-
-
-@property (nonatomic, strong) NSNumber* enabled;
-
-
-
-@property BOOL enabledValue;
--(BOOL)enabledValue;
--(void)setEnabledValue:(BOOL)value_;
-
-//- (BOOL)validateEnabled:(id*)value_ error:(NSError**)error_;
+//- (BOOL)validateIsEnabled:(id*)value_ error:(NSError**)error_;
 
 
 
 
 
-@property (nonatomic, strong) NSNumber* useBrowser;
+@property (nonatomic, strong) NSNumber* order;
 
 
 
-@property BOOL useBrowserValue;
--(BOOL)useBrowserValue;
--(void)setUseBrowserValue:(BOOL)value_;
+@property int32_t orderValue;
+-(int32_t)orderValue;
+-(void)setOrderValue:(int32_t)value_;
 
-//- (BOOL)validateUseBrowser:(id*)value_ error:(NSError**)error_;
-
-
+//- (BOOL)validateOrder:(id*)value_ error:(NSError**)error_;
 
 
 
-@property (nonatomic, strong) NSNumber* useSound;
+
+
+@property (nonatomic, strong) NSNumber* rating;
 
 
 
-@property BOOL useSoundValue;
--(BOOL)useSoundValue;
--(void)setUseSoundValue:(BOOL)value_;
+@property int32_t ratingValue;
+-(int32_t)ratingValue;
+-(void)setRatingValue:(int32_t)value_;
 
-//- (BOOL)validateUseSound:(id*)value_ error:(NSError**)error_;
+//- (BOOL)validateRating:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -135,8 +119,8 @@ extern const struct MOCommunityFetchedProperties {
 @interface _MOCommunity (CoreDataGeneratedPrimitiveAccessors)
 
 
--(NSString*)primitiveCommunity;
--(void)setPrimitiveCommunity:(NSString*)value;
+-(NSString*)primitiveCommunityId;
+-(void)setPrimitiveCommunityId:(NSString*)value;
 
 
 
@@ -147,38 +131,29 @@ extern const struct MOCommunityFetchedProperties {
 
 
 
--(NSNumber*)primitiveDisplayOrder;
--(void)setPrimitiveDisplayOrder:(NSNumber*)value;
+-(NSNumber*)primitiveIsEnabled;
+-(void)setPrimitiveIsEnabled:(NSNumber*)value;
 
--(int32_t)primitiveDisplayOrderValue;
--(void)setPrimitiveDisplayOrderValue:(int32_t)value_;
-
-
-
-
--(NSNumber*)primitiveEnabled;
--(void)setPrimitiveEnabled:(NSNumber*)value;
-
--(BOOL)primitiveEnabledValue;
--(void)setPrimitiveEnabledValue:(BOOL)value_;
+-(BOOL)primitiveIsEnabledValue;
+-(void)setPrimitiveIsEnabledValue:(BOOL)value_;
 
 
 
 
--(NSNumber*)primitiveUseBrowser;
--(void)setPrimitiveUseBrowser:(NSNumber*)value;
+-(NSNumber*)primitiveOrder;
+-(void)setPrimitiveOrder:(NSNumber*)value;
 
--(BOOL)primitiveUseBrowserValue;
--(void)setPrimitiveUseBrowserValue:(BOOL)value_;
-
-
+-(int32_t)primitiveOrderValue;
+-(void)setPrimitiveOrderValue:(int32_t)value_;
 
 
--(NSNumber*)primitiveUseSound;
--(void)setPrimitiveUseSound:(NSNumber*)value;
 
--(BOOL)primitiveUseSoundValue;
--(void)setPrimitiveUseSoundValue:(BOOL)value_;
+
+-(NSNumber*)primitiveRating;
+-(void)setPrimitiveRating:(NSNumber*)value;
+
+-(int32_t)primitiveRatingValue;
+-(void)setPrimitiveRatingValue:(int32_t)value_;
 
 
 

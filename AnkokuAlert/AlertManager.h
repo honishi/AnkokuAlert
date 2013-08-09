@@ -22,10 +22,10 @@ extern NSString* const AlertManagerAlertStatusKeyUserName;
 extern NSString* const AlertManagerAlertStatusKeyIsPremium;
 extern NSString* const AlertManagerAlertStatusKeyCommunities;
 
-extern NSString* const AlertManagerStreamInfoKeyLive;
-extern NSString* const AlertManagerStreamInfoKeyLiveTitle;
+extern NSString* const AlertManagerStreamInfoKeyLiveId;
+extern NSString* const AlertManagerStreamInfoKeyLiveName;
 extern NSString* const AlertManagerStreamInfoKeyLiveUrl;
-extern NSString* const AlertManagerStreamInfoKeyCommunity;
+extern NSString* const AlertManagerStreamInfoKeyCommunityId;
 extern NSString* const AlertManagerStreamInfoKeyCommunityName;
 extern NSString* const AlertManagerStreamInfoKeyCommunityUrl;
 
@@ -46,8 +46,8 @@ typedef void (^ CommunityInfoCompletionBlock)(NSDictionary* communityInfo, NSErr
 -(void)openStreamWithAlertStatus:(NSDictionary*)alertStatus
                   streamListener:(id<AlertManagerStreamListener>)streamListener;
 -(void)closeStream;
--(void)streamInfoForLive:(NSString*)live completion:(StreamInfoCompletionBlock)completion;
--(void)communityInfoForCommunity:(NSString*)community completion:(CommunityInfoCompletionBlock)completion;
+-(void)requestStreamInfoForLive:(NSString*)liveId completion:(StreamInfoCompletionBlock)completion;
+-(void)requestCommunityInfoForCommunity:(NSString*)communityId completion:(CommunityInfoCompletionBlock)completion;
 
 @end
 
@@ -56,7 +56,7 @@ typedef void (^ CommunityInfoCompletionBlock)(NSDictionary* communityInfo, NSErr
 @optional
 -(void)alertManagerdidOpenStream:(AlertManager*)alertManager;
 -(void)alertManager:(AlertManager*)alertManager didFailToOpenStreamWithError:(NSError*)error;
--(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)live community:(NSString*)community user:(NSString*)user url:(NSString*)url;
+-(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)liveId community:(NSString*)communityId user:(NSString*)userId url:(NSString*)liveUrl;
 -(void)alertManagerDidCloseStream:(AlertManager*)alertManager;
 
 @end

@@ -9,17 +9,20 @@
 #import "ImportCommunityWindowController.h"
 #import "AlertManager.h"
 
+#pragma mark - One-shot Representaion of "Community"
+
 @interface Community : NSObject
 
-// TODO: change all "community(number)" to coNumber
-@property (nonatomic) NSUInteger displayOrder;
-@property (nonatomic) NSString* communityNumber;
+@property (nonatomic) NSUInteger order;
+@property (nonatomic) NSString* communityId;
 @property (nonatomic) NSString* communityName;
 
 @end
 
 @implementation Community
 @end
+
+#pragma mark - Main
 
 @interface ImportCommunityWindowController ()<NSWindowDelegate>
 
@@ -57,11 +60,11 @@
 
     [[AlertManager sharedManager] loginWithEmail:self.email password:self.password completion:^(NSDictionary* alertStatus, NSError* error) {
          if (alertStatus) {
-             NSUInteger displayOrder = 0;
-             for (NSString* communityNumber in alertStatus[AlertManagerAlertStatusKeyCommunities]) {
+             NSUInteger order = 0;
+             for (NSString* communityId in alertStatus[AlertManagerAlertStatusKeyCommunities]) {
                  Community* community = Community.new;
-                 community.displayOrder = displayOrder++;
-                 community.communityNumber = communityNumber;
+                 community.order = order++;
+                 community.communityId = communityId;
                  community.communityName = @"N/A";
                  [self.communityArrayController addObject:community];
              }
@@ -83,11 +86,10 @@
 -(void)updateCommunityName
 {
     for (Community* community in self.communityArrayController.arrangedObjects) {
-        // LOG(@"aaa: %@", community.communityNumber);
         NSBlockOperation* operation = [NSBlockOperation blockOperationWithBlock:^(void) {
                                            LOG(@"go...");
                                            [self.fetchCommunityNameOperationQueue setSuspended:YES];
-                                           [[AlertManager sharedManager] communityInfoForCommunity:community.communityNumber completion:^(NSDictionary* communityInfo, NSError* error) {
+                                           [[AlertManager sharedManager] requestCommunityInfoForCommunity:community.communityId completion:^(NSDictionary* communityInfo, NSError* error) {
                                                 if (!error) {
                                                     community.communityName = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
                                                     LOG(@"%@", community.communityName);
@@ -107,7 +109,7 @@
 
     NSMutableArray* communities = NSMutableArray.new;
     for (Community* community in self.communityArrayController.arrangedObjects) {
-        [communities addObject:community.communityNumber];
+        [communities addObject:community.communityId];
     }
 
     if (self.completion) {

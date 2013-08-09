@@ -5,9 +5,9 @@
 
 
 extern const struct MOAccountAttributes {
-    __unsafe_unretained NSString* displayOrder;
     __unsafe_unretained NSString* email;
     __unsafe_unretained NSString* isDefault;
+    __unsafe_unretained NSString* order;
     __unsafe_unretained NSString* userId;
     __unsafe_unretained NSString* userName;
 } MOAccountAttributes;
@@ -40,20 +40,6 @@ extern const struct MOAccountFetchedProperties {
 
 
 
-@property (nonatomic, strong) NSNumber* displayOrder;
-
-
-
-@property int32_t displayOrderValue;
--(int32_t)displayOrderValue;
--(void)setDisplayOrderValue:(int32_t)value_;
-
-//- (BOOL)validateDisplayOrder:(id*)value_ error:(NSError**)error_;
-
-
-
-
-
 @property (nonatomic, strong) NSString* email;
 
 
@@ -73,6 +59,20 @@ extern const struct MOAccountFetchedProperties {
 -(void)setIsDefaultValue:(BOOL)value_;
 
 //- (BOOL)validateIsDefault:(id*)value_ error:(NSError**)error_;
+
+
+
+
+
+@property (nonatomic, strong) NSNumber* order;
+
+
+
+@property int32_t orderValue;
+-(int32_t)orderValue;
+-(void)setOrderValue:(int32_t)value_;
+
+//- (BOOL)validateOrder:(id*)value_ error:(NSError**)error_;
 
 
 
@@ -120,15 +120,6 @@ extern const struct MOAccountFetchedProperties {
 @interface _MOAccount (CoreDataGeneratedPrimitiveAccessors)
 
 
--(NSNumber*)primitiveDisplayOrder;
--(void)setPrimitiveDisplayOrder:(NSNumber*)value;
-
--(int32_t)primitiveDisplayOrderValue;
--(void)setPrimitiveDisplayOrderValue:(int32_t)value_;
-
-
-
-
 -(NSString*)primitiveEmail;
 -(void)setPrimitiveEmail:(NSString*)value;
 
@@ -140,6 +131,15 @@ extern const struct MOAccountFetchedProperties {
 
 -(BOOL)primitiveIsDefaultValue;
 -(void)setPrimitiveIsDefaultValue:(BOOL)value_;
+
+
+
+
+-(NSNumber*)primitiveOrder;
+-(void)setPrimitiveOrder:(NSNumber*)value;
+
+-(int32_t)primitiveOrderValue;
+-(void)setPrimitiveOrderValue:(int32_t)value_;
 
 
 

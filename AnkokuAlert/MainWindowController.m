@@ -15,9 +15,9 @@
 #import "MOAccount.h"
 #import "MOCommunity.h"
 
-// #define DEBUG_TRUNCATE_ALL_ACCOUNTS
+ #define DEBUG_TRUNCATE_ALL_ACCOUNTS
 // #define DEBUG_CREATE_DUMMY_ACCOUNTS
-// #define DEBUG_TRUNCATE_ALL_COMMUNITIES
+ #define DEBUG_TRUNCATE_ALL_COMMUNITIES
 // #define DEBUG_CREATE_DUMMY_COMMUNITIES
 // #define DEBUG_FORCE_ALERTING
 
@@ -123,12 +123,6 @@ int const kLiveStatSamplingCount = 20;
     [self.defaultAccountObjectController removeObserver:self forKeyPath:@"content"];
 }
 
--(void)awakeFromNib
-{
-    // TODO: check whether the initialization way is correct, or not.
-    // do not use this, awakeFromNib is called in initialization of every tableview cell.
-}
-
 -(void)windowDidLoad
 {
     [super windowDidLoad];
@@ -151,7 +145,7 @@ int const kLiveStatSamplingCount = 20;
 #ifdef DEBUG_CREATE_DUMMY_ACCOUNTS
     for (NSUInteger i = 0; i < DUMMY_ACCOUNT_COUNT; i++) {
         MOAccount* account = [MOAccount MR_createEntity];
-        account.displayOrder = [NSNumber numberWithInteger:i];
+        account.order = [NSNumber numberWithInteger:i];
         account.userId = [NSString stringWithFormat:@"1%05ld", i];
         account.userName = [NSString stringWithFormat:@"テストユーザー(%ld).", i];
         account.email = [NSString stringWithFormat:@"%03ld@example.com", i];
@@ -170,7 +164,7 @@ int const kLiveStatSamplingCount = 20;
     for (MOAccount* account in [MOAccount findAll]) {
         for (NSInteger i = 0; i < DUMMY_COMMUNITY_COUNT; i++) {
             MOCommunity* community = [MOCommunity MR_createEntity];
-            community.displayOrder = [NSNumber numberWithInt:i];
+            community.order = [NSNumber numberWithInt:i];
             community.community = [NSString stringWithFormat:@"co%05ld", j];
             community.communityName = [NSString stringWithFormat:@"テストコミュニティ(%ld).", j];
 
@@ -197,14 +191,14 @@ int const kLiveStatSamplingCount = 20;
 
 #pragma mark - AlertManagerStreamListener Methods
 
--(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)live community:(NSString*)community user:(NSString*)user url:(NSString*)url
+-(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)liveId community:(NSString*)communityId user:(NSString*)userId url:(NSString*)liveUrl
 {
-    [[AlertManager sharedManager] streamInfoForLive:live completion:^(NSDictionary* streamInfo, NSError* error) {
-         NSString* info = [NSString stringWithFormat:@"community:%@, title:%@\n", streamInfo[AlertManagerStreamInfoKeyCommunityName], streamInfo[AlertManagerStreamInfoKeyLiveTitle]];
+    [[AlertManager sharedManager] requestStreamInfoForLive:liveId completion:^(NSDictionary* streamInfo, NSError* error) {
+         NSString* info = [NSString stringWithFormat:@"community:%@, title:%@\n", streamInfo[AlertManagerStreamInfoKeyCommunityName], streamInfo[AlertManagerStreamInfoKeyLiveName]];
          [self logMessage:info];
      }];
 
-    static NSString* lastAlertLive;
+    static NSString* lastAlertLiveId;
     NSArray* alertCommunities = self.communityArrayController.arrangedObjects;
     BOOL isForceAlerting = NO;  // for debug purpose
     for (MOCommunity* alertCommunity in alertCommunities) {
@@ -212,10 +206,10 @@ int const kLiveStatSamplingCount = 20;
         isForceAlerting = (self.liveCount % FORCE_ALERTING_INTERVAL) == 0;
 #endif
         if (isForceAlerting ||
-            (![live isEqualToString:lastAlertLive] && [community isEqualToString:alertCommunity.community])) {
-            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];
+            (![liveId isEqualToString:lastAlertLiveId] && [communityId isEqualToString:alertCommunity.communityId])) {
+            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:liveUrl]];
             [self playChimeSound];
-            lastAlertLive = live;
+            lastAlertLiveId = liveId;
             break;
         }
     }
@@ -257,12 +251,14 @@ int const kLiveStatSamplingCount = 20;
     NSInteger fromIndex = [pboard stringForType:@"aRow"].integerValue;
     NSInteger toIndex = row;
 
-    MOCommunity* fromCommunity = [MOCommunity MR_findFirstByAttribute:@"displayOrder" withValue:[NSNumber numberWithInteger:fromIndex]];
-    MOCommunity* toCommunity = [MOCommunity MR_findFirstByAttribute:@"displayOrder" withValue:[NSNumber numberWithInteger:toIndex]];
+    // TODO: should update every displayOrder in for-loop.
+    MOCommunity* fromCommunity = [MOCommunity MR_findFirstByAttribute:@"order" withValue:[NSNumber numberWithInteger:fromIndex]];
+    MOCommunity* toCommunity = [MOCommunity MR_findFirstByAttribute:@"order" withValue:[NSNumber numberWithInteger:toIndex]];
 
-    fromCommunity.displayOrder = [NSNumber numberWithInteger:toIndex];
-    toCommunity.displayOrder = [NSNumber numberWithInteger:fromIndex];
+    fromCommunity.order = [NSNumber numberWithInteger:toIndex];
+    toCommunity.order = [NSNumber numberWithInteger:fromIndex];
 
+    // TODO: should manipulate arrangedObjects, then save. you will have no need to fetch.
     [self.managedObjectContext MR_saveOnlySelfAndWait];
     [self.communityArrayController fetch:self];
 
@@ -389,7 +385,7 @@ int const kLiveStatSamplingCount = 20;
     NSManagedObjectContext* context = [NSManagedObjectContext MR_defaultContext];
 
     MOCommunity* community = [MOCommunity MR_createEntity];
-    community.community = @"co12345";
+    community.communityId = @"co12345";
     community.communityName = @"テストです.";
 
     [context MR_saveOnlySelfAndWait];
@@ -433,9 +429,9 @@ int const kLiveStatSamplingCount = 20;
                                                 } else {
                                                     LOG(@"import done.");
                                                     MOAccount* defaultAccount = [MOAccount defaultAccount];
-                                                    for (NSString* coNumber in communities) {
+                                                    for (NSString* communityId in communities) {
                                                         MOCommunity* community = [MOCommunity MR_createEntity];
-                                                        community.community = coNumber;
+                                                        community.communityId = communityId;
                                                         [defaultAccount addCommunitiesObject:community];
                                                     }
                                                     [self.managedObjectContext MR_saveOnlySelfAndWait];
@@ -452,6 +448,15 @@ int const kLiveStatSamplingCount = 20;
 -(IBAction)enableCommunityButtonClicked:(id)sender
 {
     [[NSManagedObjectContext MR_defaultContext] MR_saveOnlySelfAndWait];
+}
+
+-(IBAction)openCommunityHomepage:(id)sender
+{
+    NSUInteger selectedRow = [self.communityTableView rowForView:sender];
+    MOCommunity* selectedCommunity = self.communityArrayController.arrangedObjects[selectedRow];
+
+    NSString* url = [@"http://com.nicovideo.jp/community/" stringByAppendingString : selectedCommunity.communityId];
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];
 }
 
 #pragma mark Misc

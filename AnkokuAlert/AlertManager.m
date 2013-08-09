@@ -28,10 +28,10 @@ NSString* const AlertManagerAlertStatusServerAddressKey = @"AlertManagerAlertSta
 NSString* const AlertManagerAlertStatusServerPortKey = @"AlertManagerAlertStatusKeyServerPort";
 NSString* const AlertManagerAlertStatusServerThreadKey = @"AlertManagerAlertStatusKeyServerThread";
 
-NSString* const AlertManagerStreamInfoKeyLive = @"AlertManagerStreamInfoKeyLive";
-NSString* const AlertManagerStreamInfoKeyLiveTitle = @"AlertManagerStreamInfoKeyLiveTitle";
+NSString* const AlertManagerStreamInfoKeyLiveId = @"AlertManagerStreamInfoKeyLiveId";
+NSString* const AlertManagerStreamInfoKeyLiveName = @"AlertManagerStreamInfoKeyLiveName";
 NSString* const AlertManagerStreamInfoKeyLiveUrl = @"AlertManagerStreamInfoKeyLiveUrl";
-NSString* const AlertManagerStreamInfoKeyCommunity = @"AlertManagerStreamInfoKeyCommunity";
+NSString* const AlertManagerStreamInfoKeyCommunityId = @"AlertManagerStreamInfoKeyCommunityId";
 NSString* const AlertManagerStreamInfoKeyCommunityName = @"AlertManagerStreamInfoKeyCommunityName";
 NSString* const AlertManagerStreamInfoKeyCommunityUrl = @"AlertManagerStreamInfoKeyCommunityUrl";
 
@@ -79,9 +79,11 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 {
     static AlertManager* sharedManager;
     static dispatch_once_t onceToken;
+
     dispatch_once(&onceToken, ^{
             sharedManager = [[AlertManager alloc] init];
         });
+
     return sharedManager;
 }
 
@@ -117,9 +119,9 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     [self closeSocket];
 }
 
--(void)streamInfoForLive:(NSString*)live completion:(StreamInfoCompletionBlock)completion
+-(void)requestStreamInfoForLive:(NSString*)liveId completion:(StreamInfoCompletionBlock)completion
 {
-    NSURL* url = [NSURL URLWithString:[kUrlGetStreamInfo stringByAppendingString:live]];
+    NSURL* url = [NSURL URLWithString:[kUrlGetStreamInfo stringByAppendingString:liveId]];
     FakedMutableURLRequest* request = [FakedMutableURLRequest requestWithURL:url];
 
     asyncRequestCompletionBlock requestCompletion = ^(NSURLResponse* response, NSData* data, NSError* error) {
@@ -145,9 +147,9 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
                            completionHandler:requestCompletion];
 }
 
--(void)communityInfoForCommunity:(NSString*)community completion:(CommunityInfoCompletionBlock)completion
+-(void)requestCommunityInfoForCommunity:(NSString*)communityId completion:(CommunityInfoCompletionBlock)completion
 {
-    NSURL* url = [NSURL URLWithString:[kUrlCommunity stringByAppendingString:community]];
+    NSURL* url = [NSURL URLWithString:[kUrlCommunity stringByAppendingString:communityId]];
     FakedMutableURLRequest* request = [FakedMutableURLRequest requestWithURL:url];
 
     asyncRequestCompletionBlock requestCompletion = ^(NSURLResponse* response, NSData* data, NSError* error) {
@@ -237,9 +239,6 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     @catch (NSException* exception) {
         LOG(@"caught exception in parsing ticket: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     }
-    @finally {
-        // do nothing
-    }
 
     return ticket;
 }
@@ -304,9 +303,6 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     }
     @catch (NSException* exception) {
         LOG(@"caught exception in parsing alert status: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    }
-    @finally {
-        // do nothing
     }
 
     return alertStatus;
@@ -455,7 +451,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
             }
             p++;
         }
-        // check tcp fragmentation
+        // check posiible tcp fragmentation
         if (data) {
             LOG(@"tcp segmentation lost? : %@", data);
         }
@@ -486,9 +482,6 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     @catch (NSException* exception) {
         LOG(@"caught exception in parsing chat: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     }
-    @finally {
-        // do nothing
-    }
 
     return (liveArray.count == 3 ? liveArray : nil);
 }
@@ -504,25 +497,22 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
         NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
         NSXMLNode* rootElement = xml.rootElement;
 
-        NSString* community = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/streaminfo/default_community" error:&error][0]).stringValue;
+        NSString* communityId = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/streaminfo/default_community" error:&error][0]).stringValue;
         NSString* communityName = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/communityinfo/name" error:&error][0]).stringValue;
-        NSString* communityUrl = [kUrlCommunity stringByAppendingString:community];
-        NSString* live = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/request_id" error:&error][0]).stringValue;
-        NSString* liveTitle = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/streaminfo/title" error:&error][0]).stringValue;
-        NSString* liveUrl = [kUrlLive stringByAppendingString:live];
+        NSString* communityUrl = [kUrlCommunity stringByAppendingString:communityId];
+        NSString* liveId = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/request_id" error:&error][0]).stringValue;
+        NSString* liveName = ((NSXMLNode*)[rootElement nodesForXPath:@"/getstreaminfo/streaminfo/title" error:&error][0]).stringValue;
+        NSString* liveUrl = [kUrlLive stringByAppendingString:liveId];
 
-        streamInfo = @{AlertManagerStreamInfoKeyLive: live,
-                       AlertManagerStreamInfoKeyLiveTitle: liveTitle,
+        streamInfo = @{AlertManagerStreamInfoKeyLiveId: liveId,
+                       AlertManagerStreamInfoKeyLiveName: liveName,
                        AlertManagerStreamInfoKeyLiveUrl: liveUrl,
-                       AlertManagerStreamInfoKeyCommunity: community,
+                       AlertManagerStreamInfoKeyCommunityId: communityId,
                        AlertManagerStreamInfoKeyCommunityName: communityName,
                        AlertManagerStreamInfoKeyCommunityUrl: communityUrl};
     }
     @catch (NSException* exception) {
         LOG(@"caught exception in parsing stream info: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    }
-    @finally {
-        // do nothing
     }
 
     return streamInfo;
@@ -547,9 +537,6 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
         // parse error, or not community member
         LOG(@"caught exception in parsing community info");
         // LOG(@"caught exception in parsing community info: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-    }
-    @finally {
-        // do nothing
     }
 
     return communityInfo;

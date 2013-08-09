@@ -4,12 +4,11 @@
 #import "_MOCommunity.h"
 
 const struct MOCommunityAttributes MOCommunityAttributes = {
-    .community = @"community",
+    .communityId = @"communityId",
     .communityName = @"communityName",
-    .displayOrder = @"displayOrder",
-    .enabled = @"enabled",
-    .useBrowser = @"useBrowser",
-    .useSound = @"useSound",
+    .isEnabled = @"isEnabled",
+    .order = @"order",
+    .rating = @"rating",
 };
 
 const struct MOCommunityRelationships MOCommunityRelationships = {
@@ -50,23 +49,18 @@ const struct MOCommunityFetchedProperties MOCommunityFetchedProperties = {
 {
     NSSet* keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
-    if ([key isEqualToString:@"displayOrderValue"]) {
-        NSSet* affectingKey = [NSSet setWithObject:@"displayOrder"];
+    if ([key isEqualToString:@"isEnabledValue"]) {
+        NSSet* affectingKey = [NSSet setWithObject:@"isEnabled"];
         keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
         return keyPaths;
     }
-    if ([key isEqualToString:@"enabledValue"]) {
-        NSSet* affectingKey = [NSSet setWithObject:@"enabled"];
+    if ([key isEqualToString:@"orderValue"]) {
+        NSSet* affectingKey = [NSSet setWithObject:@"order"];
         keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
         return keyPaths;
     }
-    if ([key isEqualToString:@"useBrowserValue"]) {
-        NSSet* affectingKey = [NSSet setWithObject:@"useBrowser"];
-        keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
-        return keyPaths;
-    }
-    if ([key isEqualToString:@"useSoundValue"]) {
-        NSSet* affectingKey = [NSSet setWithObject:@"useSound"];
+    if ([key isEqualToString:@"ratingValue"]) {
+        NSSet* affectingKey = [NSSet setWithObject:@"rating"];
         keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
         return keyPaths;
     }
@@ -77,7 +71,7 @@ const struct MOCommunityFetchedProperties MOCommunityFetchedProperties = {
 
 
 
-@dynamic community;
+@dynamic communityId;
 
 
 
@@ -91,120 +85,90 @@ const struct MOCommunityFetchedProperties MOCommunityFetchedProperties = {
 
 
 
-@dynamic displayOrder;
+@dynamic isEnabled;
 
 
 
--(int32_t)displayOrderValue
+-(BOOL)isEnabledValue
 {
-    NSNumber* result = [self displayOrder];
+    NSNumber* result = [self isEnabled];
+    return [result boolValue];
+}
+
+-(void)setIsEnabledValue:(BOOL)value_
+{
+    [self setIsEnabled:[NSNumber numberWithBool:value_]];
+}
+
+-(BOOL)primitiveIsEnabledValue
+{
+    NSNumber* result = [self primitiveIsEnabled];
+    return [result boolValue];
+}
+
+-(void)setPrimitiveIsEnabledValue:(BOOL)value_
+{
+    [self setPrimitiveIsEnabled:[NSNumber numberWithBool:value_]];
+}
+
+
+
+
+
+@dynamic order;
+
+
+
+-(int32_t)orderValue
+{
+    NSNumber* result = [self order];
     return [result intValue];
 }
 
--(void)setDisplayOrderValue:(int32_t)value_
+-(void)setOrderValue:(int32_t)value_
 {
-    [self setDisplayOrder:[NSNumber numberWithInt:value_]];
+    [self setOrder:[NSNumber numberWithInt:value_]];
 }
 
--(int32_t)primitiveDisplayOrderValue
+-(int32_t)primitiveOrderValue
 {
-    NSNumber* result = [self primitiveDisplayOrder];
+    NSNumber* result = [self primitiveOrder];
     return [result intValue];
 }
 
--(void)setPrimitiveDisplayOrderValue:(int32_t)value_
+-(void)setPrimitiveOrderValue:(int32_t)value_
 {
-    [self setPrimitiveDisplayOrder:[NSNumber numberWithInt:value_]];
+    [self setPrimitiveOrder:[NSNumber numberWithInt:value_]];
 }
 
 
 
 
 
-@dynamic enabled;
+@dynamic rating;
 
 
 
--(BOOL)enabledValue
+-(int32_t)ratingValue
 {
-    NSNumber* result = [self enabled];
-    return [result boolValue];
+    NSNumber* result = [self rating];
+    return [result intValue];
 }
 
--(void)setEnabledValue:(BOOL)value_
+-(void)setRatingValue:(int32_t)value_
 {
-    [self setEnabled:[NSNumber numberWithBool:value_]];
+    [self setRating:[NSNumber numberWithInt:value_]];
 }
 
--(BOOL)primitiveEnabledValue
+-(int32_t)primitiveRatingValue
 {
-    NSNumber* result = [self primitiveEnabled];
-    return [result boolValue];
+    NSNumber* result = [self primitiveRating];
+    return [result intValue];
 }
 
--(void)setPrimitiveEnabledValue:(BOOL)value_
+-(void)setPrimitiveRatingValue:(int32_t)value_
 {
-    [self setPrimitiveEnabled:[NSNumber numberWithBool:value_]];
-}
-
-
-
-
-
-@dynamic useBrowser;
-
-
-
--(BOOL)useBrowserValue
-{
-    NSNumber* result = [self useBrowser];
-    return [result boolValue];
-}
-
--(void)setUseBrowserValue:(BOOL)value_
-{
-    [self setUseBrowser:[NSNumber numberWithBool:value_]];
-}
-
--(BOOL)primitiveUseBrowserValue
-{
-    NSNumber* result = [self primitiveUseBrowser];
-    return [result boolValue];
-}
-
--(void)setPrimitiveUseBrowserValue:(BOOL)value_
-{
-    [self setPrimitiveUseBrowser:[NSNumber numberWithBool:value_]];
-}
-
-
-
-
-
-@dynamic useSound;
-
-
-
--(BOOL)useSoundValue
-{
-    NSNumber* result = [self useSound];
-    return [result boolValue];
-}
-
--(void)setUseSoundValue:(BOOL)value_
-{
-    [self setUseSound:[NSNumber numberWithBool:value_]];
-}
-
--(BOOL)primitiveUseSoundValue
-{
-    NSNumber* result = [self primitiveUseSound];
-    return [result boolValue];
-}
-
--(void)setPrimitiveUseSoundValue:(BOOL)value_
-{
-    [self setPrimitiveUseSound:[NSNumber numberWithBool:value_]];
+    [self setPrimitiveRating:[NSNumber numberWithInt:value_]];
 }
 
 

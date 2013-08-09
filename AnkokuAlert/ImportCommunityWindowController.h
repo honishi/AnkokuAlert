@@ -12,6 +12,8 @@ typedef void (^ ImportCommunityCompletionBlock)(BOOL isCancelled, NSArray* commu
 
 @interface ImportCommunityWindowController : NSWindowController
 
+@property (weak) IBOutlet NSTableView* communityTableView;
+
 +(ImportCommunityWindowController*)importCommunityWindowControllerWithEmail:(NSString*)email
                                                                    password:(NSString*)password
                                                                  completion:(ImportCommunityCompletionBlock)completion;

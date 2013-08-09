@@ -4,9 +4,9 @@
 #import "_MOAccount.h"
 
 const struct MOAccountAttributes MOAccountAttributes = {
-    .displayOrder = @"displayOrder",
     .email = @"email",
     .isDefault = @"isDefault",
+    .order = @"order",
     .userId = @"userId",
     .userName = @"userName",
 };
@@ -49,49 +49,19 @@ const struct MOAccountFetchedProperties MOAccountFetchedProperties = {
 {
     NSSet* keyPaths = [super keyPathsForValuesAffectingValueForKey:key];
 
-    if ([key isEqualToString:@"displayOrderValue"]) {
-        NSSet* affectingKey = [NSSet setWithObject:@"displayOrder"];
+    if ([key isEqualToString:@"isDefaultValue"]) {
+        NSSet* affectingKey = [NSSet setWithObject:@"isDefault"];
         keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
         return keyPaths;
     }
-    if ([key isEqualToString:@"isDefaultValue"]) {
-        NSSet* affectingKey = [NSSet setWithObject:@"isDefault"];
+    if ([key isEqualToString:@"orderValue"]) {
+        NSSet* affectingKey = [NSSet setWithObject:@"order"];
         keyPaths = [keyPaths setByAddingObjectsFromSet:affectingKey];
         return keyPaths;
     }
 
     return keyPaths;
 }
-
-
-
-
-@dynamic displayOrder;
-
-
-
--(int32_t)displayOrderValue
-{
-    NSNumber* result = [self displayOrder];
-    return [result intValue];
-}
-
--(void)setDisplayOrderValue:(int32_t)value_
-{
-    [self setDisplayOrder:[NSNumber numberWithInt:value_]];
-}
-
--(int32_t)primitiveDisplayOrderValue
-{
-    NSNumber* result = [self primitiveDisplayOrder];
-    return [result intValue];
-}
-
--(void)setPrimitiveDisplayOrderValue:(int32_t)value_
-{
-    [self setPrimitiveDisplayOrder:[NSNumber numberWithInt:value_]];
-}
-
 
 
 
@@ -127,6 +97,36 @@ const struct MOAccountFetchedProperties MOAccountFetchedProperties = {
 -(void)setPrimitiveIsDefaultValue:(BOOL)value_
 {
     [self setPrimitiveIsDefault:[NSNumber numberWithBool:value_]];
+}
+
+
+
+
+
+@dynamic order;
+
+
+
+-(int32_t)orderValue
+{
+    NSNumber* result = [self order];
+    return [result intValue];
+}
+
+-(void)setOrderValue:(int32_t)value_
+{
+    [self setOrder:[NSNumber numberWithInt:value_]];
+}
+
+-(int32_t)primitiveOrderValue
+{
+    NSNumber* result = [self primitiveOrder];
+    return [result intValue];
+}
+
+-(void)setPrimitiveOrderValue:(int32_t)value_
+{
+    [self setPrimitiveOrder:[NSNumber numberWithInt:value_]];
 }
 
 
