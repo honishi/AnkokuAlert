@@ -18,7 +18,9 @@
 //@property (nonatomic) NSInteger targetRating;
 @property (nonatomic) NSString* targetRating;
 
-@property (nonatomic) NSNumber* livePerSecond;
+@property (nonatomic) BOOL hasValidCommunityInput;
+
+@property (nonatomic) NSNumber* liveLevel;
 @property (nonatomic) BOOL isStreamOpened;
 
 -(IBAction)showPreferences:(id)sender;

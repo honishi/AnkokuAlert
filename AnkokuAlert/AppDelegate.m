@@ -33,6 +33,8 @@
     [MagicalRecord cleanUp];
 }
 
+// TODO: setup userdefault like SoundVolume
+
 #pragma mark - Action
 
 -(IBAction)showPreferencesWindow:(id)sender

@@ -10,7 +10,7 @@
 
 NSString* const kUrlLoginToAntenna = @"https://secure.nicovideo.jp/secure/login?site=nicolive_antenna";
 NSString* const kUrlGetAlertStatus = @"http://live.nicovideo.jp/api/getalertstatus?ticket=";
-NSString* const kUrlGetStreamInfo = @"http://live.nicovideo.jp/api/getstreaminfo/lv";
+NSString* const kUrlGetStreamInfo = @"http://live.nicovideo.jp/api/getstreaminfo/";
 NSString* const kUrlLive = @"http://live.nicovideo.jp/watch/";
 NSString* const kUrlCommunity = @"http://com.nicovideo.jp/community/";
 
@@ -126,6 +126,8 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 -(void)requestStreamInfoForLive:(NSString*)liveId completion:(StreamInfoCompletionBlock)completion
 {
+    LOG(@"%@", liveId);
+
     NSURL* url = [NSURL URLWithString:[kUrlGetStreamInfo stringByAppendingString:liveId]];
     FakedMutableURLRequest* request = [FakedMutableURLRequest requestWithURL:url];
 
@@ -393,9 +395,9 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
                     if (live) {
                         if ([self.streamListener respondsToSelector:@selector(alertManager:didReceiveLive:community:user:url:)]) {
-                            // TODO: magic string "lv", should declare kBaseUrlLive & kUrlLive.
-                            NSString* url = [kUrlLive stringByAppendingFormat:@"lv%@", live[0]];
-                            [self.streamListener alertManager:self didReceiveLive:live[0] community:live[1] user:live[2] url:url];
+                            NSString* liveId = [@"lv" stringByAppendingString : live[0]];
+                            NSString* url = [kUrlLive stringByAppendingString:liveId];
+                            [self.streamListener alertManager:self didReceiveLive:liveId community:live[1] user:live[2] url:url];
                         }
                     }
                 }

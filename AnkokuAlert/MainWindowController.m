@@ -14,6 +14,7 @@
 #import "SSKeychain.h"
 #import "MOAccount.h"
 #import "MOCommunity.h"
+#import "AlertLogScrollView.h"
 
 //#define DEBUG_TRUNCATE_ALL_ACCOUNTS
 //#define DEBUG_CREATE_DUMMY_ACCOUNTS
@@ -25,16 +26,21 @@
 #define DUMMY_COMMUNITY_COUNT 20
 #define FORCE_ALERTING_INTERVAL 20
 
+NSString* const kUserDefaultsKeySoundVolume = @"SoundVolume";
+
+NSString* const kRegExpLiveId = @".*(lv\\d+)";
+NSString* const kRegExpCommunityId = @".*(co\\d+)";
+
 float const kLiveStatTimerInterval = 0.5f;
 int const kLiveStatSamplingCount = 20;
 NSUInteger const kDefaultRatingValue = 3;
 
 #pragma mark - Value Transformer
 
-@interface LivePerSecondValueTransformer : NSValueTransformer {}
+@interface LiveLevelValueTransformer : NSValueTransformer {}
 @end
 
-@implementation LivePerSecondValueTransformer
+@implementation LiveLevelValueTransformer
 
 +(Class)transformedValueClass
 {
@@ -56,14 +62,24 @@ NSUInteger const kDefaultRatingValue = 3;
 
 #pragma mark - Main Window Controller
 
-@interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource>
+typedef NS_ENUM (NSInteger, CommunityInputType) {
+    CommunityInputTypeUnknown,
+    CommunityInputTypeLiveId,
+    CommunityInputTypeCommunityId
+};
+
+@interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource, NSTextFieldDelegate>
 
 // NSTextVIew doesn't support weak reference in arc.
 @property (strong) IBOutlet NSTextView* logTextView;
-@property (weak) IBOutlet NSScrollView* logScrollView;
+// @property (weak) IBOutlet NSScrollView* logScrollView;
+@property (weak) IBOutlet AlertLogScrollView* alertLogScrollView;
 @property (weak) IBOutlet NSLevelIndicatorCell* liveLevelIndicatorCell;
-@property (weak) IBOutlet NSTextFieldCell* liveTextFieldCell;
+@property (weak) IBOutlet NSTextFieldCell* liveLevelTextFieldCell;
 @property (unsafe_unretained) IBOutlet NSPanel* communityInputSheet;
+@property (weak) IBOutlet NSTextField* communityInputTextField;
+@property (nonatomic) CommunityInputType communityInputType;
+@property (nonatomic) NSString* communityInputValue;
 
 @property (weak) IBOutlet NSArrayController* communityArrayController;
 @property (weak) IBOutlet NSObjectController* defaultAccountObjectController;
@@ -170,8 +186,12 @@ NSUInteger const kDefaultRatingValue = 3;
 -(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)liveId community:(NSString*)communityId user:(NSString*)userId url:(NSString*)liveUrl
 {
     [[AlertManager sharedManager] requestStreamInfoForLive:liveId completion:^(NSDictionary* streamInfo, NSError* error) {
-         NSString* info = [NSString stringWithFormat:@"community:%@, title:%@\n", streamInfo[AlertManagerStreamInfoKeyCommunityName], streamInfo[AlertManagerStreamInfoKeyLiveName]];
-         [self logMessage:info];
+         // NSString* info = [NSString stringWithFormat:@"community:%@, title:%@\n", streamInfo[AlertManagerStreamInfoKeyCommunityName], streamInfo[AlertManagerStreamInfoKeyLiveName]];
+         // [self logMessage:info];
+         [self.alertLogScrollView logLiveWithLiveName:streamInfo[AlertManagerStreamInfoKeyLiveName]
+                                              liveUrl:streamInfo[AlertManagerStreamInfoKeyLiveUrl]
+                                        communityName:streamInfo[AlertManagerStreamInfoKeyCommunityName]
+                                         communityUrl:streamInfo[AlertManagerStreamInfoKeyCommunityUrl]];
      }];
 
     static NSString* lastAlertLiveId;
@@ -241,7 +261,8 @@ NSUInteger const kDefaultRatingValue = 3;
 
     // TODO: should manipulate arrangedObjects, then save. you will have no need to fetch.
     [self.managedObjectContext MR_saveOnlySelfAndWait];
-    [self.communityArrayController fetch:self];
+    // [self.communityArrayController fetch:self];
+    [self.communityArrayController rearrangeObjects];
 
     return YES;
 }
@@ -259,29 +280,30 @@ NSUInteger const kDefaultRatingValue = 3;
 
 #pragma mark Log View
 
--(void)logMessage:(NSString*)message
-{
-    BOOL shouldScrollToBottom = NO;
-    NSAttributedString* attributedMessage = [[NSAttributedString alloc] initWithString:message];
-
-    if (self.logScrollView.verticalScroller.floatValue == 1.0f) {
-        shouldScrollToBottom = YES;
-    }
-
-    [self.logTextView.textStorage appendAttributedString:attributedMessage];
-    [self.logScrollView flashScrollers];
-
-    if (shouldScrollToBottom) {
-        [self.logTextView scrollToEndOfDocument:self];
-    }
-}
-
+//-(void)logMessage:(NSString*)message
+//{
+//    BOOL shouldScrollToBottom = NO;
+//    NSAttributedString* attributedMessage = [[NSAttributedString alloc] initWithString:message];
+//
+//    if (self.logScrollView.verticalScroller.floatValue == 1.0f) {
+//        shouldScrollToBottom = YES;
+//    }
+//
+//    [self.logTextView.textStorage appendAttributedString:attributedMessage];
+//    [self.logScrollView flashScrollers];
+//
+//    if (shouldScrollToBottom) {
+//        [self.logTextView scrollToEndOfDocument:self];
+//    }
+//}
+//
 #pragma mark Live Level Indicator
 
 -(void)liveCounterTimerFired:(NSTimer*)timer
 {
+    // TODO: delete
     // LOG(@"target rating: %ld", self.targetRating);
-    LOG(@"target rating: %@", self.targetRating);
+    // LOG(@"target rating: %@", self.targetRating);
 
     NSDictionary* stat = @{@"date" : [NSDate date], @"liveCount": [NSNumber numberWithInteger:self.liveCount]};
     [self.liveStats addObject:stat];
@@ -294,7 +316,7 @@ NSUInteger const kDefaultRatingValue = 3;
         NSDate* oldestDate = oldest[@"date"];
         NSDate* newestDate = newest[@"date"];
         double rate = (newestLiveCount-oldestLiveCount)/([newestDate timeIntervalSinceDate:oldestDate]);
-        self.livePerSecond = [NSNumber numberWithDouble:rate];
+        self.liveLevel = [NSNumber numberWithDouble:rate];
     }
 
     if (kLiveStatSamplingCount < self.liveStats.count) {
@@ -354,7 +376,38 @@ NSUInteger const kDefaultRatingValue = 3;
 
 -(IBAction)inputCommunity:(id)sender
 {
+    self.communityInputTextField.stringValue = @"";
+    self.hasValidCommunityInput = NO;
     [NSApp beginSheet:self.communityInputSheet modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
+}
+
+-(void)controlTextDidChange:(NSNotification*)obj
+{
+    NSTextView* inputView = obj.userInfo[@"NSFieldEditor"];
+    NSString* inputContent = inputView.textStorage.string;
+
+    NSError* error = nil;
+    NSRegularExpression* liveIdRegexp = [NSRegularExpression regularExpressionWithPattern:kRegExpLiveId options:0 error:&error];
+    NSTextCheckingResult* result = [liveIdRegexp firstMatchInString:inputContent options:0 range:NSMakeRange(0, inputContent.length)];
+
+    if (0 < result.numberOfRanges) {
+        self.hasValidCommunityInput = YES;
+        self.communityInputType = CommunityInputTypeLiveId;
+        self.communityInputValue = [inputContent substringWithRange:[result rangeAtIndex:1]];
+        return;
+    }
+
+    NSRegularExpression* communityIdRegexp = [NSRegularExpression regularExpressionWithPattern:kRegExpCommunityId options:0 error:&error];
+    result = [communityIdRegexp firstMatchInString:inputContent options:0 range:NSMakeRange(0, inputContent.length)];
+
+    if (0 < result.numberOfRanges) {
+        self.hasValidCommunityInput = YES;
+        self.communityInputType = CommunityInputTypeCommunityId;
+        self.communityInputValue = [inputContent substringWithRange:[result rangeAtIndex:1]];
+        return;
+    }
+
+    self.hasValidCommunityInput = NO;
 }
 
 -(IBAction)cancelInputCommunity:(id)sender
@@ -368,11 +421,54 @@ NSUInteger const kDefaultRatingValue = 3;
     [NSApp endSheet:self.communityInputSheet];
     [self.communityInputSheet orderOut:sender];
 
-//    MOCommunity* community = [MOCommunity MR_createEntity];
-//    community.communityId = @"co12345";
-//    community.communityName = @"テストです.";
-//
-//    [self.managedObjectContext MR_saveOnlySelfAndWait];
+    switch (self.communityInputType) {
+        case CommunityInputTypeLiveId : {
+                [[AlertManager sharedManager] requestStreamInfoForLive:self.communityInputValue completion:^
+                     (NSDictionary* streamInfo, NSError* error) {
+                     if (error) {
+                         //
+                     } else {
+                         // TODO: create & replace communityWithNumberedOrderAttribute, to communityWithDefaultAttribute?
+                         MOCommunity* community = [[MOAccount defaultAccount] communityWithNumberedOrderAttribute];
+                         community.rating = [NSNumber numberWithInteger:kDefaultRatingValue];
+                         community.communityId = streamInfo[AlertManagerStreamInfoKeyCommunityId];
+                         community.communityName = streamInfo[AlertManagerStreamInfoKeyCommunityName];
+                         [[MOAccount defaultAccount] addCommunitiesObject:community];
+
+                         [self.managedObjectContext MR_saveOnlySelfAndWait];
+                         [self.communityArrayController rearrangeObjects];
+                     }
+                 }];
+
+                break;
+        }
+
+        case CommunityInputTypeCommunityId: {
+            [[AlertManager sharedManager] requestCommunityInfoForCommunity:self.communityInputValue completion:^
+                 (NSDictionary* communityInfo, NSError* error) {
+                 if (error) {
+                     //
+                 } else {
+                     // TODO: create & replace communityWithNumberedOrderAttribute, to communityWithDefaultAttribute?
+                     MOCommunity* community = [[MOAccount defaultAccount] communityWithNumberedOrderAttribute];
+                     community.rating = [NSNumber numberWithInteger:kDefaultRatingValue];
+                     community.communityId = self.communityInputValue;
+                     community.communityName = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
+                     [[MOAccount defaultAccount] addCommunitiesObject:community];
+
+                     [self.managedObjectContext MR_saveOnlySelfAndWait];
+                     [self.communityArrayController rearrangeObjects];
+                     // TODO: flash
+                     // [self.communityTableView.]
+                 }
+             }];
+            break;
+        }
+
+        default:
+            break;
+    }
+
 }
 
 -(IBAction)confirmCommunityRemoval:(id)sender
@@ -471,12 +567,24 @@ NSUInteger const kDefaultRatingValue = 3;
 {
 }
 
+-(IBAction)changeSoundVolume:(id)sender
+{
+    [self playChimeSound];
+}
+
 #pragma mark Misc
 
 -(void)playChimeSound
 {
-    NSSound* sound = [[NSSound alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"DefaultSound" ofType:@"mp3"] byReference:NO];
-    [sound play];
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSNumber* soundVolume = [defaults valueForKey:kUserDefaultsKeySoundVolume];
+
+    if (0 < soundVolume.integerValue) {
+        NSSound* sound = [[NSSound alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"DefaultSound" ofType:@"mp3"] byReference:NO];
+        [sound setVolume:soundVolume.floatValue/100];
+
+        [sound play];
+    }
 }
 
 @end

@@ -29,6 +29,8 @@
 		DB69268617B3BFE400027BBC /* ImportCommunityWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB69268217B3BFE400027BBC /* ImportCommunityWindowController.xib */; };
 		DB69268C17B3F58800027BBC /* DefaultSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB69268B17B3F58800027BBC /* DefaultSound.mp3 */; };
 		DB69268D17B3F58800027BBC /* DefaultSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB69268B17B3F58800027BBC /* DefaultSound.mp3 */; };
+		DB76445517B5FF70003A79B6 /* AlertLogScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB76445417B5FF70003A79B6 /* AlertLogScrollView.m */; };
+		DB76445617B5FF70003A79B6 /* AlertLogScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB76445417B5FF70003A79B6 /* AlertLogScrollView.m */; };
 		DBD2AB1417A2D625005AA7EF /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */; };
 		DBD2AB1517A2D625005AA7EF /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */; };
 		DBD2AB1617A2D625005AA7EF /* PreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */; };
@@ -139,6 +141,8 @@
 		DB69268117B3BFE400027BBC /* ImportCommunityWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImportCommunityWindowController.m; sourceTree = "<group>"; };
 		DB69268217B3BFE400027BBC /* ImportCommunityWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImportCommunityWindowController.xib; sourceTree = "<group>"; };
 		DB69268B17B3F58800027BBC /* DefaultSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = DefaultSound.mp3; path = Resources/DefaultSound.mp3; sourceTree = "<group>"; };
+		DB76445317B5FF70003A79B6 /* AlertLogScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertLogScrollView.h; sourceTree = "<group>"; };
+		DB76445417B5FF70003A79B6 /* AlertLogScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertLogScrollView.m; sourceTree = "<group>"; };
 		DBD2AB1117A2D625005AA7EF /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
 		DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
 		DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowController.xib; sourceTree = "<group>"; };
@@ -275,6 +279,7 @@
 		DB5BA5A817B3B0DB004B8B0A /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				DB76444E17B5D92F003A79B6 /* Utility */,
 				DB2D1F9517A3FF4900183A59 /* MainWindowController.h */,
 				DB2D1F9617A3FF4900183A59 /* MainWindowController.m */,
 				DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */,
@@ -284,9 +289,6 @@
 				DBD2AB1117A2D625005AA7EF /* PreferencesWindowController.h */,
 				DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */,
 				DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */,
-				DB5BA5A917B3B115004B8B0A /* ConfirmationWindowController.h */,
-				DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */,
-				DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -297,6 +299,18 @@
 				DB69268B17B3F58800027BBC /* DefaultSound.mp3 */,
 			);
 			name = Resources;
+			sourceTree = "<group>";
+		};
+		DB76444E17B5D92F003A79B6 /* Utility */ = {
+			isa = PBXGroup;
+			children = (
+				DB5BA5A917B3B115004B8B0A /* ConfirmationWindowController.h */,
+				DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */,
+				DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */,
+				DB76445317B5FF70003A79B6 /* AlertLogScrollView.h */,
+				DB76445417B5FF70003A79B6 /* AlertLogScrollView.m */,
+			);
+			name = Utility;
 			sourceTree = "<group>";
 		};
 		DBD33B8C179C3706003A41F9 = {
@@ -686,6 +700,7 @@
 				DB5BA5AC17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */,
 				DB69268317B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */,
 				EDCE607C17B4C860005B4C67 /* NSString+CompareCommunityId.m in Sources */,
+				DB76445517B5FF70003A79B6 /* AlertLogScrollView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -732,6 +747,7 @@
 				DB5BA5AD17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */,
 				DB69268417B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */,
 				EDCE607D17B4C860005B4C67 /* NSString+CompareCommunityId.m in Sources */,
+				DB76445617B5FF70003A79B6 /* AlertLogScrollView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
