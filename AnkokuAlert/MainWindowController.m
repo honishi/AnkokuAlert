@@ -186,15 +186,16 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 -(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)liveId community:(NSString*)communityId user:(NSString*)userId url:(NSString*)liveUrl
 {
     [[AlertManager sharedManager] requestStreamInfoForLive:liveId completion:^(NSDictionary* streamInfo, NSError* error) {
-         // NSString* info = [NSString stringWithFormat:@"community:%@, title:%@\n", streamInfo[AlertManagerStreamInfoKeyCommunityName], streamInfo[AlertManagerStreamInfoKeyLiveName]];
-         // [self logMessage:info];
-         [self.alertLogScrollView logLiveWithLiveName:streamInfo[AlertManagerStreamInfoKeyLiveName]
-                                              liveUrl:streamInfo[AlertManagerStreamInfoKeyLiveUrl]
-                                        communityName:streamInfo[AlertManagerStreamInfoKeyCommunityName]
-                                         communityUrl:streamInfo[AlertManagerStreamInfoKeyCommunityUrl]];
+         if (error) {
+             // TODO: do something
+         } else {
+             [self.alertLogScrollView logLiveWithLiveName:streamInfo[AlertManagerStreamInfoKeyLiveName]
+                                                  liveUrl:streamInfo[AlertManagerStreamInfoKeyLiveUrl]
+                                            communityName:streamInfo[AlertManagerStreamInfoKeyCommunityName]
+                                             communityUrl:streamInfo[AlertManagerStreamInfoKeyCommunityUrl]];
+         }
      }];
 
-    static NSString* lastAlertLiveId;
     NSArray* alertCommunities = self.communityArrayController.arrangedObjects;
     BOOL isForceAlerting = NO;  // for debug purpose
     for (MOCommunity* alertCommunity in alertCommunities) {
@@ -202,10 +203,9 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
         isForceAlerting = (self.liveCount % FORCE_ALERTING_INTERVAL) == 0;
 #endif
         if (isForceAlerting ||
-            (![liveId isEqualToString:lastAlertLiveId] && [communityId isEqualToString:alertCommunity.communityId])) {
+            ([communityId isEqualToString:alertCommunity.communityId])) {
             [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:liveUrl]];
             [self playChimeSound];
-            lastAlertLiveId = liveId;
             break;
         }
     }
@@ -322,6 +322,8 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     if (kLiveStatSamplingCount < self.liveStats.count) {
         [self.liveStats removeObjectAtIndex:0];
     }
+
+    // TODO: auto reopen stream logic here.
 }
 
 #pragma mark Default Account Predicate

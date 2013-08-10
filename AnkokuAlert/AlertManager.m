@@ -38,6 +38,7 @@ NSString* const AlertManagerStreamInfoKeyCommunityUrl = @"AlertManagerStreamInfo
 NSString* const AlertManagerCommunityInfoKeyCommunityName = @"AlertManagerCommunityInfoKeyCommunityName";
 
 NSUInteger const kMaxInputStreamBufferSize = 10240;
+NSUInteger const kMaxRecentLiveIdsCount = 100;
 
 typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* data, NSError* error);
 
@@ -126,7 +127,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 -(void)requestStreamInfoForLive:(NSString*)liveId completion:(StreamInfoCompletionBlock)completion
 {
-    LOG(@"%@", liveId);
+    // LOG(@"%@", liveId);
 
     NSURL* url = [NSURL URLWithString:[kUrlGetStreamInfo stringByAppendingString:liveId]];
     FakedMutableURLRequest* request = [FakedMutableURLRequest requestWithURL:url];
@@ -391,15 +392,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
                 for (NSData* data in chunks) {
                     // LOG(@"data: %@", data);
                     // LOG(@"string: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
-                    NSArray* live = [self parseChat:data];
-
-                    if (live) {
-                        if ([self.streamListener respondsToSelector:@selector(alertManager:didReceiveLive:community:user:url:)]) {
-                            NSString* liveId = [@"lv" stringByAppendingString : live[0]];
-                            NSString* url = [kUrlLive stringByAppendingString:liveId];
-                            [self.streamListener alertManager:self didReceiveLive:liveId community:live[1] user:live[2] url:url];
-                        }
-                    }
+                    [self handleChat:[self parseChat:data]];
                 }
                 break;
             }
@@ -486,6 +479,43 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     }
 
     return (liveArray.count == 3 ? liveArray : nil);
+}
+
+-(void)handleChat:(NSArray*)chat
+{
+    if (!chat) {
+        return;
+    }
+
+    static NSMutableArray* recentLiveIds = nil;
+
+    if (!recentLiveIds) {
+        recentLiveIds = NSMutableArray.new;
+    }
+
+    NSString* liveId = [@"lv" stringByAppendingString : chat[0]];
+
+    BOOL isDuplicated = NO;
+    for (NSString* pastliveId in recentLiveIds) {
+        if ([liveId isEqualToString:pastliveId]) {
+            isDuplicated = YES;
+            break;
+        }
+    }
+
+    if (!isDuplicated) {
+        if ([self.streamListener respondsToSelector:@selector(alertManager:didReceiveLive:community:user:url:)]) {
+            NSString* url = [kUrlLive stringByAppendingString:liveId];
+            [self.streamListener alertManager:self didReceiveLive:liveId community:chat[1] user:chat[2] url:url];
+        }
+
+        [recentLiveIds addObject:liveId];
+        if (kMaxRecentLiveIdsCount < recentLiveIds.count) {
+            [recentLiveIds removeObjectAtIndex:0];
+        }
+    } else {
+        // LOG(@"live is duplicated. liveId %@ is in %@.", liveId, recentLiveIds);
+    }
 }
 
 #pragma mark Stream Info

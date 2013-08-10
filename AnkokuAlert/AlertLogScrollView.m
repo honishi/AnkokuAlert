@@ -29,20 +29,24 @@
 
 -(void)logLiveWithLiveName:(NSString*)liveName liveUrl:(NSString*)liveUrl communityName:(NSString*)communityName communityUrl:(NSString*)communityUrl
 {
-    // TODO: nil check
+    if (!liveName || !liveUrl || !communityName || !communityUrl) {
+        LOG(@"nil paramter found, liveName:%@, liveUrl:%@, communityName:%@, communityUrl:%@", liveName, liveUrl, communityName, communityUrl);
+        return;
+    }
+
     NSMutableAttributedString* message = NSMutableAttributedString.new;
 
-    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"Live "]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"Live \""]];
 
     NSAttributedString* liveNameAttributedString = [[NSAttributedString alloc] initWithString:liveName attributes:[self attributeWithLinkUrl:liveUrl]];
     [message appendAttributedString:liveNameAttributedString];
 
-    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@" started at "]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\" is started in community \""]];
 
     NSAttributedString* communityNameAttributedString = [[NSAttributedString alloc] initWithString:communityName attributes:[self attributeWithLinkUrl:communityUrl]];
     [message appendAttributedString:communityNameAttributedString];
 
-    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"."]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\"."]];
 
     [self logMessage:message];
 }
