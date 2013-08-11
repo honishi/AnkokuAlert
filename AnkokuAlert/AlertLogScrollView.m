@@ -27,6 +27,12 @@
 
 #pragma mark - Public Interface
 
+-(void)logMessage:(NSString*)message
+{
+    NSAttributedString* attributedMessage = [[NSAttributedString alloc] initWithString:message];
+    [self logToConsole:attributedMessage];
+}
+
 -(void)logLiveWithLiveName:(NSString*)liveName liveUrl:(NSString*)liveUrl communityName:(NSString*)communityName communityUrl:(NSString*)communityUrl
 {
     if (!liveName || !liveUrl || !communityName || !communityUrl) {
@@ -41,14 +47,14 @@
     NSAttributedString* liveNameAttributedString = [[NSAttributedString alloc] initWithString:liveName attributes:[self attributeWithLinkUrl:liveUrl]];
     [message appendAttributedString:liveNameAttributedString];
 
-    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\" is started in community \""]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\" is started in \""]];
 
     NSAttributedString* communityNameAttributedString = [[NSAttributedString alloc] initWithString:communityName attributes:[self attributeWithLinkUrl:communityUrl]];
     [message appendAttributedString:communityNameAttributedString];
 
     [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\"."]];
 
-    [self logMessage:message];
+    [self logToConsole:message];
 }
 
 #pragma mark - Internal Methods
@@ -77,7 +83,7 @@
     return [[NSAttributedString alloc] initWithString:formattedDateString];
 }
 
--(void)logMessage:(NSAttributedString*)message
+-(void)logToConsole:(NSAttributedString*)message
 {
     BOOL shouldScrollToBottom = NO;
     NSMutableAttributedString* attributedMessage = NSMutableAttributedString.new;

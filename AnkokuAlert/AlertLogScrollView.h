@@ -10,6 +10,7 @@
 
 @interface AlertLogScrollView : NSScrollView
 
+-(void)logMessage:(NSString*)message;
 -(void)logLiveWithLiveName:(NSString*)liveName liveUrl:(NSString*)liveUrl communityName:(NSString*)communityName communityUrl:(NSString*)communityUrl;
 
 @end

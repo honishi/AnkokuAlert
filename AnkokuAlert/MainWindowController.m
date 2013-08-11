@@ -26,14 +26,16 @@
 #define DUMMY_COMMUNITY_COUNT 20
 #define FORCE_ALERTING_INTERVAL 20
 
+NSString* const kCommunityTableViewDraggedType = @"kCommunityTableViewDraggedType";
+
 NSString* const kUserDefaultsKeySoundVolume = @"SoundVolume";
+NSString* const kUserDefaultsKeyLogAllLive = @"LogAllLive";
 
 NSString* const kRegExpLiveId = @".*(lv\\d+)";
 NSString* const kRegExpCommunityId = @".*(co\\d+)";
 
 float const kLiveStatTimerInterval = 0.5f;
 int const kLiveStatSamplingCount = 20;
-NSUInteger const kDefaultRatingValue = 3;
 
 #pragma mark - Value Transformer
 
@@ -70,6 +72,8 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 @interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource, NSTextFieldDelegate>
 
+@property (weak) IBOutlet NSScrollView* communityScrollView;
+@property (nonatomic, weak) IBOutlet NSTableView* communityTableView;
 // NSTextVIew doesn't support weak reference in arc.
 @property (strong) IBOutlet NSTextView* logTextView;
 // @property (weak) IBOutlet NSScrollView* logScrollView;
@@ -122,8 +126,8 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     [self setupDebugData];
     [self.defaultAccountObjectController addObserver:self forKeyPath:@"content" options:NSKeyValueObservingOptionNew context:nil];
 
-    [self.communityTableView registerForDraggedTypes:@[@"aRow"]];
-    [self.communityTableView setDraggingSourceOperationMask:NSDragOperationAll forLocal:NO];
+    [self.communityTableView registerForDraggedTypes:@[kCommunityTableViewDraggedType]];
+    [self.communityTableView setDraggingSourceOperationMask:NSDragOperationMove forLocal:YES];
 
     [self updateWindowTitleAndPredicate];
 
@@ -147,7 +151,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 #ifdef DEBUG_CREATE_DUMMY_ACCOUNTS
     for (NSUInteger i = 0; i < DUMMY_ACCOUNT_COUNT; i++) {
-        MOAccount* account = [MOAccount accountWithNumberedOrderAttribute];
+        MOAccount* account = [MOAccount accountWithDefaultAttributes];
         account.userId = [NSString stringWithFormat:@"1%05ld", i];
         account.userName = [NSString stringWithFormat:@"テストユーザー(%ld).", i];
         account.email = [NSString stringWithFormat:@"%03ld@example.com", i];
@@ -165,7 +169,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     NSUInteger j = 0;
     for (MOAccount* account in [MOAccount findAll]) {
         for (NSInteger i = 0; i < DUMMY_COMMUNITY_COUNT; i++) {
-            MOCommunity* community = [account communityWithNumberedOrderAttribute];
+            MOCommunity* community = [account communityWithDefaultAttributes];
             community.communityId = [NSString stringWithFormat:@"co%05ld", j];
             community.communityName = [NSString stringWithFormat:@"テストコミュニティ(%ld).", j];
             community.rating = [NSNumber numberWithInteger:(i%6)];
@@ -185,37 +189,53 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 -(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)liveId community:(NSString*)communityId user:(NSString*)userId url:(NSString*)liveUrl
 {
-    [[AlertManager sharedManager] requestStreamInfoForLive:liveId completion:^(NSDictionary* streamInfo, NSError* error) {
-         if (error) {
-             // TODO: do something
-         } else {
-             [self.alertLogScrollView logLiveWithLiveName:streamInfo[AlertManagerStreamInfoKeyLiveName]
-                                                  liveUrl:streamInfo[AlertManagerStreamInfoKeyLiveUrl]
-                                            communityName:streamInfo[AlertManagerStreamInfoKeyCommunityName]
-                                             communityUrl:streamInfo[AlertManagerStreamInfoKeyCommunityUrl]];
-         }
-     }];
-
-    NSArray* alertCommunities = self.communityArrayController.arrangedObjects;
+    NSArray* targetCommunities = self.communityArrayController.arrangedObjects;
     BOOL isForceAlerting = NO;  // for debug purpose
-    for (MOCommunity* alertCommunity in alertCommunities) {
+    BOOL shouldLogLiveInfo = NO;
+    for (MOCommunity* targetCommunity in targetCommunities) {
 #ifdef DEBUG_FORCE_ALERTING
         isForceAlerting = (self.liveCount % FORCE_ALERTING_INTERVAL) == 0;
 #endif
+        // TODO: add other condition, like target rating level.
+        if (!targetCommunity.isEnabled.boolValue) {
+            continue;
+        }
+
         if (isForceAlerting ||
-            ([communityId isEqualToString:alertCommunity.communityId])) {
+            ([communityId isEqualToString:targetCommunity.communityId])) {
             [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:liveUrl]];
             [self playChimeSound];
+            shouldLogLiveInfo = YES;
             break;
         }
+    }
+
+    NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
+    NSNumber* logAllLive = [defaults valueForKey:kUserDefaultsKeyLogAllLive];
+    if (shouldLogLiveInfo || logAllLive.boolValue) {
+        [[AlertManager sharedManager] requestStreamInfoForLive:liveId completion:^(NSDictionary* streamInfo, NSError* error) {
+             if (error) {
+                 // TODO: do something
+             } else {
+                 [self.alertLogScrollView logLiveWithLiveName:streamInfo[AlertManagerStreamInfoKeyLiveName]
+                                                      liveUrl:streamInfo[AlertManagerStreamInfoKeyLiveUrl]
+                                                communityName:streamInfo[AlertManagerStreamInfoKeyCommunityName]
+                                                 communityUrl:streamInfo[AlertManagerStreamInfoKeyCommunityUrl]];
+             }
+         }];
     }
 
     self.liveCount++;
 }
 
+-(void)alertManagerdidOpenStream:(AlertManager*)alertManager
+{
+    [self.alertLogScrollView logMessage:@"Connected."];
+}
+
 -(void)alertManagerDidCloseStream:(AlertManager*)alertManager
 {
-    LOG(@"stream closed.");
+    [self.alertLogScrollView logMessage:@"Disconnected."];
     self.isStreamOpened = NO;
 }
 
@@ -225,44 +245,31 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 -(BOOL)tableView:(NSTableView*)tableView writeRowsWithIndexes:(NSIndexSet*)rowIndexes toPasteboard:(NSPasteboard*)pboard
 {
-    // MOCommunity* community = self.communityArrayController.arrangedObjects[rowIndexes.firstIndex];
-    LOG(@"%ld", rowIndexes.firstIndex);
+    // LOG(@"%ld", rowIndexes.firstIndex);
 
-    [pboard declareTypes:[NSArray arrayWithObject:@"aRow"] owner:self];
-    // [pboard setValue:community forKey:@"aRow"];
-    // [pboard setString:community.community forType:@"aRow"];
-    [pboard setString:[NSNumber numberWithInteger:rowIndexes.firstIndex].stringValue forType:@"aRow"];
+    [pboard declareTypes:@[kCommunityTableViewDraggedType] owner:self];
+    NSString* fromIndex = [NSNumber numberWithInteger:rowIndexes.firstIndex].stringValue;
+    [pboard setString:fromIndex forType:kCommunityTableViewDraggedType];
 
     return YES;
 }
 
 -(NSDragOperation)tableView:(NSTableView*)tableView validateDrop:(id<NSDraggingInfo>)info proposedRow:(NSInteger)row proposedDropOperation:(NSTableViewDropOperation)dropOperation
 {
-    return NSDragOperationMove; // NSDragOperationEvery;
+    return NSDragOperationMove;
 }
 
 -(BOOL)tableView:(NSTableView*)tableView acceptDrop:(id<NSDraggingInfo>)info row:(NSInteger)row dropOperation:(NSTableViewDropOperation)dropOperation
 {
     NSPasteboard* pboard = info.draggingPasteboard;
-    NSInteger fromIndex = [pboard stringForType:@"aRow"].integerValue;
+    NSInteger fromIndex = [pboard stringForType:kCommunityTableViewDraggedType].integerValue;
     NSInteger toIndex = row;
+    // LOG(@"from: %ld, to: %ld", fromIndex, toIndex);
 
-    LOG(@"from: %ld, to: %ld", fromIndex, toIndex);
-
-    // TODO: should update every displayOrder in for-loop.
-//    MOCommunity* fromCommunity = [MOCommunity MR_findFirstByAttribute:@"order" withValue:[NSNumber numberWithInteger:fromIndex]];
-//    MOCommunity* toCommunity = [MOCommunity MR_findFirstByAttribute:@"order" withValue:[NSNumber numberWithInteger:toIndex]];
     MOCommunity* fromCommunity = self.communityArrayController.arrangedObjects[fromIndex];
     MOCommunity* toCommunity = self.communityArrayController.arrangedObjects[toIndex];
-
-    NSNumber* anOrder = fromCommunity.order;
-    fromCommunity.order = toCommunity.order;
-    toCommunity.order = anOrder;
-
-    // TODO: should manipulate arrangedObjects, then save. you will have no need to fetch.
+    [fromCommunity exchangeCommunityWithCommunity:toCommunity];
     [self.managedObjectContext MR_saveOnlySelfAndWait];
-    // [self.communityArrayController fetch:self];
-    [self.communityArrayController rearrangeObjects];
 
     return YES;
 }
@@ -276,88 +283,21 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     [self.preferenceWindowController.window makeKeyAndOrderFront:self];
 }
 
-#pragma mark - Internal Methods
-
-#pragma mark Log View
-
-//-(void)logMessage:(NSString*)message
-//{
-//    BOOL shouldScrollToBottom = NO;
-//    NSAttributedString* attributedMessage = [[NSAttributedString alloc] initWithString:message];
-//
-//    if (self.logScrollView.verticalScroller.floatValue == 1.0f) {
-//        shouldScrollToBottom = YES;
-//    }
-//
-//    [self.logTextView.textStorage appendAttributedString:attributedMessage];
-//    [self.logScrollView flashScrollers];
-//
-//    if (shouldScrollToBottom) {
-//        [self.logTextView scrollToEndOfDocument:self];
-//    }
-//}
-//
-#pragma mark Live Level Indicator
-
--(void)liveCounterTimerFired:(NSTimer*)timer
-{
-    // TODO: delete
-    // LOG(@"target rating: %ld", self.targetRating);
-    // LOG(@"target rating: %@", self.targetRating);
-
-    NSDictionary* stat = @{@"date" : [NSDate date], @"liveCount": [NSNumber numberWithInteger:self.liveCount]};
-    [self.liveStats addObject:stat];
-
-    if (2 < self.liveStats.count) {
-        NSDictionary* oldest = self.liveStats[0];
-        NSDictionary* newest = self.liveStats[self.liveStats.count-1];
-        NSUInteger oldestLiveCount = ((NSNumber*)oldest[@"liveCount"]).integerValue;
-        NSUInteger newestLiveCount = ((NSNumber*)newest[@"liveCount"]).integerValue;
-        NSDate* oldestDate = oldest[@"date"];
-        NSDate* newestDate = newest[@"date"];
-        double rate = (newestLiveCount-oldestLiveCount)/([newestDate timeIntervalSinceDate:oldestDate]);
-        self.liveLevel = [NSNumber numberWithDouble:rate];
-    }
-
-    if (kLiveStatSamplingCount < self.liveStats.count) {
-        [self.liveStats removeObjectAtIndex:0];
-    }
-
-    // TODO: auto reopen stream logic here.
-}
-
-#pragma mark Default Account Predicate
-
--(void)observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
-{
-    if ([keyPath isEqualToString:@"content"] && object == self.defaultAccountObjectController) {
-        [self updateWindowTitleAndPredicate];
-    }
-}
-
--(void)updateWindowTitleAndPredicate
-{
-    MOAccount* account = [MOAccount defaultAccount];
-    self.windowTitle = [NSString stringWithFormat:@"Ankoku Alert: %@", account.userName ? account.userName:@"<No user selected.>"];
-
-    if (account) {
-        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"account.objectID == %@", account.objectID];
-        self.accountFilterPredicate = predicate;
-    }
-}
-
-#pragma mark - Button Actions
+#pragma mark - Internal Methods, Button Actions
 
 #pragma mark Start/Stop Stream
 
 -(IBAction)startAlert:(id)sender
 {
     MOAccount* account = [MOAccount defaultAccount];
+    NSString* message = [NSString stringWithFormat:@"Connecting to the server as user %@.", account.userName];
+    [self.alertLogScrollView logMessage:message];
+
     if (account) {
         self.isStreamOpened = YES;
 
         NSString* email = account.email;
-        NSString* password = [SSKeychain passwordForService:[[NSBundle mainBundle] bundleIdentifier] account:email];
+        NSString* password = [self cachedPasswordForAccount:account];
 
         [[AlertManager sharedManager] loginWithEmail:email password:password completion:^(NSDictionary* alertStatus, NSError* error) {
              if (error) {
@@ -424,25 +364,24 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     [self.communityInputSheet orderOut:sender];
 
     switch (self.communityInputType) {
-        case CommunityInputTypeLiveId : {
-                [[AlertManager sharedManager] requestStreamInfoForLive:self.communityInputValue completion:^
-                     (NSDictionary* streamInfo, NSError* error) {
-                     if (error) {
-                         //
-                     } else {
-                         // TODO: create & replace communityWithNumberedOrderAttribute, to communityWithDefaultAttribute?
-                         MOCommunity* community = [[MOAccount defaultAccount] communityWithNumberedOrderAttribute];
-                         community.rating = [NSNumber numberWithInteger:kDefaultRatingValue];
-                         community.communityId = streamInfo[AlertManagerStreamInfoKeyCommunityId];
-                         community.communityName = streamInfo[AlertManagerStreamInfoKeyCommunityName];
-                         [[MOAccount defaultAccount] addCommunitiesObject:community];
+        case CommunityInputTypeLiveId: {
+            [[AlertManager sharedManager] requestStreamInfoForLive:self.communityInputValue completion:^
+                 (NSDictionary* streamInfo, NSError* error) {
+                 if (error) {
+                     //
+                 } else {
+                     MOCommunity* community = [[MOAccount defaultAccount] communityWithDefaultAttributes];
+                     community.communityId = streamInfo[AlertManagerStreamInfoKeyCommunityId];
+                     community.communityName = streamInfo[AlertManagerStreamInfoKeyCommunityName];
+                     [[MOAccount defaultAccount] addCommunitiesObject:community];
 
-                         [self.managedObjectContext MR_saveOnlySelfAndWait];
-                         [self.communityArrayController rearrangeObjects];
-                     }
-                 }];
+                     [self.managedObjectContext MR_saveOnlySelfAndWait];
+                     [self.communityArrayController rearrangeObjects];
+                     [self.communityScrollView flashScrollers];
+                 }
+             }];
 
-                break;
+            break;
         }
 
         case CommunityInputTypeCommunityId: {
@@ -451,17 +390,14 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
                  if (error) {
                      //
                  } else {
-                     // TODO: create & replace communityWithNumberedOrderAttribute, to communityWithDefaultAttribute?
-                     MOCommunity* community = [[MOAccount defaultAccount] communityWithNumberedOrderAttribute];
-                     community.rating = [NSNumber numberWithInteger:kDefaultRatingValue];
+                     MOCommunity* community = [[MOAccount defaultAccount] communityWithDefaultAttributes];
                      community.communityId = self.communityInputValue;
                      community.communityName = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
                      [[MOAccount defaultAccount] addCommunitiesObject:community];
 
                      [self.managedObjectContext MR_saveOnlySelfAndWait];
                      [self.communityArrayController rearrangeObjects];
-                     // TODO: flash
-                     // [self.communityTableView.]
+                     [self.communityScrollView flashScrollers];
                  }
              }];
             break;
@@ -491,6 +427,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 {
     [self.communityArrayController removeObjectsAtArrangedObjectIndexes:self.communityArrayController.selectionIndexes];
     [self.managedObjectContext MR_saveOnlySelfAndWait];
+    [self.communityScrollView flashScrollers];
 }
 
 -(IBAction)showImportCommunityWindow:(id)sender
@@ -501,33 +438,42 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     }
 
     NSString* email = account.email;
-    NSString* password = [SSKeychain passwordForService:[[NSBundle mainBundle] bundleIdentifier] account:email];
+    NSString* password = [self cachedPasswordForAccount:account];
+    NSMutableArray* registeredCommunities = NSMutableArray.new;
+    for (MOCommunity* community in account.communities) {
+        [registeredCommunities addObject:community.communityId];
+    }
 
-    self.importCommunityWindowController = [ImportCommunityWindowController importCommunityWindowControllerWithEmail:email password:password completion:^(BOOL isCancelled, NSArray* importedCommunities) {
-                                                [NSApp endSheet:self.importCommunityWindowController.window];
-                                                [self.importCommunityWindowController.window orderOut:self];
-                                                if (isCancelled) {
-                                                    LOG(@"import cancelled.")
-                                                } else {
-                                                    LOG(@"import done.");
-                                                    MOAccount* defaultAccount = [MOAccount defaultAccount];
-                                                    for (NSDictionary* importedCommunity in importedCommunities) {
-                                                        MOCommunity* community = [defaultAccount communityWithNumberedOrderAttribute];
-                                                        community.communityId = importedCommunity[@"communityId"];
-                                                        community.communityName = importedCommunity[@"communityName"];
-                                                        community.rating = [NSNumber numberWithInteger:kDefaultRatingValue];
-                                                        [defaultAccount addCommunitiesObject:community];
-                                                    }
-                                                    [self.managedObjectContext MR_saveOnlySelfAndWait];
-                                                }
-                                                // TODO:
-                                                self.importCommunityWindowController = nil;
-                                            }];
+    self.importCommunityWindowController =
+        [ImportCommunityWindowController importCommunityWindowControllerWithEmail:email
+                                                                         password:password
+                                                             communitiesExcluding:registeredCommunities
+                                                                       completion:^(BOOL isCancelled, NSArray* importedCommunities) {
+             [NSApp endSheet:self.importCommunityWindowController.window];
+             [self.importCommunityWindowController.window orderOut:self];
+             if (isCancelled) {
+                 LOG(@"import cancelled.")
+             } else {
+                 LOG(@"import done.");
+                 MOAccount* defaultAccount = [MOAccount defaultAccount];
+                 for (NSDictionary* importedCommunity in importedCommunities) {
+                     MOCommunity* community = [defaultAccount communityWithDefaultAttributes];
+                     community.communityId = importedCommunity[kImportCommunityKeyCommunityId];
+                     community.communityName = importedCommunity[kImportCommunityKeyCommunityName];
+                     [defaultAccount addCommunitiesObject:community];
+                 }
+                 [self.managedObjectContext MR_saveOnlySelfAndWait];
+
+                 [self.communityScrollView flashScrollers];
+             }
+             // TODO:
+             self.importCommunityWindowController = nil;
+         }];
 
     [NSApp beginSheet:self.importCommunityWindowController.window modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
 }
 
-#pragma mark Actions in Community Table View
+#pragma mark - Internal Methods, Actions in Community Table View
 
 -(IBAction)changeCommunityEnabled:(id)sender
 {
@@ -574,7 +520,76 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     [self playChimeSound];
 }
 
+#pragma mark - Internal Methods, Misc Utility
+
+#pragma mark Live Level Indicator
+
+-(void)liveCounterTimerFired:(NSTimer*)timer
+{
+    // TODO: delete
+    // LOG(@"target rating: %ld", self.targetRating);
+    // LOG(@"target rating: %@", self.targetRating);
+
+    NSDictionary* stat = @{@"date" : [NSDate date], @"liveCount": [NSNumber numberWithInteger:self.liveCount]};
+    [self.liveStats addObject:stat];
+
+    if (2 < self.liveStats.count) {
+        NSDictionary* oldest = self.liveStats[0];
+        NSDictionary* newest = self.liveStats[self.liveStats.count-1];
+        NSUInteger oldestLiveCount = ((NSNumber*)oldest[@"liveCount"]).integerValue;
+        NSUInteger newestLiveCount = ((NSNumber*)newest[@"liveCount"]).integerValue;
+        NSDate* oldestDate = oldest[@"date"];
+        NSDate* newestDate = newest[@"date"];
+        double rate = (newestLiveCount-oldestLiveCount)/([newestDate timeIntervalSinceDate:oldestDate]);
+        self.liveLevel = [NSNumber numberWithDouble:rate];
+    }
+
+    if (kLiveStatSamplingCount < self.liveStats.count) {
+        [self.liveStats removeObjectAtIndex:0];
+    }
+
+    // TODO: auto reopen stream logic here.
+}
+
+#pragma mark Default Account Predicate
+
+-(void)observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
+{
+    if ([keyPath isEqualToString:@"content"] && object == self.defaultAccountObjectController) {
+        [self updateWindowTitleAndPredicate];
+    }
+}
+
+-(void)updateWindowTitleAndPredicate
+{
+    MOAccount* account = [MOAccount defaultAccount];
+    self.windowTitle = [NSString stringWithFormat:@"Ankoku Alert: %@", account.userName ? account.userName:@"<No user selected.>"];
+
+    if (account) {
+        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"account.objectID == %@", account.objectID];
+        self.accountFilterPredicate = predicate;
+    }
+}
+
 #pragma mark Misc
+
+-(NSString*)cachedPasswordForAccount:(MOAccount*)account
+{
+    static NSMutableDictionary* cachedPasswords;
+
+    if (!cachedPasswords) {
+        cachedPasswords = NSMutableDictionary.new;
+    }
+
+    NSString* email = account.email;
+    NSString* password = cachedPasswords[email];
+    if (!password) {
+        password = [SSKeychain passwordForService:[[NSBundle mainBundle] bundleIdentifier] account:email];
+        cachedPasswords[email] = password;
+    }
+
+    return password;
+}
 
 -(void)playChimeSound
 {
@@ -588,5 +603,6 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
         [sound play];
     }
 }
+
 
 @end

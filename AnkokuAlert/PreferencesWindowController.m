@@ -82,9 +82,7 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
 // #pragma mark - [ClassName] Overrides
 // #pragma mark - [ProtocolName] Methods
 
-#pragma mark NSTableViewDataSource Methods
-
-#pragma mark Drag & Drop Reordering Support
+#pragma mark NSTableViewDataSource Methods, Drag & Drop Reordering Support
 
 -(BOOL)tableView:(NSTableView*)tableView writeRowsWithIndexes:(NSIndexSet*)rowIndexes toPasteboard:(NSPasteboard*)pboard
 {
@@ -200,7 +198,7 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
 
          BOOL isDefault = MOAccount.hasAccounts ? NO : YES;
 
-         MOAccount* account = [MOAccount accountWithNumberedOrderAttribute];
+         MOAccount* account = [MOAccount accountWithDefaultAttributes];
 #ifndef DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
          account.userId = alertStatus[AlertManagerAlertStatusKeyUserId];
          account.userName = alertStatus[AlertManagerAlertStatusKeyUserName];

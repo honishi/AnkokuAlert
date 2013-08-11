@@ -379,7 +379,7 @@
 															<string key="NSFrameSize">{768, 213}</string>
 															<reference key="NSSuperview" ref="263237692"/>
 															<reference key="NSWindow"/>
-															<reference key="NSNextKeyView" ref="666933180"/>
+															<reference key="NSNextKeyView" ref="560508663"/>
 															<string key="NSReuseIdentifierKey">_NS:13</string>
 															<bool key="NSEnabled">YES</bool>
 															<bool key="NSAllowsLogicalLayoutDirection">NO</bool>
@@ -703,7 +703,7 @@
 											<string key="NSFrame">{{0, 33}, {770, 231}}</string>
 											<reference key="NSSuperview" ref="291281860"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="560508663"/>
+											<reference key="NSNextKeyView" ref="263237692"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<int key="NSsFlags">133682</int>
 											<reference key="NSVScroller" ref="282741098"/>
@@ -741,7 +741,7 @@
 															<string key="NSFrameSize">{768, 280}</string>
 															<reference key="NSSuperview" ref="75588396"/>
 															<reference key="NSWindow"/>
-															<reference key="NSNextKeyView" ref="173620347"/>
+															<reference key="NSNextKeyView" ref="332010726"/>
 															<string key="NSReuseIdentifierKey">_NS:13</string>
 															<object class="NSTextContainer" key="NSTextContainer" id="278968641">
 																<object class="NSLayoutManager" key="NSLayoutManager">
@@ -762,7 +762,7 @@
 																<int key="NSTCFlags">1</int>
 															</object>
 															<object class="NSTextViewSharedData" key="NSSharedData">
-																<int key="NSFlags">10597</int>
+																<int key="NSFlags">67119461</int>
 																<int key="NSTextCheckingTypes">0</int>
 																<nil key="NSMarkedAttributes"/>
 																<reference key="NSBackgroundColor" ref="842522965"/>
@@ -862,7 +862,7 @@
 											<string key="NSFrameSize">{770, 282}</string>
 											<reference key="NSSuperview" ref="92070477"/>
 											<reference key="NSWindow"/>
-											<reference key="NSNextKeyView" ref="332010726"/>
+											<reference key="NSNextKeyView" ref="75588396"/>
 											<string key="NSReuseIdentifierKey">_NS:9</string>
 											<int key="NSsFlags">133138</int>
 											<reference key="NSVScroller" ref="173620347"/>
@@ -1638,6 +1638,14 @@
 						<reference key="destination" ref="9040418"/>
 					</object>
 					<int key="connectionID">920</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBOutletConnection" key="connection">
+						<string key="label">communityScrollView</string>
+						<reference key="source" ref="1001"/>
+						<reference key="destination" ref="252133575"/>
+					</object>
+					<int key="connectionID">921</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -4620,7 +4628,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">920</int>
+			<int key="maxID">921</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -4719,6 +4727,7 @@
 						<string key="communityArrayController">NSArrayController</string>
 						<string key="communityInputSheet">NSPanel</string>
 						<string key="communityInputTextField">NSTextField</string>
+						<string key="communityScrollView">NSScrollView</string>
 						<string key="communityTableView">NSTableView</string>
 						<string key="defaultAccountObjectController">NSObjectController</string>
 						<string key="liveLevelIndicatorCell">NSLevelIndicatorCell</string>
@@ -4741,6 +4750,10 @@
 						<object class="IBToOneOutletInfo" key="communityInputTextField">
 							<string key="name">communityInputTextField</string>
 							<string key="candidateClassName">NSTextField</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="communityScrollView">
+							<string key="name">communityScrollView</string>
+							<string key="candidateClassName">NSScrollView</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="communityTableView">
 							<string key="name">communityTableView</string>

@@ -460,7 +460,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 -(NSArray*)parseChat:(NSData*)data
 {
-    NSArray* liveArray;
+    NSArray* chatArray;
 
     @try {
         NSError* error = nil;
@@ -469,31 +469,30 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
         NSArray* nodes = [rootElement nodesForXPath:@"/chat" error:&error];
 
         if (nodes.count) {
-            NSString* liveString = ((NSXMLNode*)nodes[0]).stringValue;
-            // LOG(@"parsed: %@", liveString);
-            liveArray = [liveString componentsSeparatedByString:@","];
+            NSString* chatString = ((NSXMLNode*)nodes[0]).stringValue;
+            // LOG(@"parsed: %@", chatString);
+            NSArray* chatsSeparated = [chatString componentsSeparatedByString:@","];
+
+            if (chatsSeparated.count == 3) {
+                NSString* liveId = [@"lv" stringByAppendingString : chatsSeparated[0]];
+                chatArray = @[liveId, chatsSeparated[1], chatsSeparated[2]];
+            }
         }
     }
     @catch (NSException* exception) {
         LOG(@"caught exception in parsing chat: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
     }
 
-    return (liveArray.count == 3 ? liveArray : nil);
+    return chatArray;
 }
 
--(void)handleChat:(NSArray*)chat
+-(BOOL)isLiveIdDuplicated:(NSString*)liveId
 {
-    if (!chat) {
-        return;
-    }
-
     static NSMutableArray* recentLiveIds = nil;
 
     if (!recentLiveIds) {
         recentLiveIds = NSMutableArray.new;
     }
-
-    NSString* liveId = [@"lv" stringByAppendingString : chat[0]];
 
     BOOL isDuplicated = NO;
     for (NSString* pastliveId in recentLiveIds) {
@@ -503,16 +502,26 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
         }
     }
 
-    if (!isDuplicated) {
+    [recentLiveIds addObject:liveId];
+    if (kMaxRecentLiveIdsCount < recentLiveIds.count) {
+        [recentLiveIds removeObjectAtIndex:0];
+    }
+
+    return isDuplicated;
+}
+
+-(void)handleChat:(NSArray*)chats
+{
+    if (!chats) {
+        return;
+    }
+
+    if (![self isLiveIdDuplicated:chats[0]]) {
         if ([self.streamListener respondsToSelector:@selector(alertManager:didReceiveLive:community:user:url:)]) {
-            NSString* url = [kUrlLive stringByAppendingString:liveId];
-            [self.streamListener alertManager:self didReceiveLive:liveId community:chat[1] user:chat[2] url:url];
+            NSString* url = [kUrlLive stringByAppendingString:chats[0]];
+            [self.streamListener alertManager:self didReceiveLive:chats[0] community:chats[1] user:chats[2] url:url];
         }
 
-        [recentLiveIds addObject:liveId];
-        if (kMaxRecentLiveIdsCount < recentLiveIds.count) {
-            [recentLiveIds removeObjectAtIndex:0];
-        }
     } else {
         // LOG(@"live is duplicated. liveId %@ is in %@.", liveId, recentLiveIds);
     }

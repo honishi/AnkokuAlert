@@ -12,6 +12,26 @@
 
 // Custom logic goes here.
 
+#pragma mark - Public Methods
+
+-(void)exchangeCommunityWithCommunity:(MOCommunity*)community
+{
+    NSString* workCommunityId = community.communityId;
+    NSString* workCommunityName = community.communityName;
+    NSNumber* workIsEnabled = community.isEnabled;
+    NSNumber* workRating = community.rating;
+
+    community.communityId = self.communityId;
+    community.communityName = self.communityName;
+    community.isEnabled = self.isEnabled;
+    community.rating = self.rating;
+
+    self.communityId = workCommunityId;
+    self.communityName = workCommunityName;
+    self.isEnabled = workIsEnabled;
+    self.rating = workRating;
+}
+
 #pragma mark - Internal Methods
 
 #pragma mark Maintain Order Attribute

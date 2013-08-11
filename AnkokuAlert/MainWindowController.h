@@ -14,7 +14,6 @@
 @property (nonatomic) NSString* windowTitle;
 @property (nonatomic) NSPredicate* accountFilterPredicate;
 
-@property (nonatomic, weak) IBOutlet NSTableView* communityTableView;
 //@property (nonatomic) NSInteger targetRating;
 @property (nonatomic) NSString* targetRating;
 

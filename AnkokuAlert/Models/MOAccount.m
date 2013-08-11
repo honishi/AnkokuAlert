@@ -1,6 +1,8 @@
 #import "MOAccount.h"
 #import "MOCommunity.h"
 
+NSUInteger const kDefaultRatingValue = 3;
+
 @interface MOAccount ()
 
 // Private interface goes here.
@@ -14,7 +16,7 @@
 
 #pragma mark - Object Lifecycle
 
-+(MOAccount*)accountWithNumberedOrderAttribute
++(MOAccount*)accountWithDefaultAttributes
 {
     MOAccount* account = [MOAccount MR_createEntity];
     account.order = MOAccount.nextAccountOrder;
@@ -44,10 +46,12 @@
     return 0 < [MOAccount findAll].count;
 }
 
--(MOCommunity*)communityWithNumberedOrderAttribute
+-(MOCommunity*)communityWithDefaultAttributes
 {
     MOCommunity* community = [MOCommunity MR_createEntity];
     community.order = [self nextCommunityOrder];
+    community.isEnabled = [NSNumber numberWithBool:YES];
+    community.rating = [NSNumber numberWithInteger:kDefaultRatingValue];
 
     return community;
 }
