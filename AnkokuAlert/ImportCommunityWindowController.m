@@ -92,6 +92,7 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
              // TODO: implement for channel case.
              self.community[kImportCommunityKeyCommunityName] = @"(request failed.)";
          }
+         self.community[kImportCommunityKeyIsCommunityNameUpdated] = [NSNumber numberWithBool:YES];
 
          if (self.completion) {
              self.completion();
@@ -188,8 +189,6 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
     for (NSMutableDictionary* community in self.communityArrayController.arrangedObjects) {
         CommunityInfoRequestBlockOperation* operation =
             [CommunityInfoRequestBlockOperation operationWithCommunity:community completion:^() {
-                 community[kImportCommunityKeyIsCommunityNameUpdated] = [NSNumber numberWithBool:YES];
-
                  BOOL updateInProgress = NO;
                  for (NSDictionary* community in self.communityArrayController.arrangedObjects) {
                      if (((NSNumber*)community[kImportCommunityKeyIsCommunityNameUpdated]).boolValue == NO) {

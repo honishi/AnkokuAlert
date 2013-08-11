@@ -86,15 +86,18 @@
 -(void)logToConsole:(NSAttributedString*)message
 {
     BOOL shouldScrollToBottom = NO;
-    NSMutableAttributedString* attributedMessage = NSMutableAttributedString.new;
-
-    [attributedMessage appendAttributedString:[self dateTimeAttributedString]];
-    [attributedMessage appendAttributedString:message];
-    [attributedMessage appendAttributedString:[[NSAttributedString alloc] initWithString:@"\n"]];
-
     if (self.verticalScroller.floatValue == 1.0f) {
         shouldScrollToBottom = YES;
     }
+
+    if (self.alertLogTextView.textStorage.length) {
+        NSAttributedString* enter = [[NSAttributedString alloc] initWithString:@"\n"];
+        [self.alertLogTextView.textStorage appendAttributedString:enter];
+    }
+
+    NSMutableAttributedString* attributedMessage = NSMutableAttributedString.new;
+    [attributedMessage appendAttributedString:[self dateTimeAttributedString]];
+    [attributedMessage appendAttributedString:message];
 
     [self.alertLogTextView.textStorage appendAttributedString:attributedMessage];
     [self flashScrollers];
