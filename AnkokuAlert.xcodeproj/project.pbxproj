@@ -166,10 +166,10 @@
 		DBD33BC2179C3707003A41F9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DBD33BC4179C3707003A41F9 /* AnkokuAlertTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnkokuAlertTests.h; sourceTree = "<group>"; };
 		DBD33BC5179C3707003A41F9 /* AnkokuAlertTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnkokuAlertTests.m; sourceTree = "<group>"; };
-		ED4E6A7A17B0E5A900B008CB /* _MOCommunity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _MOCommunity.h; path = Models/_MOCommunity.h; sourceTree = "<group>"; };
-		ED4E6A7B17B0E5A900B008CB /* _MOCommunity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _MOCommunity.m; path = Models/_MOCommunity.m; sourceTree = "<group>"; };
-		ED4E6A7C17B0E5A900B008CB /* MOCommunity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOCommunity.h; path = Models/MOCommunity.h; sourceTree = "<group>"; };
-		ED4E6A7D17B0E5A900B008CB /* MOCommunity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOCommunity.m; path = Models/MOCommunity.m; sourceTree = "<group>"; };
+		ED4E6A7A17B0E5A900B008CB /* _MOCommunity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _MOCommunity.h; sourceTree = "<group>"; };
+		ED4E6A7B17B0E5A900B008CB /* _MOCommunity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _MOCommunity.m; sourceTree = "<group>"; };
+		ED4E6A7C17B0E5A900B008CB /* MOCommunity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOCommunity.h; sourceTree = "<group>"; };
+		ED4E6A7D17B0E5A900B008CB /* MOCommunity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MOCommunity.m; sourceTree = "<group>"; };
 		ED4E6A8517B0E94200B008CB /* MagicalImportFunctions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicalImportFunctions.h; sourceTree = "<group>"; };
 		ED4E6A8617B0E94200B008CB /* MagicalImportFunctions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicalImportFunctions.m; sourceTree = "<group>"; };
 		ED4E6A8717B0E94200B008CB /* NSAttributeDescription+MagicalDataImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSAttributeDescription+MagicalDataImport.h"; sourceTree = "<group>"; };
@@ -224,10 +224,10 @@
 		ED4E6ABB17B0E94200B008CB /* MagicalRecord.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MagicalRecord.m; sourceTree = "<group>"; };
 		ED4E6ABC17B0E94200B008CB /* MagicalRecordShorthand.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MagicalRecordShorthand.h; sourceTree = "<group>"; };
 		ED4E6ABD17B0E94200B008CB /* CoreData+MagicalRecord.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "CoreData+MagicalRecord.h"; path = "Vendor/MagicalRecord/MagicalRecord/CoreData+MagicalRecord.h"; sourceTree = SOURCE_ROOT; };
-		ED7DC34017B225C1007A9D8F /* _MOAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = _MOAccount.h; path = Models/_MOAccount.h; sourceTree = "<group>"; };
-		ED7DC34117B225C1007A9D8F /* _MOAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = _MOAccount.m; path = Models/_MOAccount.m; sourceTree = "<group>"; };
-		ED7DC34217B225C1007A9D8F /* MOAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MOAccount.h; path = Models/MOAccount.h; sourceTree = "<group>"; };
-		ED7DC34317B225C1007A9D8F /* MOAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MOAccount.m; path = Models/MOAccount.m; sourceTree = "<group>"; };
+		ED7DC34017B225C1007A9D8F /* _MOAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _MOAccount.h; sourceTree = "<group>"; };
+		ED7DC34117B225C1007A9D8F /* _MOAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _MOAccount.m; sourceTree = "<group>"; };
+		ED7DC34217B225C1007A9D8F /* MOAccount.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOAccount.h; sourceTree = "<group>"; };
+		ED7DC34317B225C1007A9D8F /* MOAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MOAccount.m; sourceTree = "<group>"; };
 		EDCE607A17B4C860005B4C67 /* NSString+CompareCommunityId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CompareCommunityId.h"; sourceTree = "<group>"; };
 		EDCE607B17B4C860005B4C67 /* NSString+CompareCommunityId.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CompareCommunityId.m"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -290,7 +290,7 @@
 				DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */,
 				DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */,
 			);
-			name = Controllers;
+			path = Controllers;
 			sourceTree = "<group>";
 		};
 		DB69268717B3F4CB00027BBC /* Resources */ = {
@@ -416,7 +416,7 @@
 				ED4E6A7C17B0E5A900B008CB /* MOCommunity.h */,
 				ED4E6A7D17B0E5A900B008CB /* MOCommunity.m */,
 			);
-			name = Models;
+			path = Models;
 			sourceTree = "<group>";
 		};
 		ED4E6A8217B0E91400B008CB /* MagicalRecord */ = {
@@ -528,7 +528,7 @@
 				DB650FD417A15A1100B46806 /* AlertManager.h */,
 				DB650FD517A15A1100B46806 /* AlertManager.m */,
 			);
-			name = Managers;
+			path = Managers;
 			sourceTree = "<group>";
 		};
 		EDCE607E17B4C86A005B4C67 /* Categories */ = {
@@ -537,7 +537,7 @@
 				EDCE607A17B4C860005B4C67 /* NSString+CompareCommunityId.h */,
 				EDCE607B17B4C860005B4C67 /* NSString+CompareCommunityId.m */,
 			);
-			name = Categories;
+			path = Categories;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
