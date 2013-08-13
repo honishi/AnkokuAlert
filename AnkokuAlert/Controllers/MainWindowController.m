@@ -34,9 +34,17 @@ NSString* const kUserDefaultsKeyLogAllLive = @"LogAllLive";
 NSString* const kRegExpLiveId = @".*(lv\\d+)";
 NSString* const kRegExpCommunityId = @".*(co\\d+)";
 
+NSString* const kAlertSoundFileNameDefault = @"DefaultSound";
+NSString* const kAlertSoundFileNameOption = @"OptionSound";
+
 float const kLiveStatTimerInterval = 0.5f;
 float const kLiveLevelTimePeriod = 10.0f;
 float const kDisconnectAutoDetectionTimePeriod = 20.0f;
+
+typedef NS_ENUM (NSInteger, AlertSoundType) {
+    AlertSoundTypeDefault,
+    AlertSoundTypeOption
+};
 
 #pragma mark - Value Transformer
 
@@ -198,15 +206,15 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 #ifdef DEBUG_FORCE_ALERTING
         isForceAlerting = (self.liveCount % FORCE_ALERTING_INTERVAL) == 0;
 #endif
-        // TODO: add other condition, like target rating level.
-        if (!targetCommunity.isEnabled.boolValue) {
-            continue;
-        }
-
         if (isForceAlerting ||
             ([communityId isEqualToString:targetCommunity.communityId])) {
-            [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:liveUrl]];
-            [self playChimeSound];
+            // TODO: add other condition, like target rating level.
+            if (!targetCommunity.isEnabled.boolValue) {
+                [self playAlertSound:AlertSoundTypeOption];
+            } else {
+                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:liveUrl]];
+                [self playAlertSound:AlertSoundTypeDefault];
+            }
             shouldLogLiveInfo = YES;
             break;
         }
@@ -522,7 +530,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 -(IBAction)changeSoundVolume:(id)sender
 {
-    [self playChimeSound];
+    [self playAlertSound:AlertSoundTypeDefault];
 }
 
 #pragma mark - Internal Methods, Misc Utility
@@ -638,13 +646,27 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     return password;
 }
 
--(void)playChimeSound
+-(void)playAlertSound:(AlertSoundType)soundType
 {
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSNumber* soundVolume = [defaults valueForKey:kUserDefaultsKeySoundVolume];
 
     if (0 < soundVolume.integerValue) {
-        NSSound* sound = [[NSSound alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"DefaultSound" ofType:@"mp3"] byReference:NO];
+        NSString* fileName;
+        switch (soundType) {
+            case AlertSoundTypeDefault :
+                fileName = kAlertSoundFileNameDefault;
+                break;
+
+            case AlertSoundTypeOption:
+                fileName = kAlertSoundFileNameOption;
+                break;
+
+            default:
+                break;
+        }
+
+        NSSound* sound = [[NSSound alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:fileName ofType:@"mp3"] byReference:NO];
         [sound setVolume:soundVolume.floatValue/100];
 
         [sound play];
