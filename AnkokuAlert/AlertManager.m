@@ -315,8 +315,8 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 -(void)openSocketWithAlertStatus:(NSDictionary*)alertStatus
 {
-    if (self.inputStream && self.outputStream) {
-        return;
+    if (self.inputStream || self.outputStream) {
+        [self closeSocket];
     }
 
     NSInputStream* inputStream;
@@ -342,7 +342,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 -(void)closeSocket
 {
-    if (!self.inputStream || !self.outputStream) {
+    if (!self.inputStream && !self.outputStream) {
         return;
     }
 
@@ -403,13 +403,11 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
             case NSStreamEventErrorOccurred:
                 LOG(@"*** stream event error occurred");
+                [self closeSocket];
                 break;
 
             case NSStreamEventEndEncountered:
                 LOG(@"*** stream event end encountered");
-                if ([self.streamListener respondsToSelector:@selector(alertManagerDidCloseStream:)]) {
-                    [self.streamListener alertManagerDidCloseStream:self];
-                }
                 break;
 
             default:

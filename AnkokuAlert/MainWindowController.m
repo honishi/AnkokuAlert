@@ -35,7 +35,8 @@ NSString* const kRegExpLiveId = @".*(lv\\d+)";
 NSString* const kRegExpCommunityId = @".*(co\\d+)";
 
 float const kLiveStatTimerInterval = 0.5f;
-int const kLiveStatSamplingCount = 20;
+float const kLiveLevelTimePeriod = 10.0f;
+float const kDisconnectAutoDetectionTimePeriod = 20.0f;
 
 #pragma mark - Value Transformer
 
@@ -90,6 +91,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 @property (nonatomic) NSUInteger liveCount;
 @property (nonatomic) NSMutableArray* liveStats;
+@property (nonatomic) BOOL isOpeningStreamInProgress;
 
 @property (nonatomic) ImportCommunityWindowController* importCommunityWindowController;
 @property (nonatomic) ConfirmationWindowController* confirmationWindowController;
@@ -131,7 +133,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
     [self updateWindowTitleAndPredicate];
 
-    [NSTimer scheduledTimerWithTimeInterval:kLiveStatTimerInterval target:self selector:@selector(liveCounterTimerFired:) userInfo:nil repeats:YES];
+    [NSTimer scheduledTimerWithTimeInterval:kLiveStatTimerInterval target:self selector:@selector(liveStatTimerFired:) userInfo:nil repeats:YES];
 
     if (!MOAccount.hasAccounts) {
         double delayInSeconds = 0.5f;
@@ -231,12 +233,12 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 -(void)alertManagerdidOpenStream:(AlertManager*)alertManager
 {
     [self.alertLogScrollView logMessage:@"Connected."];
+    self.isOpeningStreamInProgress = NO;
 }
 
 -(void)alertManagerDidCloseStream:(AlertManager*)alertManager
 {
     [self.alertLogScrollView logMessage:@"Disconnected."];
-    self.isStreamOpened = NO;
 }
 
 #pragma mark NSTableViewDataSource Methods
@@ -295,13 +297,15 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
     if (account) {
         self.isStreamOpened = YES;
+        self.isOpeningStreamInProgress = YES;
+        [self.liveStats removeAllObjects];
 
         NSString* email = account.email;
         NSString* password = [self cachedPasswordForAccount:account];
 
         [[AlertManager sharedManager] loginWithEmail:email password:password completion:^(NSDictionary* alertStatus, NSError* error) {
              if (error) {
-                 self.isStreamOpened = NO;
+                 [self.alertLogScrollView logMessage:@"Login failed..."];
              } else {
                  [[AlertManager sharedManager] openStreamWithAlertStatus:alertStatus streamListener:self];
              }
@@ -312,6 +316,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 -(IBAction)stopAlert:(id)sender
 {
     [[AlertManager sharedManager] closeStream];
+    self.isStreamOpened = NO;
 }
 
 #pragma mark Add/Remove/Import Community
@@ -522,33 +527,75 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 #pragma mark - Internal Methods, Misc Utility
 
-#pragma mark Live Level Indicator
+#pragma mark Live Stat Timer
 
--(void)liveCounterTimerFired:(NSTimer*)timer
+-(void)liveStatTimerFired:(NSTimer*)timer
 {
-    // TODO: delete
-    // LOG(@"target rating: %ld", self.targetRating);
-    // LOG(@"target rating: %@", self.targetRating);
+    NSDictionary* currentStat = @{@"date" : [NSDate date], @"liveCount": [NSNumber numberWithInteger:self.liveCount]};
+    [self.liveStats addObject:currentStat];
 
-    NSDictionary* stat = @{@"date" : [NSDate date], @"liveCount": [NSNumber numberWithInteger:self.liveCount]};
-    [self.liveStats addObject:stat];
+    [self updateLiveLevel];
+    [self checkDisconnected];
 
-    if (2 < self.liveStats.count) {
-        NSDictionary* oldest = self.liveStats[0];
-        NSDictionary* newest = self.liveStats[self.liveStats.count-1];
-        NSUInteger oldestLiveCount = ((NSNumber*)oldest[@"liveCount"]).integerValue;
-        NSUInteger newestLiveCount = ((NSNumber*)newest[@"liveCount"]).integerValue;
-        NSDate* oldestDate = oldest[@"date"];
-        NSDate* newestDate = newest[@"date"];
-        double rate = (newestLiveCount-oldestLiveCount)/([newestDate timeIntervalSinceDate:oldestDate]);
-        self.liveLevel = [NSNumber numberWithDouble:rate];
+    for (NSDictionary* stat in self.liveStats.reverseObjectEnumerator) {
+        float timeDelta = [(NSDate*)stat[@"date"] timeIntervalSinceNow];
+        if (fmaxf(kLiveLevelTimePeriod, kDisconnectAutoDetectionTimePeriod) <= fabs(timeDelta)) {
+            [self.liveStats removeObject:stat];
+        }
+    }
+}
+
+-(void)updateLiveLevel
+{
+    if (self.liveStats.count < 2) {
+        self.liveLevel = [NSNumber numberWithFloat:0.0f];
+        return;
     }
 
-    if (kLiveStatSamplingCount < self.liveStats.count) {
-        [self.liveStats removeObjectAtIndex:0];
-    }
+    NSDictionary* lastStat = self.liveStats.lastObject;
+    NSUInteger lastLiveCount = ((NSNumber*)lastStat[@"liveCount"]).integerValue;
+    NSDate* lastDate = lastStat[@"date"];
 
-    // TODO: auto reopen stream logic here.
+    NSDictionary* pastStat = nil;
+    for (NSDictionary* stat in self.liveStats.reverseObjectEnumerator) {
+        pastStat = stat;
+        float timeDelta = [(NSDate*)stat[@"date"] timeIntervalSinceNow];
+        if (kLiveLevelTimePeriod <= fabsf(timeDelta)) {
+            break;
+        }
+    }
+    // LOG(@"current:%@ past:%@", currentStat[@"date"], pastStat[@"date"]);
+
+    NSUInteger pastLiveCount = ((NSNumber*)pastStat[@"liveCount"]).integerValue;
+    NSDate* pastDate = pastStat[@"date"];
+
+    float level = (lastLiveCount-pastLiveCount)/([lastDate timeIntervalSinceDate:pastDate]);
+    self.liveLevel = [NSNumber numberWithFloat:level];
+}
+
+-(void)checkDisconnected
+{
+    NSDictionary* lastStat = self.liveStats.lastObject;
+    NSUInteger lastLiveCount = ((NSNumber*)lastStat[@"liveCount"]).integerValue;
+
+    if (self.isStreamOpened && !self.isOpeningStreamInProgress) {
+        NSDictionary* pastStat = nil;
+        for (NSDictionary* stat in self.liveStats.reverseObjectEnumerator) {
+            float timeDelta = [(NSDate*)stat[@"date"] timeIntervalSinceNow];
+            if (kDisconnectAutoDetectionTimePeriod <= fabsf(timeDelta)) {
+                pastStat = stat;
+                break;
+            }
+        }
+
+        if (pastStat) {
+            NSUInteger pastLiveCount = ((NSNumber*)pastStat[@"liveCount"]).integerValue;
+            if (lastLiveCount - pastLiveCount == 0) {
+                [self.alertLogScrollView logMessage:@"Detected disconnected. Reconnecting..."];
+                [self startAlert:self];
+            }
+        }
+    }
 }
 
 #pragma mark Default Account Predicate
