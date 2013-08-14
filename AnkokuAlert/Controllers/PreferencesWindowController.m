@@ -43,18 +43,6 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
     return [[PreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindowController"];
 }
 
-// TODO: delete this.
--(id)initWithWindow:(NSWindow*)window
-{
-    self = [super initWithWindow:window];
-
-    if (self) {
-        // do nothing
-    }
-
-    return self;
-}
-
 // use windowDidLoad instead of awakeFromNib. http://stackoverflow.com/a/15780876
 -(void)windowDidLoad
 {

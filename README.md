@@ -1,5 +1,10 @@
-AnkokuAlert
+AnkokuAlert 2.x
 =========
+Niconama alert altenative for OS X
+
+sample
+-
+![screenshot](https://dl.dropboxusercontent.com/u/444711/github.com/honishi/AnkokuAlert/screenshot.png)
 
 setup repository
 -

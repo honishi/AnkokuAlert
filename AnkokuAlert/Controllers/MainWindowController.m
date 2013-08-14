@@ -22,14 +22,16 @@
 //#define DEBUG_CREATE_DUMMY_COMMUNITIES
 //#define DEBUG_FORCE_ALERTING
 
-#define DUMMY_ACCOUNT_COUNT 3
-#define DUMMY_COMMUNITY_COUNT 20
-#define FORCE_ALERTING_INTERVAL 20
+#define DUMMY_ACCOUNT_COUNT         3
+#define DUMMY_COMMUNITY_COUNT       20
+#define FORCE_ALERTING_INTERVAL     50
 
 NSString* const kCommunityTableViewDraggedType = @"kCommunityTableViewDraggedType";
 
 NSString* const kUserDefaultsKeySoundVolume = @"SoundVolume";
 NSString* const kUserDefaultsKeyLogAllLive = @"LogAllLive";
+NSString* const kUserDefaultsKeyTargetRating = @"TargetRating";
+NSString* const kUserDefaultsKeyOpenLive = @"OpenLive";
 
 NSString* const kRegExpLiveId = @".*(lv\\d+)";
 NSString* const kRegExpCommunityId = @".*(co\\d+)";
@@ -76,6 +78,35 @@ typedef NS_ENUM (NSInteger, AlertSoundType) {
 
 @end
 
+@interface SoundVolumeValueTransformer : NSValueTransformer {}
+@end
+
+@implementation SoundVolumeValueTransformer
+
++(Class)transformedValueClass
+{
+    return [NSString class];
+}
+
++(BOOL)allowsReverseTransformation
+{
+    return NO;
+}
+
+-(id)transformedValue:(id)value
+{
+    NSInteger volume = ((NSNumber*)value).integerValue;
+    NSString* content = nil;
+    if (!volume) {
+        content = @"Off";
+    } else {
+        content = [NSString stringWithFormat:@"%ld%%", volume];
+    }
+    return [NSString stringWithFormat:@"(%@)", content];
+}
+
+@end
+
 #pragma mark - Main Window Controller
 
 typedef NS_ENUM (NSInteger, CommunityInputType) {
@@ -86,21 +117,20 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 @interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource, NSTextFieldDelegate, NSUserNotificationCenterDelegate>
 
-@property (weak) IBOutlet NSScrollView* communityScrollView;
+@property (nonatomic, weak) IBOutlet NSScrollView* communityScrollView;
 @property (nonatomic, weak) IBOutlet NSTableView* communityTableView;
 // NSTextVIew doesn't support weak reference in arc.
-@property (strong) IBOutlet NSTextView* logTextView;
-// @property (weak) IBOutlet NSScrollView* logScrollView;
-@property (weak) IBOutlet AlertLogScrollView* alertLogScrollView;
-@property (weak) IBOutlet NSLevelIndicatorCell* liveLevelIndicatorCell;
-@property (weak) IBOutlet NSTextFieldCell* liveLevelTextFieldCell;
-@property (unsafe_unretained) IBOutlet NSPanel* communityInputSheet;
-@property (weak) IBOutlet NSTextField* communityInputTextField;
+@property (nonatomic, strong) IBOutlet NSTextView* logTextView;
+@property (nonatomic, weak) IBOutlet AlertLogScrollView* alertLogScrollView;
+@property (nonatomic, weak) IBOutlet NSLevelIndicatorCell* liveLevelIndicatorCell;
+@property (nonatomic, weak) IBOutlet NSTextFieldCell* liveLevelTextFieldCell;
+@property (nonatomic, unsafe_unretained) IBOutlet NSPanel* communityInputSheet;
+@property (nonatomic, weak) IBOutlet NSTextField* communityInputTextField;
 @property (nonatomic) CommunityInputType communityInputType;
 @property (nonatomic) NSString* communityInputValue;
 
-@property (weak) IBOutlet NSArrayController* communityArrayController;
-@property (weak) IBOutlet NSObjectController* defaultAccountObjectController;
+@property (nonatomic, weak) IBOutlet NSArrayController* communityArrayController;
+@property (nonatomic, weak) IBOutlet NSObjectController* defaultAccountObjectController;
 
 @property (nonatomic) NSUInteger liveCount;
 @property (nonatomic) NSMutableArray* liveStats;
@@ -123,6 +153,8 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     if (self) {
         self.liveStats = NSMutableArray.new;
         NSUserNotificationCenter.defaultUserNotificationCenter.delegate = self;
+
+        [self setupUserDefaults];
     }
 
     return self;
@@ -148,12 +180,16 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
     [NSTimer scheduledTimerWithTimeInterval:kLiveStatTimerInterval target:self selector:@selector(liveStatTimerFired:) userInfo:nil repeats:YES];
 
-    if (!MOAccount.hasAccounts) {
-        double delayInSeconds = 0.5f;
-        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
-        dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
-                [self showPreferences:self];
-            });
+    if (MOAccount.defaultAccount) {
+        [self startAlert:self];
+    } else {
+        if (!MOAccount.hasAccounts) {
+            double delayInSeconds = 0.5f;
+            dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+            dispatch_after(popTime, dispatch_get_main_queue(), ^(void) {
+                    [self showPreferences:self];
+                });
+        }
     }
 }
 
@@ -210,15 +246,18 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     BOOL shouldNotifyLiveInfo = NO;
     for (MOCommunity* targetCommunity in targetCommunities) {
 #ifdef DEBUG_FORCE_ALERTING
-        isForceAlerting = (self.liveCount % FORCE_ALERTING_INTERVAL) == 0;
+        isForceAlerting = (self.liveCount != 0) && (self.liveCount % FORCE_ALERTING_INTERVAL == 0);
 #endif
         if (isForceAlerting ||
             ([communityId isEqualToString:targetCommunity.communityId])) {
-            // TODO: add other condition, like target rating level.
-            if (!targetCommunity.isEnabled.boolValue) {
+            NSNumber* targetRating = [[NSUserDefaults standardUserDefaults] valueForKey:kUserDefaultsKeyTargetRating];
+            NSNumber* openLive = [[NSUserDefaults standardUserDefaults] valueForKey:kUserDefaultsKeyOpenLive];
+            if (!targetCommunity.isEnabled.boolValue || targetCommunity.rating.integerValue < targetRating.integerValue) {
                 [self playAlertSound:AlertSoundTypeOption];
             } else {
-                [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:liveUrl]];
+                if (openLive.boolValue) {
+                    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:liveUrl]];
+                }
                 [self playAlertSound:AlertSoundTypeDefault];
             }
             shouldLogLiveInfo = YES;
@@ -266,9 +305,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     [self.alertLogScrollView logMessage:@"Disconnected."];
 }
 
-#pragma mark NSTableViewDataSource Methods
-
-#pragma mark Drag & Drop Reordering Support
+#pragma mark NSTableViewDataSource Methods, Drag & Drop Reordering Support
 
 -(BOOL)tableView:(NSTableView*)tableView writeRowsWithIndexes:(NSIndexSet*)rowIndexes toPasteboard:(NSPasteboard*)pboard
 {
@@ -484,9 +521,9 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
              [NSApp endSheet:self.importCommunityWindowController.window];
              [self.importCommunityWindowController.window orderOut:self];
              if (isCancelled) {
-                 LOG(@"import cancelled.")
+                 // LOG(@"import cancelled.")
              } else {
-                 LOG(@"import done.");
+                 // LOG(@"import done.");
                  MOAccount* defaultAccount = [MOAccount defaultAccount];
                  for (NSDictionary* importedCommunity in importedCommunities) {
                      MOCommunity* community = [defaultAccount communityWithDefaultAttributes];
@@ -504,6 +541,10 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
     [NSApp beginSheet:self.importCommunityWindowController.window modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
 }
+
+#pragma mark Show Preferences (is in Public Interfaces)
+
+// snip
 
 #pragma mark - Internal Methods, Actions in Community Table View
 
@@ -530,7 +571,6 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 -(IBAction)changeCommunityRating:(id)sender
 {
-    // [self.communityArrayController rearrangeObjects];
     [self.managedObjectContext MR_saveOnlySelfAndWait];
 }
 
@@ -541,10 +581,6 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
     NSString* url = [AlertManager communityUrlStringWithCommunithId:selectedCommunity.communityId];
     [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:url]];
-}
-
--(IBAction)selectTargetRating:(id)sender
-{
 }
 
 -(IBAction)changeSoundVolume:(id)sender
@@ -560,6 +596,37 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 }
 
 #pragma mark - Internal Methods, Misc Utility
+
+#pragma mark UserDefaults
+
+-(void)setupUserDefaults
+{
+    [[NSUserDefaults standardUserDefaults] registerDefaults:
+     @{kUserDefaultsKeyTargetRating: [NSNumber numberWithInteger:0],
+       kUserDefaultsKeyLogAllLive: [NSNumber numberWithBool:NO],
+       kUserDefaultsKeySoundVolume: [NSNumber numberWithInteger:100],
+       kUserDefaultsKeyOpenLive: [NSNumber numberWithBool:YES]}];
+}
+
+#pragma mark Default Account Predicate
+
+-(void)observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
+{
+    if ([keyPath isEqualToString:@"content"] && object == self.defaultAccountObjectController) {
+        [self updateWindowTitleAndPredicate];
+    }
+}
+
+-(void)updateWindowTitleAndPredicate
+{
+    MOAccount* account = [MOAccount defaultAccount];
+    self.windowTitle = [NSString stringWithFormat:@"Ankoku Alert: %@", account.userName ? account.userName:@"<No user selected.>"];
+
+    if (account) {
+        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"account.objectID == %@", account.objectID];
+        self.accountFilterPredicate = predicate;
+    }
+}
 
 #pragma mark Live Stat Timer
 
@@ -632,26 +699,6 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     }
 }
 
-#pragma mark Default Account Predicate
-
--(void)observeValueForKeyPath:(NSString*)keyPath ofObject:(id)object change:(NSDictionary*)change context:(void*)context
-{
-    if ([keyPath isEqualToString:@"content"] && object == self.defaultAccountObjectController) {
-        [self updateWindowTitleAndPredicate];
-    }
-}
-
--(void)updateWindowTitleAndPredicate
-{
-    MOAccount* account = [MOAccount defaultAccount];
-    self.windowTitle = [NSString stringWithFormat:@"Ankoku Alert: %@", account.userName ? account.userName:@"<No user selected.>"];
-
-    if (account) {
-        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"account.objectID == %@", account.objectID];
-        self.accountFilterPredicate = predicate;
-    }
-}
-
 #pragma mark Misc
 
 -(NSString*)cachedPasswordForAccount:(MOAccount*)account
@@ -680,7 +727,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     if (0 < soundVolume.integerValue) {
         NSString* fileName;
         switch (soundType) {
-            case AlertSoundTypeDefault :
+            case AlertSoundTypeDefault:
                 fileName = kAlertSoundFileNameDefault;
                 break;
 

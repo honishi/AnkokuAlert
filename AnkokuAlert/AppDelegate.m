@@ -19,7 +19,6 @@
 
 -(void)applicationDidFinishLaunching:(NSNotification*)aNotification
 {
-    // Insert code here to initialize your application
     [MagicalRecord setupCoreDataStack];
     // LOG(@"%@", [MagicalRecord currentStack]);
 
@@ -33,9 +32,12 @@
     [MagicalRecord cleanUp];
 }
 
-// TODO: setup userdefault like SoundVolume
+-(BOOL)applicationShouldTerminateAfterLastWindowClosed:(NSApplication*)sender
+{
+    return YES;
+}
 
-#pragma mark - Action
+#pragma mark - Public Methods, Menu Actions
 
 -(IBAction)showPreferencesWindow:(id)sender
 {

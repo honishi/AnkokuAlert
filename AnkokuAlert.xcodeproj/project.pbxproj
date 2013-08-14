@@ -26,10 +26,6 @@
 		DB4E6B5817BBB2750079BA92 /* ImportCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B5617BBB2750079BA92 /* ImportCommunityTemplate.png */; };
 		DB4E6B5A17BBB27F0079BA92 /* PreferencesTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B5917BBB27F0079BA92 /* PreferencesTemplate.png */; };
 		DB4E6B5B17BBB27F0079BA92 /* PreferencesTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B5917BBB27F0079BA92 /* PreferencesTemplate.png */; };
-		DB4E6B6417BBBF7E0079BA92 /* AddCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B6217BBBF7E0079BA92 /* AddCommunityTemplate.png */; };
-		DB4E6B6517BBBF7E0079BA92 /* AddCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B6217BBBF7E0079BA92 /* AddCommunityTemplate.png */; };
-		DB4E6B6617BBBF7E0079BA92 /* RemoveCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B6317BBBF7E0079BA92 /* RemoveCommunityTemplate.png */; };
-		DB4E6B6717BBBF7E0079BA92 /* RemoveCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B6317BBBF7E0079BA92 /* RemoveCommunityTemplate.png */; };
 		DB5BA5AC17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */; };
 		DB5BA5AD17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */; };
 		DB5BA5AE17B3B115004B8B0A /* ConfirmationWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */; };
@@ -45,6 +41,12 @@
 		DB69268D17B3F58800027BBC /* DefaultSound.mp3 in Resources */ = {isa = PBXBuildFile; fileRef = DB69268B17B3F58800027BBC /* DefaultSound.mp3 */; };
 		DB76445517B5FF70003A79B6 /* AlertLogScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB76445417B5FF70003A79B6 /* AlertLogScrollView.m */; };
 		DB76445617B5FF70003A79B6 /* AlertLogScrollView.m in Sources */ = {isa = PBXBuildFile; fileRef = DB76445417B5FF70003A79B6 /* AlertLogScrollView.m */; };
+		DBBE509B17BBE83A005D5C9B /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = DBBE509A17BBE83A005D5C9B /* icon.icns */; };
+		DBBE509C17BBE83A005D5C9B /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = DBBE509A17BBE83A005D5C9B /* icon.icns */; };
+		DBBE50A217BBF862005D5C9B /* AddCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DBBE50A017BBF862005D5C9B /* AddCommunityTemplate.png */; };
+		DBBE50A317BBF862005D5C9B /* AddCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DBBE50A017BBF862005D5C9B /* AddCommunityTemplate.png */; };
+		DBBE50A417BBF862005D5C9B /* RemoveCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DBBE50A117BBF862005D5C9B /* RemoveCommunityTemplate.png */; };
+		DBBE50A517BBF862005D5C9B /* RemoveCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DBBE50A117BBF862005D5C9B /* RemoveCommunityTemplate.png */; };
 		DBD2AB1417A2D625005AA7EF /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */; };
 		DBD2AB1517A2D625005AA7EF /* PreferencesWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */; };
 		DBD2AB1617A2D625005AA7EF /* PreferencesWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */; };
@@ -149,8 +151,6 @@
 		DB4E6B4D17BBB23A0079BA92 /* StopStreamTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = StopStreamTemplate.png; sourceTree = "<group>"; };
 		DB4E6B5617BBB2750079BA92 /* ImportCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ImportCommunityTemplate.png; sourceTree = "<group>"; };
 		DB4E6B5917BBB27F0079BA92 /* PreferencesTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = PreferencesTemplate.png; sourceTree = "<group>"; };
-		DB4E6B6217BBBF7E0079BA92 /* AddCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AddCommunityTemplate.png; sourceTree = "<group>"; };
-		DB4E6B6317BBBF7E0079BA92 /* RemoveCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RemoveCommunityTemplate.png; sourceTree = "<group>"; };
 		DB5BA5A917B3B115004B8B0A /* ConfirmationWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfirmationWindowController.h; sourceTree = "<group>"; };
 		DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfirmationWindowController.m; sourceTree = "<group>"; };
 		DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfirmationWindowController.xib; sourceTree = "<group>"; };
@@ -164,6 +164,9 @@
 		DB69268B17B3F58800027BBC /* DefaultSound.mp3 */ = {isa = PBXFileReference; lastKnownFileType = audio.mp3; name = DefaultSound.mp3; path = Resources/DefaultSound.mp3; sourceTree = "<group>"; };
 		DB76445317B5FF70003A79B6 /* AlertLogScrollView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AlertLogScrollView.h; sourceTree = "<group>"; };
 		DB76445417B5FF70003A79B6 /* AlertLogScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertLogScrollView.m; sourceTree = "<group>"; };
+		DBBE509A17BBE83A005D5C9B /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
+		DBBE50A017BBF862005D5C9B /* AddCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = AddCommunityTemplate.png; sourceTree = "<group>"; };
+		DBBE50A117BBF862005D5C9B /* RemoveCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = RemoveCommunityTemplate.png; sourceTree = "<group>"; };
 		DBD2AB1117A2D625005AA7EF /* PreferencesWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreferencesWindowController.h; sourceTree = "<group>"; };
 		DBD2AB1217A2D625005AA7EF /* PreferencesWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreferencesWindowController.m; sourceTree = "<group>"; };
 		DBD2AB1317A2D625005AA7EF /* PreferencesWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PreferencesWindowController.xib; sourceTree = "<group>"; };
@@ -317,10 +320,11 @@
 		DB69268717B3F4CB00027BBC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				DBBE509A17BBE83A005D5C9B /* icon.icns */,
 				DB4E6B4A17BBB1DB0079BA92 /* StartStreamTemplate.png */,
 				DB4E6B4D17BBB23A0079BA92 /* StopStreamTemplate.png */,
-				DB4E6B6217BBBF7E0079BA92 /* AddCommunityTemplate.png */,
-				DB4E6B6317BBBF7E0079BA92 /* RemoveCommunityTemplate.png */,
+				DBBE50A017BBF862005D5C9B /* AddCommunityTemplate.png */,
+				DBBE50A117BBF862005D5C9B /* RemoveCommunityTemplate.png */,
 				DB4E6B5617BBB2750079BA92 /* ImportCommunityTemplate.png */,
 				DB4E6B5917BBB27F0079BA92 /* PreferencesTemplate.png */,
 				DB69268B17B3F58800027BBC /* DefaultSound.mp3 */,
@@ -652,8 +656,9 @@
 				DB4E6B4E17BBB23A0079BA92 /* StopStreamTemplate.png in Resources */,
 				DB4E6B5717BBB2750079BA92 /* ImportCommunityTemplate.png in Resources */,
 				DB4E6B5A17BBB27F0079BA92 /* PreferencesTemplate.png in Resources */,
-				DB4E6B6417BBBF7E0079BA92 /* AddCommunityTemplate.png in Resources */,
-				DB4E6B6617BBBF7E0079BA92 /* RemoveCommunityTemplate.png in Resources */,
+				DBBE509B17BBE83A005D5C9B /* icon.icns in Resources */,
+				DBBE50A217BBF862005D5C9B /* AddCommunityTemplate.png in Resources */,
+				DBBE50A417BBF862005D5C9B /* RemoveCommunityTemplate.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -673,8 +678,9 @@
 				DB4E6B4F17BBB23A0079BA92 /* StopStreamTemplate.png in Resources */,
 				DB4E6B5817BBB2750079BA92 /* ImportCommunityTemplate.png in Resources */,
 				DB4E6B5B17BBB27F0079BA92 /* PreferencesTemplate.png in Resources */,
-				DB4E6B6517BBBF7E0079BA92 /* AddCommunityTemplate.png in Resources */,
-				DB4E6B6717BBBF7E0079BA92 /* RemoveCommunityTemplate.png in Resources */,
+				DBBE509C17BBE83A005D5C9B /* icon.icns in Resources */,
+				DBBE50A317BBF862005D5C9B /* AddCommunityTemplate.png in Resources */,
+				DBBE50A517BBF862005D5C9B /* RemoveCommunityTemplate.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

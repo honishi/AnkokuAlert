@@ -89,7 +89,6 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
          if (!error) {
              self.community[kImportCommunityKeyCommunityName] = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
          } else {
-             // TODO: implement for channel case.
              self.community[kImportCommunityKeyCommunityName] = @"(request failed.)";
          }
          self.community[kImportCommunityKeyIsCommunityNameUpdated] = [NSNumber numberWithBool:YES];

@@ -570,7 +570,21 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
         NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyXML error:&error];
         NSXMLNode* rootElement = xml.rootElement;
 
-        NSString* communityName = ((NSXMLNode*)[rootElement nodesForXPath:@"//*[@id=\"community_name\"]" error:&error][0]).stringValue;
+        NSString* communityName = nil;
+        NSArray* nodes = [rootElement nodesForXPath:@"//*[@id=\"community_name\"]" error:&error];
+        if (nodes.count) {
+            // open community case
+            communityName = ((NSXMLNode*)nodes[0]).stringValue;
+        } else {
+            // closed/channel community case
+            NSArray* titleNodes = [rootElement nodesForXPath:@"//*/title" error:&error];
+            if (titleNodes.count) {
+                NSRegularExpression* regexp = [NSRegularExpression regularExpressionWithPattern:@"(.+)-.*?" options:0 error:&error];
+                NSString* title = ((NSXMLNode*)titleNodes[0]).stringValue;
+                NSTextCheckingResult* result = [regexp firstMatchInString:title options:0 range:NSMakeRange(0, title.length)];
+                communityName = [title substringWithRange:[result rangeAtIndex:1]];
+            }
+        }
 
         communityInfo = @{AlertManagerCommunityInfoKeyCommunityName: communityName};
     }
