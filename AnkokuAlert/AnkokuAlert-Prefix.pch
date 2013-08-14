@@ -2,10 +2,11 @@
 // Prefix header for all source files of the 'AnkokuAlert' target in the 'AnkokuAlert' project
 //
 
+#define MR_SHORTHAND 1
+
 #ifdef __OBJC__
     #import <Cocoa/Cocoa.h>
 
-    #define MR_SHORTHAND 1
     #define MR_ENABLE_ACTIVE_RECORD_LOGGING 0
     #import "CoreData+MagicalRecord.h"
 

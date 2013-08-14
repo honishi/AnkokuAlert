@@ -398,7 +398,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
             }
 
             case NSStreamEventHasSpaceAvailable:
-                LOG(@"*** stream event has space available");
+                // LOG(@"*** stream event has space available");
                 break;
 
             case NSStreamEventErrorOccurred:
@@ -444,9 +444,11 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
             }
             p++;
         }
-        // check posiible tcp fragmentation
+        // check possible tcp fragmentation
         if (data) {
-            LOG(@"tcp segmentation lost? : %@", data);
+            LOG(@"tcp segmentation lost? : %@, %@",
+                data,
+                [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
         }
     } else {
         LOG(@"no data.");

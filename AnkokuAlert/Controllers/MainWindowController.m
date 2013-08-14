@@ -37,9 +37,14 @@ NSString* const kRegExpCommunityId = @".*(co\\d+)";
 NSString* const kAlertSoundFileNameDefault = @"DefaultSound";
 NSString* const kAlertSoundFileNameOption = @"OptionSound";
 
+NSString* const kUserNotificationUserInfoKeyLiveName = @"liveName";
+NSString* const kUserNotificationUserInfoKeyLiveUrl = @"liveUrl";
+NSString* const kUserNotificationUserInfoKeyCommunityName = @"communityName";
+NSString* const kUserNotificationUserInfoKeyCommunityUrl = @"communityUrl";
+
 float const kLiveStatTimerInterval = 0.5f;
 float const kLiveLevelTimePeriod = 10.0f;
-float const kDisconnectAutoDetectionTimePeriod = 20.0f;
+float const kDisconnectAutoDetectionTimePeriod = 60.0f;
 
 typedef NS_ENUM (NSInteger, AlertSoundType) {
     AlertSoundTypeDefault,
@@ -79,7 +84,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     CommunityInputTypeCommunityId
 };
 
-@interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource, NSTextFieldDelegate>
+@interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource, NSTextFieldDelegate, NSUserNotificationCenterDelegate>
 
 @property (weak) IBOutlet NSScrollView* communityScrollView;
 @property (nonatomic, weak) IBOutlet NSTableView* communityTableView;
@@ -116,8 +121,8 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     self = [super initWithWindow:window];
 
     if (self) {
-        // Initialization code here.
         self.liveStats = NSMutableArray.new;
+        NSUserNotificationCenter.defaultUserNotificationCenter.delegate = self;
     }
 
     return self;
@@ -202,6 +207,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     NSArray* targetCommunities = self.communityArrayController.arrangedObjects;
     BOOL isForceAlerting = NO;  // for debug purpose
     BOOL shouldLogLiveInfo = NO;
+    BOOL shouldNotifyLiveInfo = NO;
     for (MOCommunity* targetCommunity in targetCommunities) {
 #ifdef DEBUG_FORCE_ALERTING
         isForceAlerting = (self.liveCount % FORCE_ALERTING_INTERVAL) == 0;
@@ -216,21 +222,32 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
                 [self playAlertSound:AlertSoundTypeDefault];
             }
             shouldLogLiveInfo = YES;
+            shouldNotifyLiveInfo = YES;
             break;
         }
     }
 
     NSUserDefaults* defaults = [NSUserDefaults standardUserDefaults];
     NSNumber* logAllLive = [defaults valueForKey:kUserDefaultsKeyLogAllLive];
-    if (shouldLogLiveInfo || logAllLive.boolValue) {
+    if (shouldLogLiveInfo || logAllLive.boolValue || shouldNotifyLiveInfo) {
         [[AlertManager sharedManager] requestStreamInfoForLive:liveId completion:^(NSDictionary* streamInfo, NSError* error) {
              if (error) {
                  // TODO: do something
              } else {
-                 [self.alertLogScrollView logLiveWithLiveName:streamInfo[AlertManagerStreamInfoKeyLiveName]
-                                                      liveUrl:streamInfo[AlertManagerStreamInfoKeyLiveUrl]
-                                                communityName:streamInfo[AlertManagerStreamInfoKeyCommunityName]
-                                                 communityUrl:streamInfo[AlertManagerStreamInfoKeyCommunityUrl]];
+                 NSString* liveName = streamInfo[AlertManagerStreamInfoKeyLiveName];
+                 NSString* liveUrl = streamInfo[AlertManagerStreamInfoKeyLiveUrl];
+                 NSString* communityName = streamInfo[AlertManagerStreamInfoKeyCommunityName];
+                 NSString* communityUrl = streamInfo[AlertManagerStreamInfoKeyCommunityUrl];
+                 [self.alertLogScrollView logLiveWithLiveName:liveName
+                                                      liveUrl:liveUrl
+                                                communityName:communityName
+                                                 communityUrl:communityUrl];
+                 if (shouldNotifyLiveInfo || isForceAlerting) {
+                     [self showLiveNotificationWithLiveName:liveName
+                                                    liveUrl:liveUrl
+                                              communityName:communityName
+                                               communityUrl:communityUrl];
+                 }
              }
          }];
     }
@@ -314,6 +331,8 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
         [[AlertManager sharedManager] loginWithEmail:email password:password completion:^(NSDictionary* alertStatus, NSError* error) {
              if (error) {
                  [self.alertLogScrollView logMessage:@"Login failed..."];
+                 self.isOpeningStreamInProgress = NO;
+                 [self.liveStats removeAllObjects];
              } else {
                  [[AlertManager sharedManager] openStreamWithAlertStatus:alertStatus streamListener:self];
              }
@@ -533,6 +552,13 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     [self playAlertSound:AlertSoundTypeDefault];
 }
 
+#pragma mark - Internal Methods, Actions in Community Table View
+
+-(IBAction)clearLog:(id)sender
+{
+    [self.alertLogScrollView clearLog];
+}
+
 #pragma mark - Internal Methods, Misc Utility
 
 #pragma mark Live Stat Timer
@@ -673,5 +699,21 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     }
 }
 
+-(void)showLiveNotificationWithLiveName:(NSString*)liveName liveUrl:(NSString*)liveUrl communityName:(NSString*)communityName communityUrl:(NSString*)communityUrl
+{
+    NSUserNotification* userNotification = NSUserNotification.new;
+    userNotification.title = liveName;
+    userNotification.informativeText = [NSString stringWithFormat:@"Live started in \"%@\".", communityName];
+    userNotification.userInfo = @{kUserNotificationUserInfoKeyLiveName: liveName,
+                                  kUserNotificationUserInfoKeyLiveUrl: liveUrl,
+                                  kUserNotificationUserInfoKeyCommunityName: communityName,
+                                  kUserNotificationUserInfoKeyCommunityUrl: communityUrl};
+    [NSUserNotificationCenter.defaultUserNotificationCenter deliverNotification:userNotification];
+}
+
+-(void)userNotificationCenter:(NSUserNotificationCenter*)center didActivateNotification:(NSUserNotification*)notification
+{
+    [[NSWorkspace sharedWorkspace] openURL:[NSURL URLWithString:notification.userInfo[kUserNotificationUserInfoKeyLiveUrl]]];
+}
 
 @end

@@ -57,6 +57,13 @@
     [self logToConsole:message];
 }
 
+-(void)clearLog
+{
+    NSAttributedString* empty = [[NSAttributedString alloc] initWithString:@""];
+    [self.alertLogTextView.textStorage setAttributedString:empty];
+    [self logMessage:@"Cleared log."];
+}
+
 #pragma mark - Internal Methods
 
 -(NSDictionary*)attributeWithLinkUrl:(NSString*)linkUrl
