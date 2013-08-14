@@ -95,7 +95,7 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
 
          if (self.completion) {
              self.completion();
-             // TODO: nil?
+             self.completion = nil;
          }
 
          [self willChangeValueForKey:@"isExecuting"];
@@ -168,7 +168,7 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
                  community[kImportCommunityKeyShouldImport] = [NSNumber numberWithBool:shouldImport];
                  [self.communityArrayController addObject:community];
              }
-             LOG(@"%@", self.communityArrayController.arrangedObjects);
+             // LOG(@"%@", self.communityArrayController.arrangedObjects);
              [self updateCommunityName];
          }
      }];
@@ -219,7 +219,7 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
         }
 
         self.completion(NO, communities.copy);
-        // TODO: self.completion = nil;
+        self.completion = nil;
     }
 }
 
@@ -229,7 +229,7 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
 
     if (self.completion) {
         self.completion(YES, nil);
-        // TODO: self.completion = nil;
+        self.completion = nil;
     }
 }
 

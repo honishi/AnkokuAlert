@@ -182,7 +182,7 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
              [self beginAccountInputSheetWithMessage:@"Login failed. Please try again..."];
          } else {
 #endif
-         LOG(@"login completed: %@", alertStatus);
+         // LOG(@"login completed: %@", alertStatus);
 
          BOOL isDefault = MOAccount.hasAccounts ? NO : YES;
 
@@ -221,6 +221,7 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
                                              if (!isCancelled) {
                                                  [self removeAccount];
                                              }
+                                             self.confirmationWindowController = nil;
                                          }];
     self.confirmationWindowController.titleOfOkButton = @"Remove";
     [NSApp beginSheet:self.confirmationWindowController.window modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];

@@ -90,22 +90,4 @@
     NSLog(@"LOG: %s:%d: %@", __PRETTY_FUNCTION__, __LINE__, @"");
 }
 
-//-(void)alertManager:(AlertManager*)alertManager didLoginToAntennaWithTicket:(NSString*)ticket
-//{
-//    NSLog(@"ticket: %@", ticket);
-//}
-//
-//-(void)alertManager:(AlertManager*)alertManager didFailToLoginToAntennaWithError:(NSError*)error
-//{
-//}
-//
-//-(void)alertManager:(AlertManager *)alertManager didGetAlertStatus:(NSDictionary *)alertStatus
-//{
-//    NSLog(@"alertStatus: %@", alertStatus);
-//}
-//
-//-(void)alertManager:(AlertManager *)alertManager didFailToGetAlertStatusWithError:(NSError *)error
-//{
-//}
-
 @end

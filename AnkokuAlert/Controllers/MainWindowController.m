@@ -437,7 +437,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
             [[AlertManager sharedManager] requestStreamInfoForLive:self.communityInputValue completion:^
                  (NSDictionary* streamInfo, NSError* error) {
                  if (error) {
-                     //
+                     // do something
                  } else {
                      MOCommunity* community = [[MOAccount defaultAccount] communityWithDefaultAttributes];
                      community.communityId = streamInfo[AlertManagerStreamInfoKeyCommunityId];
@@ -457,7 +457,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
             [[AlertManager sharedManager] requestCommunityInfoForCommunity:self.communityInputValue completion:^
                  (NSDictionary* communityInfo, NSError* error) {
                  if (error) {
-                     //
+                     // do something
                  } else {
                      MOCommunity* community = [[MOAccount defaultAccount] communityWithDefaultAttributes];
                      community.communityId = self.communityInputValue;
@@ -487,6 +487,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
                                              if (!isCancelled) {
                                                  [self removeCommunity];
                                              }
+                                             self.confirmationWindowController = nil;
                                          }];
     self.confirmationWindowController.titleOfOkButton = @"Remove";
     [NSApp beginSheet:self.confirmationWindowController.window modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
@@ -535,7 +536,6 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
                  [self.communityScrollView flashScrollers];
              }
-             // TODO:
              self.importCommunityWindowController = nil;
          }];
 
