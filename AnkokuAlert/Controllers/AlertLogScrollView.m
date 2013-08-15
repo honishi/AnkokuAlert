@@ -14,16 +14,12 @@
 
 @implementation AlertLogScrollView
 
-#pragma mark - Object Lifecycle
+#pragma mark - NSView Overrides
 
 -(void)viewDidMoveToSuperview
 {
     self.alertLogTextView = self.contentView.documentView;
 }
-
-// #pragma mark - Property Methods
-// #pragma mark - [ClassName] Overrides
-// #pragma mark - [ProtocolName] Methods
 
 #pragma mark - Public Interface
 
@@ -47,7 +43,7 @@
     NSAttributedString* liveNameAttributedString = [[NSAttributedString alloc] initWithString:liveName attributes:[self attributeWithLinkUrl:liveUrl]];
     [message appendAttributedString:liveNameAttributedString];
 
-    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\" is started in \""]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\" started in \""]];
 
     NSAttributedString* communityNameAttributedString = [[NSAttributedString alloc] initWithString:communityName attributes:[self attributeWithLinkUrl:communityUrl]];
     [message appendAttributedString:communityNameAttributedString];
@@ -72,8 +68,8 @@
         return nil;
     }
 
-    NSMutableDictionary* linkAttribute = [NSMutableDictionary dictionaryWithCapacity:3];
-    [linkAttribute setObject:[NSColor blueColor] forKey:NSForegroundColorAttributeName];
+    NSMutableDictionary* linkAttribute = NSMutableDictionary.new;
+    [linkAttribute setObject:NSColor.blueColor forKey:NSForegroundColorAttributeName];
     [linkAttribute setObject:[NSNumber numberWithBool:YES] forKey:NSUnderlineStyleAttributeName];
     [linkAttribute setObject:linkUrl forKey:NSLinkAttributeName];
 
@@ -85,7 +81,7 @@
     NSDateFormatter* dateFormatter = NSDateFormatter.new;
     [dateFormatter setDateFormat:@"[yyyy/MM/dd HH:mm:ss] "];
 
-    NSString* formattedDateString = [dateFormatter stringFromDate:[NSDate date]];
+    NSString* formattedDateString = [dateFormatter stringFromDate:NSDate.date];
 
     return [[NSAttributedString alloc] initWithString:formattedDateString];
 }
@@ -103,7 +99,7 @@
     }
 
     NSMutableAttributedString* attributedMessage = NSMutableAttributedString.new;
-    [attributedMessage appendAttributedString:[self dateTimeAttributedString]];
+    [attributedMessage appendAttributedString:self.dateTimeAttributedString];
     [attributedMessage appendAttributedString:message];
 
     [self.alertLogTextView.textStorage appendAttributedString:attributedMessage];

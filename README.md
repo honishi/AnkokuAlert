@@ -1,8 +1,8 @@
 AnkokuAlert 2.x
 =========
-Niconama alert altenative for OS X
+Niconama alert alternative for OS X
 
-sample
+screenshot
 -
 ![screenshot](https://dl.dropboxusercontent.com/u/444711/github.com/honishi/AnkokuAlert/screenshot.png)
 

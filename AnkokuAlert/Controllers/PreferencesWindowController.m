@@ -24,13 +24,10 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
 
 @interface PreferencesWindowController ()<NSTextFieldDelegate>
 
-@property (nonatomic, readwrite) NSManagedObjectContext* managedObjectContext;
-@property (nonatomic, readwrite) BOOL addingAccountInProgress;
-
 @property (nonatomic, weak) IBOutlet NSPanel* accountInputPanel;
 @property (nonatomic, weak) IBOutlet NSTextField* messageTextField;
-@property (nonatomic) ConfirmationWindowController* confirmationWindowController;
 @property (nonatomic, weak) IBOutlet NSArrayController* accountArrayController;
+@property (nonatomic) ConfirmationWindowController* confirmationWindowController;
 
 @end
 
@@ -43,12 +40,14 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
     return [[PreferencesWindowController alloc] initWithWindowNibName:@"PreferencesWindowController"];
 }
 
+#pragma mark - NSWindowController Overrides
+
 // use windowDidLoad instead of awakeFromNib. http://stackoverflow.com/a/15780876
 -(void)windowDidLoad
 {
     [super windowDidLoad];
 
-    self.managedObjectContext = [NSManagedObjectContext MR_defaultContext];
+    self.managedObjectContext = NSManagedObjectContext.MR_defaultContext;
 
     NSSortDescriptor* sortDescriptor = [NSSortDescriptor sortDescriptorWithKey:@"order" ascending:YES];
     self.accountSortDescriptors = @[sortDescriptor];
@@ -66,11 +65,7 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
     }
 }
 
-// #pragma mark - Property Methods
-// #pragma mark - [ClassName] Overrides
-// #pragma mark - [ProtocolName] Methods
-
-#pragma mark NSTableViewDataSource Methods, Drag & Drop Reordering Support
+#pragma mark - NSTableViewDataSource Methods, Drag & Drop Reordering Support
 
 -(BOOL)tableView:(NSTableView*)tableView writeRowsWithIndexes:(NSIndexSet*)rowIndexes toPasteboard:(NSPasteboard*)pboard
 {
@@ -107,8 +102,6 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
 
     return YES;
 }
-
-// #pragma mark - Public Interface
 
 #pragma mark - Internal Methods, Action
 
@@ -171,11 +164,11 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
     NSString* password = self.passwordTextField.stringValue;
 
     [self endAccountInputSheet];
-    self.addingAccountInProgress = YES;
+    self.isAddingAccountInProgress = YES;
 
-    [[AlertManager sharedManager] loginWithEmail:email password:password completion:^
+    [AlertManager.sharedManager loginWithEmail:email password:password completion:^
          (NSDictionary* alertStatus, NSError* error) {
-         self.addingAccountInProgress = NO;
+         self.isAddingAccountInProgress = NO;
 #ifndef DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
          if (error) {
              LOG(@"login error.");
@@ -186,7 +179,7 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
 
          BOOL isDefault = MOAccount.hasAccounts ? NO : YES;
 
-         MOAccount* account = [MOAccount accountWithDefaultAttributes];
+         MOAccount* account = MOAccount.accountWithDefaultAttributes;
 #ifndef DEBUG_ALLOW_EMPTY_ADD_ACCOUNT
          account.userId = alertStatus[AlertManagerAlertStatusKeyUserId];
          account.userName = alertStatus[AlertManagerAlertStatusKeyUserName];
@@ -197,7 +190,7 @@ NSString* const kAccountTableViewDraggedType = @"kAccountTableViewDraggedType";
          account.email = DUMMY_EMAIL;
 #endif
          account.isDefault = [NSNumber numberWithBool:isDefault];
-         [SSKeychain setPassword:password forService:[[NSBundle mainBundle] bundleIdentifier] account:email];
+         [SSKeychain setPassword:password forService:NSBundle.mainBundle.bundleIdentifier account:email];
 
          [self.accountArrayController addObject:account];
          [self.managedObjectContext MR_saveOnlySelfAndWait];

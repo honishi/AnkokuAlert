@@ -38,7 +38,7 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
 -(id)transformedValue:(id)value
 {
     BOOL isExcluding = ((NSNumber*)value).boolValue;
-    return (isExcluding ? [NSColor disabledControlTextColor] : [NSColor textColor]);
+    return (isExcluding ? NSColor.disabledControlTextColor : NSColor.textColor);
 }
 
 @end
@@ -84,8 +84,8 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
     [self didChangeValueForKey:@"isExecuting"];
     [self didChangeValueForKey:@"isFinished"];
 
-    [[AlertManager sharedManager] requestCommunityInfoForCommunity:self.community[kImportCommunityKeyCommunityId]
-                                                        completion:^(NSDictionary* communityInfo, NSError* error) {
+    [AlertManager.sharedManager requestCommunityInfoForCommunity:self.community[kImportCommunityKeyCommunityId]
+                                                      completion:^(NSDictionary* communityInfo, NSError* error) {
          if (!error) {
              self.community[kImportCommunityKeyCommunityName] = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
          } else {
@@ -145,11 +145,13 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
     return importCommunityWindowController;
 }
 
+#pragma mark - NSWindowController Overrides
+
 -(void)windowDidLoad
 {
     [super windowDidLoad];
 
-    [[AlertManager sharedManager] loginWithEmail:self.email password:self.password completion:^(NSDictionary* alertStatus, NSError* error) {
+    [AlertManager.sharedManager loginWithEmail:self.email password:self.password completion:^(NSDictionary* alertStatus, NSError* error) {
          if (alertStatus) {
              NSUInteger order = 1;
              for (NSString* communityId in alertStatus[AlertManagerAlertStatusKeyCommunities]) {
@@ -173,11 +175,6 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
          }
      }];
 }
-
-// #pragma mark - Property Methods
-// #pragma mark - [ClassName] Overrides
-// #pragma mark - NSWindowDelegate Methods
-// #pragma mark - Public Interface
 
 #pragma mark - Internal Methods
 

@@ -13,6 +13,7 @@
 @property (nonatomic) NSManagedObjectContext* managedObjectContext;
 @property (nonatomic) NSString* windowTitle;
 @property (nonatomic) NSPredicate* accountFilterPredicate;
+@property (nonatomic) NSString* communityInputMessage;
 @property (nonatomic) BOOL hasValidCommunityInput;
 @property (nonatomic) NSNumber* liveLevel;
 @property (nonatomic) BOOL isStreamOpened;

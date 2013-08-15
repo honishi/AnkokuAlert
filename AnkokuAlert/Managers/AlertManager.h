@@ -43,8 +43,6 @@ typedef void (^ CommunityInfoCompletionBlock)(NSDictionary* communityInfo, NSErr
 
 +(AlertManager*)sharedManager;
 
-+(NSString*)communityUrlStringWithCommunithId:(NSString*)communityId;
-
 -(void)loginWithEmail:(NSString*)email
              password:(NSString*)password
            completion:(LoginCompletionBlock)completion;
@@ -53,13 +51,14 @@ typedef void (^ CommunityInfoCompletionBlock)(NSDictionary* communityInfo, NSErr
 -(void)closeStream;
 -(void)requestStreamInfoForLive:(NSString*)liveId completion:(StreamInfoCompletionBlock)completion;
 -(void)requestCommunityInfoForCommunity:(NSString*)communityId completion:(CommunityInfoCompletionBlock)completion;
++(NSString*)communityUrlStringWithCommunithId:(NSString*)communityId;
 
 @end
 
 @protocol AlertManagerStreamListener<NSObject>
 
 @optional
--(void)alertManagerdidOpenStream:(AlertManager*)alertManager;
+-(void)alertManagerDidOpenStream:(AlertManager*)alertManager;
 -(void)alertManager:(AlertManager*)alertManager didFailToOpenStreamWithError:(NSError*)error;
 -(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)liveId community:(NSString*)communityId user:(NSString*)userId url:(NSString*)liveUrl;
 -(void)alertManagerDidCloseStream:(AlertManager*)alertManager;

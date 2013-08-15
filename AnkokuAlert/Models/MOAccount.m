@@ -14,11 +14,11 @@ NSUInteger const kDefaultRatingValue = 3;
 
 // Custom logic goes here.
 
-#pragma mark - Object Lifecycle
+#pragma mark - Public Interface
 
 +(MOAccount*)accountWithDefaultAttributes
 {
-    MOAccount* account = [MOAccount MR_createEntity];
+    MOAccount* account = MOAccount.MR_createEntity;
     account.order = MOAccount.nextAccountOrder;
 
     return account;
@@ -26,7 +26,7 @@ NSUInteger const kDefaultRatingValue = 3;
 
 +(MOAccount*)defaultAccount
 {
-    for (MOAccount* account in [MOAccount findAll]) {
+    for (MOAccount* account in MOAccount.findAll) {
         if ([account.isDefault isEqualToNumber:[NSNumber numberWithBool:YES]]) {
             return account;
         }
@@ -35,21 +35,15 @@ NSUInteger const kDefaultRatingValue = 3;
     return nil;
 }
 
-// #pragma mark - Property Methods
-// #pragma mark - [ClassName] Overrides
-// #pragma mark - [ProtocolName] Methods
-
-#pragma mark - Public Interface
-
 +(BOOL)hasAccounts
 {
-    return 0 < [MOAccount findAll].count;
+    return 0 < MOAccount.findAll.count;
 }
 
 -(MOCommunity*)communityWithDefaultAttributes
 {
-    MOCommunity* community = [MOCommunity MR_createEntity];
-    community.order = [self nextCommunityOrder];
+    MOCommunity* community = MOCommunity.MR_createEntity;
+    community.order = self.nextCommunityOrder;
     community.isEnabled = [NSNumber numberWithBool:YES];
     community.rating = [NSNumber numberWithInteger:kDefaultRatingValue];
 
@@ -64,7 +58,7 @@ NSUInteger const kDefaultRatingValue = 3;
 {
     NSInteger maxOrder = 0;
 
-    for (MOAccount* account in [MOAccount findAll]) {
+    for (MOAccount* account in MOAccount.findAll) {
         if (maxOrder < account.orderValue) {
             maxOrder = account.orderValue;
         }
@@ -77,7 +71,7 @@ NSUInteger const kDefaultRatingValue = 3;
 {
     NSInteger maxOrder = 0;
 
-    for (MOCommunity* community in [self communities]) {
+    for (MOCommunity* community in self.communities) {
         if (maxOrder < community.orderValue) {
             maxOrder = community.orderValue;
         }

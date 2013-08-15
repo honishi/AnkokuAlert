@@ -43,7 +43,6 @@ NSUInteger const kMaxRecentLiveIdsCount = 100;
 typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* data, NSError* error);
 
 @interface FakedMutableURLRequest : NSMutableURLRequest
-
 @end
 
 @implementation FakedMutableURLRequest
@@ -67,8 +66,8 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 @property (nonatomic, copy) LoginCompletionBlock loginCompletionBlock;
 @property (nonatomic, weak) id<AlertManagerStreamListener> streamListener;
-@property (nonatomic, strong) NSInputStream* inputStream;
-@property (nonatomic, strong) NSOutputStream* outputStream;
+@property (nonatomic) NSInputStream* inputStream;
+@property (nonatomic) NSOutputStream* outputStream;
 
 @end
 
@@ -88,15 +87,7 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     return sharedManager;
 }
 
-#pragma mark - Property Methods
-#pragma mark - [ClassName] Overrides
-#pragma mark - [ProtocolName] Methods
 #pragma mark - Public Interface
-
-+(NSString*)communityUrlStringWithCommunithId:(NSString*)communityId
-{
-    return [kUrlCommunity stringByAppendingString:communityId];
-}
 
 -(void)loginWithEmail:(NSString*)email
              password:(NSString*)password
@@ -183,6 +174,11 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     };
 
     [NSURLConnection sendAsynchronousRequest:request queue:NSOperationQueue.mainQueue completionHandler:requestCompletion];
+}
+
++(NSString*)communityUrlStringWithCommunithId:(NSString*)communityId
+{
+    return [kUrlCommunity stringByAppendingString:communityId];
 }
 
 #pragma mark - Internal Methods
@@ -378,8 +374,8 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
             case NSStreamEventOpenCompleted:
                 LOG(@"*** stream event open completed");
                 if (stream == self.inputStream) {
-                    if ([self.streamListener respondsToSelector:@selector(alertManagerdidOpenStream:)]) {
-                        [self.streamListener alertManagerdidOpenStream:self];
+                    if ([self.streamListener respondsToSelector:@selector(alertManagerDidOpenStream:)]) {
+                        [self.streamListener alertManagerDidOpenStream:self];
                     }
                 }
                 break;

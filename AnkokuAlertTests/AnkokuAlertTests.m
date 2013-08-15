@@ -39,7 +39,7 @@
     self.email = testAccount[@"email"];
     self.password = testAccount[@"password"];
 
-    self.alertManager = [AlertManager sharedManager];
+    self.alertManager = AlertManager.sharedManager;
 }
 
 -(void)tearDown
@@ -74,7 +74,7 @@
 
 #pragma mark - AlertManagerListener Methods
 
--(void)alertManagerdidOpenStream:(AlertManager*)alertManager
+-(void)alertManagerDidOpenStream:(AlertManager*)alertManager
 {
     NSLog(@"LOG: %s:%d: %@", __PRETTY_FUNCTION__, __LINE__, @"");
     self.streamOpened = YES;
