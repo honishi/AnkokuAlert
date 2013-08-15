@@ -480,7 +480,7 @@
 					<reference key="NSNextKeyView" ref="788045013"/>
 					<string key="NSReuseIdentifierKey">_NS:20</string>
 				</object>
-				<string key="NSScreenRect">{{1440, 0}, {1920, 1080}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1366, 746}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -666,7 +666,7 @@
 					<reference key="NSNextKeyView" ref="996726259"/>
 					<string key="NSReuseIdentifierKey">_NS:21</string>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1366, 746}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -887,15 +887,15 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled: addingAccountInProgress</string>
+						<string key="label">enabled: self.isAddingAccountInProgress</string>
 						<reference key="source" ref="952663414"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="952663414"/>
 							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">enabled: addingAccountInProgress</string>
+							<string key="NSLabel">enabled: self.isAddingAccountInProgress</string>
 							<string key="NSBinding">enabled</string>
-							<string key="NSKeyPath">addingAccountInProgress</string>
+							<string key="NSKeyPath">self.isAddingAccountInProgress</string>
 							<object class="NSDictionary" key="NSOptions">
 								<string key="NS.key.0">NSValueTransformerName</string>
 								<string key="NS.object.0">NSNegateBoolean</string>
@@ -903,7 +903,7 @@
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">572</int>
+					<int key="connectionID">826</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
@@ -923,15 +923,15 @@
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBBindingConnection" key="connection">
-						<string key="label">enabled2: addingAccountInProgress</string>
+						<string key="label">enabled2: self.isAddingAccountInProgress</string>
 						<reference key="source" ref="644442593"/>
 						<reference key="destination" ref="1001"/>
 						<object class="NSNibBindingConnector" key="connector">
 							<reference key="NSSource" ref="644442593"/>
 							<reference key="NSDestination" ref="1001"/>
-							<string key="NSLabel">enabled2: addingAccountInProgress</string>
+							<string key="NSLabel">enabled2: self.isAddingAccountInProgress</string>
 							<string key="NSBinding">enabled2</string>
-							<string key="NSKeyPath">addingAccountInProgress</string>
+							<string key="NSKeyPath">self.isAddingAccountInProgress</string>
 							<dictionary key="NSOptions">
 								<integer value="-1" key="NSMultipleValuesPlaceholder"/>
 								<integer value="-1" key="NSNoSelectionPlaceholder"/>
@@ -943,7 +943,7 @@
 							<int key="NSNibBindingConnectorVersion">2</int>
 						</object>
 					</object>
-					<int key="connectionID">575</int>
+					<int key="connectionID">827</int>
 				</object>
 				<object class="IBConnectionRecord">
 					<object class="IBOutletConnection" key="connection">
@@ -2762,7 +2762,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">824</int>
+			<int key="maxID">827</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">

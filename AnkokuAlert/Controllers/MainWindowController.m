@@ -38,7 +38,8 @@ NSString* const kRegExpCommunityId = @".*(co\\d+)";
 
 NSString* const kAlertSoundFileNameDefault = @"DefaultSound";
 NSString* const kAlertSoundFileNameOption = @"OptionSound";
-NSString* const kAlertSoundFileType = @"mp3";
+// confirmed mp3 file couldn't be played in OS X 10.9 DP4, so use aiff.
+NSString* const kAlertSoundFileType = @"aiff";
 
 NSString* const kUserNotificationUserInfoKeyLiveName = @"liveName";
 NSString* const kUserNotificationUserInfoKeyLiveUrl = @"liveUrl";

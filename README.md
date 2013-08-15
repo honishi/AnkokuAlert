@@ -1,6 +1,7 @@
 AnkokuAlert 2.x
 =========
-Niconama alert alternative for OS X
+- Niconama alert alternative for OS X.
+- Binary available at [Mac App Store](https://itunes.apple.com/jp/app/ankoku-alert/id447599289?l=en&mt=12).
 
 screenshot
 -
