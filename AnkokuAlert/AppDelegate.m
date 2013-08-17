@@ -12,9 +12,8 @@
 
 @interface AppDelegate ()
 
-@property (nonatomic, strong) MainWindowController* mainWindowController;
-
 @end
+
 @implementation AppDelegate
 
 -(void)applicationDidFinishLaunching:(NSNotification*)aNotification
@@ -38,6 +37,31 @@
 }
 
 #pragma mark - Public Methods, Menu Actions
+
+-(IBAction)startAlert:(id)sender
+{
+    [self.mainWindowController startAlert:self];
+}
+
+-(IBAction)stopAlert:(id)sender
+{
+    [self.mainWindowController stopAlert:self];
+}
+
+-(IBAction)addCommunity:(id)sender
+{
+    [self.mainWindowController inputCommunity:self];
+}
+
+-(IBAction)removeCommunity:(id)sender
+{
+    [self.mainWindowController confirmCommunityRemoval:self];
+}
+
+-(IBAction)importCommunity:(id)sender
+{
+    [self.mainWindowController showImportCommunityWindow:self];
+}
 
 -(IBAction)showPreferencesWindow:(id)sender
 {

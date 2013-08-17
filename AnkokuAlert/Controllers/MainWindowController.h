@@ -18,6 +18,13 @@
 @property (nonatomic) NSNumber* liveLevel;
 @property (nonatomic) BOOL isStreamOpened;
 
+@property (nonatomic, weak) IBOutlet NSArrayController* communityArrayController;
+
+-(IBAction)startAlert:(id)sender;
+-(IBAction)stopAlert:(id)sender;
+-(IBAction)inputCommunity:(id)sender;
+-(IBAction)confirmCommunityRemoval:(id)sender;
+-(IBAction)showImportCommunityWindow:(id)sender;
 -(IBAction)showPreferences:(id)sender;
 
 @end

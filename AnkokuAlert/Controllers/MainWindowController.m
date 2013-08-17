@@ -127,7 +127,6 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 @property (nonatomic) CommunityInputType communityInputType;
 @property (nonatomic) NSString* communityInputValue;
 
-@property (nonatomic, weak) IBOutlet NSArrayController* communityArrayController;
 @property (nonatomic, weak) IBOutlet NSObjectController* defaultAccountObjectController;
 
 @property (nonatomic) NSUInteger liveCount;
@@ -336,15 +335,6 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 #pragma mark - Public Interface
 
--(IBAction)showPreferences:(id)sender
-{
-    self.preferenceWindowController = PreferencesWindowController.preferenceWindowController;
-    [self.preferenceWindowController.window center];
-    [self.preferenceWindowController.window makeKeyAndOrderFront:self];
-}
-
-#pragma mark - Internal Methods, Button Actions
-
 #pragma mark Start/Stop Stream
 
 -(IBAction)startAlert:(id)sender
@@ -379,12 +369,78 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     self.isStreamOpened = NO;
 }
 
-#pragma mark Add/Remove/Import Community
-
 -(IBAction)inputCommunity:(id)sender
 {
     [self beginCommunityInputSheetWithMessage:@"Enter community# or community url:"];
 }
+
+-(IBAction)confirmCommunityRemoval:(id)sender
+{
+    self.confirmationWindowController = [ConfirmationWindowController confirmationWindowControllerWithMessage:@"Are you really sure to remove selected community(s)?" completion:^
+                                             (BOOL isCancelled) {
+                                             [NSApp endSheet:self.confirmationWindowController.window];
+                                             [self.confirmationWindowController.window orderOut:self];
+                                             if (!isCancelled) {
+                                                 [self removeCommunity];
+                                             }
+                                             self.confirmationWindowController = nil;
+                                         }];
+    self.confirmationWindowController.titleOfOkButton = @"Remove";
+    [NSApp beginSheet:self.confirmationWindowController.window modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
+}
+
+-(IBAction)showImportCommunityWindow:(id)sender
+{
+    MOAccount* account = MOAccount.defaultAccount;
+    if (!account) {
+        return;
+    }
+
+    NSString* email = account.email;
+    NSString* password = [self cachedPasswordForAccount:account];
+    NSMutableArray* registeredCommunities = NSMutableArray.new;
+    for (MOCommunity* community in account.communities) {
+        [registeredCommunities addObject:community.communityId];
+    }
+
+    self.importCommunityWindowController =
+        [ImportCommunityWindowController importCommunityWindowControllerWithEmail:email
+                                                                         password:password
+                                                             communitiesExcluding:registeredCommunities
+                                                                       completion:^(BOOL isCancelled, NSArray* importedCommunities) {
+             [NSApp endSheet:self.importCommunityWindowController.window];
+             [self.importCommunityWindowController.window orderOut:self];
+             if (isCancelled) {
+                 // LOG(@"import cancelled.")
+             } else {
+                 // LOG(@"import done.");
+                 MOAccount* defaultAccount = MOAccount.defaultAccount;
+                 for (NSDictionary* importedCommunity in importedCommunities) {
+                     MOCommunity* community = defaultAccount.communityWithDefaultAttributes;
+                     community.communityId = importedCommunity[kImportCommunityKeyCommunityId];
+                     community.communityName = importedCommunity[kImportCommunityKeyCommunityName];
+                     [defaultAccount addCommunitiesObject:community];
+                 }
+                 [self.managedObjectContext MR_saveOnlySelfAndWait];
+
+                 [self.communityScrollView flashScrollers];
+             }
+             self.importCommunityWindowController = nil;
+         }];
+
+    [NSApp beginSheet:self.importCommunityWindowController.window modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
+}
+
+-(IBAction)showPreferences:(id)sender
+{
+    self.preferenceWindowController = PreferencesWindowController.preferenceWindowController;
+    [self.preferenceWindowController.window center];
+    [self.preferenceWindowController.window makeKeyAndOrderFront:self];
+}
+
+#pragma mark - Internal Methods, Button Actions
+
+#pragma mark Add/Remove/Import Community
 
 -(void)controlTextDidChange:(NSNotification*)obj
 {
@@ -491,68 +547,11 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 }
 
--(IBAction)confirmCommunityRemoval:(id)sender
-{
-    self.confirmationWindowController = [ConfirmationWindowController confirmationWindowControllerWithMessage:@"Are you really sure to remove selected community(s)?" completion:^
-                                             (BOOL isCancelled) {
-                                             [NSApp endSheet:self.confirmationWindowController.window];
-                                             [self.confirmationWindowController.window orderOut:self];
-                                             if (!isCancelled) {
-                                                 [self removeCommunity];
-                                             }
-                                             self.confirmationWindowController = nil;
-                                         }];
-    self.confirmationWindowController.titleOfOkButton = @"Remove";
-    [NSApp beginSheet:self.confirmationWindowController.window modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
-}
-
 -(void)removeCommunity
 {
     [self.communityArrayController removeObjectsAtArrangedObjectIndexes:self.communityArrayController.selectionIndexes];
     [self.managedObjectContext MR_saveOnlySelfAndWait];
     [self.communityScrollView flashScrollers];
-}
-
--(IBAction)showImportCommunityWindow:(id)sender
-{
-    MOAccount* account = MOAccount.defaultAccount;
-    if (!account) {
-        return;
-    }
-
-    NSString* email = account.email;
-    NSString* password = [self cachedPasswordForAccount:account];
-    NSMutableArray* registeredCommunities = NSMutableArray.new;
-    for (MOCommunity* community in account.communities) {
-        [registeredCommunities addObject:community.communityId];
-    }
-
-    self.importCommunityWindowController =
-        [ImportCommunityWindowController importCommunityWindowControllerWithEmail:email
-                                                                         password:password
-                                                             communitiesExcluding:registeredCommunities
-                                                                       completion:^(BOOL isCancelled, NSArray* importedCommunities) {
-             [NSApp endSheet:self.importCommunityWindowController.window];
-             [self.importCommunityWindowController.window orderOut:self];
-             if (isCancelled) {
-                 // LOG(@"import cancelled.")
-             } else {
-                 // LOG(@"import done.");
-                 MOAccount* defaultAccount = MOAccount.defaultAccount;
-                 for (NSDictionary* importedCommunity in importedCommunities) {
-                     MOCommunity* community = defaultAccount.communityWithDefaultAttributes;
-                     community.communityId = importedCommunity[kImportCommunityKeyCommunityId];
-                     community.communityName = importedCommunity[kImportCommunityKeyCommunityName];
-                     [defaultAccount addCommunitiesObject:community];
-                 }
-                 [self.managedObjectContext MR_saveOnlySelfAndWait];
-
-                 [self.communityScrollView flashScrollers];
-             }
-             self.importCommunityWindowController = nil;
-         }];
-
-    [NSApp beginSheet:self.importCommunityWindowController.window modalForWindow:self.window modalDelegate:self didEndSelector:nil contextInfo:nil];
 }
 
 #pragma mark Show Preferences (is in Public Interfaces)

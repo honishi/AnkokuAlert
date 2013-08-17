@@ -1169,7 +1169,7 @@
 					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="282221768"/>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1366, 746}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
 				<string key="NSMinSize">{800, 678}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
@@ -1305,6 +1305,7 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{17, 81}, {155, 17}}</string>
 							<reference key="NSSuperview" ref="952852556"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="587339907"/>
 							<string key="NSReuseIdentifierKey">_NS:1535</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1325,6 +1326,7 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{20, 51}, {360, 22}}</string>
 							<reference key="NSSuperview" ref="952852556"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="472820960"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1357,6 +1359,7 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{310, 19}, {70, 19}}</string>
 							<reference key="NSSuperview" ref="952852556"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1381,6 +1384,7 @@
 							<int key="NSvFlags">268</int>
 							<string key="NSFrame">{{232, 19}, {70, 19}}</string>
 							<reference key="NSSuperview" ref="952852556"/>
+							<reference key="NSWindow"/>
 							<reference key="NSNextKeyView" ref="1013051851"/>
 							<string key="NSReuseIdentifierKey">_NS:9</string>
 							<bool key="NSEnabled">YES</bool>
@@ -1394,7 +1398,7 @@
 								<int key="NSButtonFlags">-2038153216</int>
 								<int key="NSButtonFlags2">164</int>
 								<string key="NSAlternateContents"/>
-								<string key="NSKeyEquivalent"/>
+								<string type="base64-UTF8" key="NSKeyEquivalent">Gw</string>
 								<int key="NSPeriodicDelay">400</int>
 								<int key="NSPeriodicInterval">75</int>
 							</object>
@@ -1403,10 +1407,11 @@
 					</array>
 					<string key="NSFrameSize">{400, 118}</string>
 					<reference key="NSSuperview"/>
+					<reference key="NSWindow"/>
 					<reference key="NSNextKeyView" ref="931833497"/>
 					<string key="NSReuseIdentifierKey">_NS:21</string>
 				</object>
-				<string key="NSScreenRect">{{0, 0}, {1366, 746}}</string>
+				<string key="NSScreenRect">{{0, 0}, {1440, 878}}</string>
 				<string key="NSMaxSize">{10000000000000, 10000000000000}</string>
 				<bool key="NSWindowIsRestorable">YES</bool>
 			</object>
@@ -4948,17 +4953,85 @@
 				<object class="IBPartialClassDescription">
 					<string key="className">MainWindowController</string>
 					<string key="superclassName">NSWindowController</string>
-					<object class="NSMutableDictionary" key="actions">
-						<string key="NS.key.0">showPreferences:</string>
-						<string key="NS.object.0">id</string>
-					</object>
-					<object class="NSMutableDictionary" key="actionInfosByName">
-						<string key="NS.key.0">showPreferences:</string>
-						<object class="IBActionInfo" key="NS.object.0">
+					<dictionary class="NSMutableDictionary" key="actions">
+						<string key="addCommunity:">id</string>
+						<string key="cancelInputCommunity:">id</string>
+						<string key="changeCommunityEnabled:">id</string>
+						<string key="changeCommunityRating:">id</string>
+						<string key="changeSoundVolume:">id</string>
+						<string key="clearLog:">id</string>
+						<string key="confirmCommunityRemoval:">id</string>
+						<string key="disableAllCommunity:">id</string>
+						<string key="enableAllCommunity:">id</string>
+						<string key="inputCommunity:">id</string>
+						<string key="openCommunityHomepage:">id</string>
+						<string key="showImportCommunityWindow:">id</string>
+						<string key="showPreferences:">id</string>
+						<string key="startAlert:">id</string>
+						<string key="stopAlert:">id</string>
+					</dictionary>
+					<dictionary class="NSMutableDictionary" key="actionInfosByName">
+						<object class="IBActionInfo" key="addCommunity:">
+							<string key="name">addCommunity:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="cancelInputCommunity:">
+							<string key="name">cancelInputCommunity:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="changeCommunityEnabled:">
+							<string key="name">changeCommunityEnabled:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="changeCommunityRating:">
+							<string key="name">changeCommunityRating:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="changeSoundVolume:">
+							<string key="name">changeSoundVolume:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="clearLog:">
+							<string key="name">clearLog:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="confirmCommunityRemoval:">
+							<string key="name">confirmCommunityRemoval:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="disableAllCommunity:">
+							<string key="name">disableAllCommunity:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="enableAllCommunity:">
+							<string key="name">enableAllCommunity:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="inputCommunity:">
+							<string key="name">inputCommunity:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="openCommunityHomepage:">
+							<string key="name">openCommunityHomepage:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="showImportCommunityWindow:">
+							<string key="name">showImportCommunityWindow:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="showPreferences:">
 							<string key="name">showPreferences:</string>
 							<string key="candidateClassName">id</string>
 						</object>
-					</object>
+						<object class="IBActionInfo" key="startAlert:">
+							<string key="name">startAlert:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+						<object class="IBActionInfo" key="stopAlert:">
+							<string key="name">stopAlert:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</dictionary>
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="alertLogScrollView">AlertLogScrollView</string>
 						<string key="communityArrayController">NSArrayController</string>
@@ -5004,6 +5077,24 @@
 					<object class="IBClassDescriptionSource" key="sourceIdentifier">
 						<string key="majorKey">IBProjectSource</string>
 						<string key="minorKey">./Classes/NSLayoutConstraint.h</string>
+					</object>
+				</object>
+				<object class="IBPartialClassDescription">
+					<string key="className">NSTextView</string>
+					<object class="NSMutableDictionary" key="actions">
+						<string key="NS.key.0">orderFrontSharingServicePicker:</string>
+						<string key="NS.object.0">id</string>
+					</object>
+					<object class="NSMutableDictionary" key="actionInfosByName">
+						<string key="NS.key.0">orderFrontSharingServicePicker:</string>
+						<object class="IBActionInfo" key="NS.object.0">
+							<string key="name">orderFrontSharingServicePicker:</string>
+							<string key="candidateClassName">id</string>
+						</object>
+					</object>
+					<object class="IBClassDescriptionSource" key="sourceIdentifier">
+						<string key="majorKey">IBProjectSource</string>
+						<string key="minorKey">./Classes/NSTextView.h</string>
 					</object>
 				</object>
 			</array>

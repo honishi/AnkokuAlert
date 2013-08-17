@@ -8,9 +8,12 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class MainWindowController;
+
 @interface AppDelegate : NSObject<NSApplicationDelegate>
 
-@property (assign) IBOutlet NSWindow* window;
+@property (nonatomic, weak) IBOutlet NSWindow* window;
+@property (nonatomic) MainWindowController* mainWindowController;
 
 -(IBAction)showPreferencesWindow:(id)sender;
 
