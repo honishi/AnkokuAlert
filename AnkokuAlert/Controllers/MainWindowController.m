@@ -287,7 +287,9 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
             ([communityId isEqualToString:targetCommunity.communityId])) {
             NSNumber* targetRating = [NSUserDefaults.standardUserDefaults valueForKey:kUserDefaultsKeyTargetRating];
             NSNumber* openLive = [NSUserDefaults.standardUserDefaults valueForKey:kUserDefaultsKeyOpenLive];
-            if (!targetCommunity.isEnabled.boolValue || targetCommunity.rating.integerValue < targetRating.integerValue) {
+            if (!targetCommunity.isEnabled.boolValue) {
+                // do nothing
+            } else if (targetCommunity.rating.integerValue < targetRating.integerValue)   {
                 [self playAlertSound:AlertSoundTypeOption];
             } else {
                 if (openLive.boolValue) {
