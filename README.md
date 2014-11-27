@@ -5,20 +5,20 @@ AnkokuAlert 2.x
 
 screenshot
 -
-![screenshot](https://dl.dropboxusercontent.com/u/444711/github.com/honishi/AnkokuAlert/screenshot.png)
+![screenshot](./document/screenshot.png)
 
 setup repository
 -
 ````
-$ brew insatll uncrustify
-$ cd .git/hooks
-$ ln -s ../../scripts/git-hooks/pre-commit
+brew insatll uncrustify
+cd .git/hooks
+ln -s ../../scripts/git-hooks/pre-commit
 ````
 setup coredata
 -
 ````
-$ brew install mogenerator
-$ mogenerator -m AnkokuAlert.xcdatamodeld/AnkokuAlert.xcdatamodel -O Models/ --template-var arc=true
+brew install mogenerator
+mogenerator -m AnkokuAlert.xcdatamodeld/AnkokuAlert.xcdatamodel -O Models/ --template-var arc=true
 ````
 
 license
