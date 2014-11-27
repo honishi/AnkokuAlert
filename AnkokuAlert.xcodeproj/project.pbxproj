@@ -405,6 +405,16 @@
 				LastTestingUpgradeCheck = 0610;
 				LastUpgradeCheck = 0610;
 				ORGANIZATIONNAME = "Hiroyuki Onishi";
+				TargetAttributes = {
+					DBD33B94179C3706003A41F9 = {
+						DevelopmentTeam = N4SRN3NAQ3;
+						SystemCapabilities = {
+							com.apple.iCloud = {
+								enabled = 0;
+							};
+						};
+					};
+				};
 			};
 			buildConfigurationList = DBD33B90179C3706003A41F9 /* Build configuration list for PBXProject "AnkokuAlert" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -643,11 +653,14 @@
 			baseConfigurationReference = 4230068D339E942CB552E82D /* Pods.test.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = AnkokuAlert/AnkokuAlert.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AnkokuAlert/AnkokuAlert-Prefix.pch";
 				INFOPLIST_FILE = "AnkokuAlert/AnkokuAlert-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Test;
@@ -732,11 +745,14 @@
 			baseConfigurationReference = B079C8B88C0757FCB21023A2 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = AnkokuAlert/AnkokuAlert.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AnkokuAlert/AnkokuAlert-Prefix.pch";
 				INFOPLIST_FILE = "AnkokuAlert/AnkokuAlert-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Debug;
@@ -746,11 +762,14 @@
 			baseConfigurationReference = D0FD6B1291D902E7ACC38562 /* Pods.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = AnkokuAlert/AnkokuAlert.entitlements;
+				CODE_SIGN_IDENTITY = "Mac Developer";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Mac Developer";
 				COMBINE_HIDPI_IMAGES = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AnkokuAlert/AnkokuAlert-Prefix.pch";
 				INFOPLIST_FILE = "AnkokuAlert/AnkokuAlert-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE = "";
 				WRAPPER_EXTENSION = app;
 			};
 			name = Release;

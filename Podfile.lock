@@ -1,11 +1,9 @@
 PODS:
-  - MagicalRecord (2.2):
-    - MagicalRecord/Core (= 2.2)
-  - MagicalRecord/Core (2.2)
+  - MagicalRecord/Shorthand (2.2)
   - SSKeychain (1.2.2)
 
 DEPENDENCIES:
-  - MagicalRecord
+  - MagicalRecord/Shorthand
   - SSKeychain
 
 SPEC CHECKSUMS:

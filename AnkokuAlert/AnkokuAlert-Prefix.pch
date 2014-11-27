@@ -8,7 +8,7 @@
     #import <Cocoa/Cocoa.h>
 
     #define MR_ENABLE_ACTIVE_RECORD_LOGGING 0
-    #import "CoreData+MagicalRecord.h"
+    #import <MagicalRecord/CoreData+MagicalRecord.h>
 
     #define LOG(A, ...) NSLog(@"LOG: %s:%d:%@", __PRETTY_FUNCTION__, __LINE__, [NSString stringWithFormat:A, ## __VA_ARGS__]);
 #endif

@@ -75,6 +75,17 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 
 #pragma mark - Object Lifecycle
 
+-(id)init
+{
+    self = [super init];
+
+    if (self) {
+        [self deleteAllCookies];
+    }
+
+    return self;
+}
+
 +(AlertManager*)sharedManager
 {
     static AlertManager* sharedManager;
@@ -182,6 +193,17 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 }
 
 #pragma mark - Internal Methods
+
+-(void)deleteAllCookies
+{
+    NSHTTPCookieStorage* storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+
+    for (NSHTTPCookie* cookie in [storage cookies]) {
+        [storage deleteCookie:cookie];
+    }
+
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 #pragma mark Login to Antenna
 
