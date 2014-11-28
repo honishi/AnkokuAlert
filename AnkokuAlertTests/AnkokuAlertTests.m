@@ -6,8 +6,13 @@
 //  Copyright (c) 2013 Hiroyuki Onishi. All rights reserved.
 //
 
-#import "AnkokuAlertTests.h"
+#import <Cocoa/Cocoa.h>
+#import <XCTest/XCTest.h>
 #import "AlertManager.h"
+
+@interface AnkokuAlertTests : XCTestCase
+
+@end
 
 // convenience macro for waiting async process
 #define waitForCondition(CONDITION, TIMEOUT) { \
@@ -63,7 +68,7 @@
     [self.alertManager loginWithEmail:self.email password:self.password completion:completion];
 
     waitForCondition(fetchedAlertStatus != nil, 5.0f);
-    STAssertNotNil(fetchedAlertStatus, nil);
+    XCTAssertNotNil(fetchedAlertStatus, @"");
 
     // open stream
     [self.alertManager openStreamWithAlertStatus:fetchedAlertStatus streamListener:self];
@@ -94,7 +99,7 @@
     
     waitForCondition(communityName != nil, 5.0f);
     NSLog(@"[%@], expected[%@], actual[%@]", community, expectedName, communityName);
-    STAssertTrue([communityName isEqualToString:expectedName], nil);
+    XCTAssert([communityName isEqualToString:expectedName] == true, @"");
 }
 
 #pragma mark - AlertManagerListener Methods

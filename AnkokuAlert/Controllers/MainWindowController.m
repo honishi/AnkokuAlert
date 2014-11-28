@@ -560,6 +560,23 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 // snip
 
+#pragma mark Utility
+
+-(NSString*)firstMatchStringWithRegexpPattern:(NSString*)regexpPattern inString:(NSString*)inString
+{
+    NSError* error = nil;
+    NSRegularExpression* regexp = [NSRegularExpression regularExpressionWithPattern:regexpPattern options:0 error:&error];
+    NSTextCheckingResult* result = [regexp firstMatchInString:inString options:0 range:NSMakeRange(0, inString.length)];
+    
+    NSString* patternInString = nil;
+    
+    if (0 < result.numberOfRanges) {
+        patternInString = [inString substringWithRange:[result rangeAtIndex:1]];
+    }
+    
+    return patternInString;
+}
+
 #pragma mark - Internal Methods, Actions in Community Table View
 
 -(IBAction)changeCommunityEnabled:(id)sender

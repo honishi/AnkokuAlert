@@ -27,6 +27,7 @@
 		DB650FD617A15A1100B46806 /* AlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DB650FD517A15A1100B46806 /* AlertManager.m */; };
 		DB650FD717A15A1100B46806 /* AlertManager.m in Sources */ = {isa = PBXBuildFile; fileRef = DB650FD517A15A1100B46806 /* AlertManager.m */; };
 		DB650FDC17A16A5500B46806 /* TestAccount.plist in Resources */ = {isa = PBXBuildFile; fileRef = DB650FD817A1650900B46806 /* TestAccount.plist */; };
+		DB68BBC81A285AD700367B7A /* MainWindowControllerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DB68BBC71A285AD700367B7A /* MainWindowControllerTests.m */; };
 		DB69268317B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB69268117B3BFE400027BBC /* ImportCommunityWindowController.m */; };
 		DB69268417B3BFE400027BBC /* ImportCommunityWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB69268117B3BFE400027BBC /* ImportCommunityWindowController.m */; };
 		DB69268517B3BFE400027BBC /* ImportCommunityWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB69268217B3BFE400027BBC /* ImportCommunityWindowController.xib */; };
@@ -55,11 +56,11 @@
 		DBD33BAC179C3706003A41F9 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD33BAB179C3706003A41F9 /* AppDelegate.m */; };
 		DBD33BAF179C3707003A41F9 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = DBD33BAD179C3707003A41F9 /* MainMenu.xib */; };
 		DBD33BB2179C3707003A41F9 /* AnkokuAlert.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = DBD33BB0179C3707003A41F9 /* AnkokuAlert.xcdatamodeld */; };
-		DBD33BBA179C3707003A41F9 /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD33BB9179C3707003A41F9 /* SenTestingKit.framework */; };
 		DBD33BBB179C3707003A41F9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD33B98179C3706003A41F9 /* Cocoa.framework */; };
 		DBD33BC3179C3707003A41F9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DBD33BC1179C3707003A41F9 /* InfoPlist.strings */; };
 		DBD33BC6179C3707003A41F9 /* AnkokuAlertTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD33BC5179C3707003A41F9 /* AnkokuAlertTests.m */; };
 		DCDED27FE53EFA610062E207 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D3721E8B32936BBB6F8D402 /* libPods.a */; };
+		E8B3385F7CE38EC278B4DB23 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D3721E8B32936BBB6F8D402 /* libPods.a */; };
 		ED4E6A7E17B0E5A900B008CB /* _MOCommunity.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E6A7B17B0E5A900B008CB /* _MOCommunity.m */; };
 		ED4E6A7F17B0E5A900B008CB /* _MOCommunity.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E6A7B17B0E5A900B008CB /* _MOCommunity.m */; };
 		ED4E6A8017B0E5A900B008CB /* MOCommunity.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E6A7D17B0E5A900B008CB /* MOCommunity.m */; };
@@ -103,6 +104,7 @@
 		DB650FD517A15A1100B46806 /* AlertManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertManager.m; sourceTree = "<group>"; };
 		DB650FD817A1650900B46806 /* TestAccount.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = TestAccount.plist; sourceTree = "<group>"; };
 		DB650FDA17A165B000B46806 /* TestAccount.plist.sample */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = TestAccount.plist.sample; sourceTree = "<group>"; };
+		DB68BBC71A285AD700367B7A /* MainWindowControllerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowControllerTests.m; sourceTree = "<group>"; };
 		DB69268017B3BFE400027BBC /* ImportCommunityWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ImportCommunityWindowController.h; sourceTree = "<group>"; };
 		DB69268117B3BFE400027BBC /* ImportCommunityWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ImportCommunityWindowController.m; sourceTree = "<group>"; };
 		DB69268217B3BFE400027BBC /* ImportCommunityWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ImportCommunityWindowController.xib; sourceTree = "<group>"; };
@@ -110,6 +112,7 @@
 		DB76445417B5FF70003A79B6 /* AlertLogScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertLogScrollView.m; sourceTree = "<group>"; };
 		DB8B346117BCEE1D001423E4 /* DefaultSound.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; name = DefaultSound.aiff; path = Resources/DefaultSound.aiff; sourceTree = "<group>"; };
 		DB8B346217BCEE1D001423E4 /* OptionSound.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; name = OptionSound.aiff; path = Resources/OptionSound.aiff; sourceTree = "<group>"; };
+		DBB6DEDD1A2860C900EB6941 /* Xcode.app */ = {isa = PBXFileReference; lastKnownFileType = wrapper.application; name = Xcode.app; path = ../../../../../Applications/Xcode.app; sourceTree = "<group>"; };
 		DBBE509A17BBE83A005D5C9B /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = icon.icns; path = Resources/icon.icns; sourceTree = "<group>"; };
 		DBBE50A017BBF862005D5C9B /* AddCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = AddCommunityTemplate.png; path = Resources/AddCommunityTemplate.png; sourceTree = "<group>"; };
 		DBBE50A117BBF862005D5C9B /* RemoveCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = RemoveCommunityTemplate.png; path = Resources/RemoveCommunityTemplate.png; sourceTree = "<group>"; };
@@ -131,11 +134,10 @@
 		DBD33BAB179C3706003A41F9 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		DBD33BAE179C3707003A41F9 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = en; path = en.lproj/MainMenu.xib; sourceTree = "<group>"; };
 		DBD33BB1179C3707003A41F9 /* AnkokuAlert.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = AnkokuAlert.xcdatamodel; sourceTree = "<group>"; };
-		DBD33BB8179C3707003A41F9 /* AnkokuAlertTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AnkokuAlertTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
+		DBD33BB8179C3707003A41F9 /* AnkokuAlertTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = AnkokuAlertTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DBD33BB9179C3707003A41F9 /* SenTestingKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SenTestingKit.framework; path = Library/Frameworks/SenTestingKit.framework; sourceTree = DEVELOPER_DIR; };
 		DBD33BC0179C3707003A41F9 /* AnkokuAlertTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AnkokuAlertTests-Info.plist"; sourceTree = "<group>"; };
 		DBD33BC2179C3707003A41F9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
-		DBD33BC4179C3707003A41F9 /* AnkokuAlertTests.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AnkokuAlertTests.h; sourceTree = "<group>"; };
 		DBD33BC5179C3707003A41F9 /* AnkokuAlertTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnkokuAlertTests.m; sourceTree = "<group>"; };
 		ED4E6A7A17B0E5A900B008CB /* _MOCommunity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _MOCommunity.h; sourceTree = "<group>"; };
 		ED4E6A7B17B0E5A900B008CB /* _MOCommunity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _MOCommunity.m; sourceTree = "<group>"; };
@@ -166,8 +168,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				DBBE50A717BC158C005D5C9B /* Security.framework in Frameworks */,
-				DBD33BBA179C3707003A41F9 /* SenTestingKit.framework in Frameworks */,
 				DBD33BBB179C3707003A41F9 /* Cocoa.framework in Frameworks */,
+				E8B3385F7CE38EC278B4DB23 /* libPods.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,7 +246,7 @@
 			isa = PBXGroup;
 			children = (
 				DBD33B95179C3706003A41F9 /* AnkokuAlert.app */,
-				DBD33BB8179C3707003A41F9 /* AnkokuAlertTests.octest */,
+				DBD33BB8179C3707003A41F9 /* AnkokuAlertTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -252,6 +254,7 @@
 		DBD33B97179C3706003A41F9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				DBB6DEDD1A2860C900EB6941 /* Xcode.app */,
 				DBD33B98179C3706003A41F9 /* Cocoa.framework */,
 				DB1088E917AFD5F00086BC71 /* Security.framework */,
 				DBD33BB9179C3707003A41F9 /* SenTestingKit.framework */,
@@ -306,8 +309,8 @@
 			children = (
 				DB650FDA17A165B000B46806 /* TestAccount.plist.sample */,
 				DB650FD817A1650900B46806 /* TestAccount.plist */,
-				DBD33BC4179C3707003A41F9 /* AnkokuAlertTests.h */,
 				DBD33BC5179C3707003A41F9 /* AnkokuAlertTests.m */,
+				DB68BBC71A285AD700367B7A /* MainWindowControllerTests.m */,
 				DBD33BBF179C3707003A41F9 /* Supporting Files */,
 			);
 			path = AnkokuAlertTests;
@@ -381,10 +384,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DBD33BCC179C3707003A41F9 /* Build configuration list for PBXNativeTarget "AnkokuAlertTests" */;
 			buildPhases = (
+				CA433B030F151A221AA291ED /* Check Pods Manifest.lock */,
 				DBD33BB3179C3707003A41F9 /* Sources */,
 				DBD33BB4179C3707003A41F9 /* Frameworks */,
 				DBD33BB5179C3707003A41F9 /* Resources */,
 				DBD33BB6179C3707003A41F9 /* ShellScript */,
+				D3E9493DB49ACCC921DAF8BB /* Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -393,8 +398,8 @@
 			);
 			name = AnkokuAlertTests;
 			productName = AnkokuAlertTests;
-			productReference = DBD33BB8179C3707003A41F9 /* AnkokuAlertTests.octest */;
-			productType = "com.apple.product-type.bundle.ocunit-test";
+			productReference = DBD33BB8179C3707003A41F9 /* AnkokuAlertTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -498,6 +503,36 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
+		CA433B030F151A221AA291ED /* Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		D3E9493DB49ACCC921DAF8BB /* Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		DBD33BB6179C3707003A41F9 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -509,7 +544,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "# Run the unit tests in this test bundle.\n\"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
+			shellScript = "# Run the unit tests in this test bundle.\n# \"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
 		};
 		F8F81F763A3CDEA2368804FF /* Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -556,6 +591,7 @@
 			files = (
 				DBD33BC6179C3707003A41F9 /* AnkokuAlertTests.m in Sources */,
 				DB650FD717A15A1100B46806 /* AlertManager.m in Sources */,
+				DB68BBC81A285AD700367B7A /* MainWindowControllerTests.m in Sources */,
 				DBD2AB1517A2D625005AA7EF /* PreferencesWindowController.m in Sources */,
 				DB2D1F9917A3FF4900183A59 /* MainWindowController.m in Sources */,
 				ED4E6A7F17B0E5A900B008CB /* _MOCommunity.m in Sources */,
@@ -667,17 +703,21 @@
 		};
 		DBBE50AA17BC17A2005D5C9B /* Test */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4230068D339E942CB552E82D /* Pods.test.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(PLATFORM_DIR)/Developer/Library/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AnkokuAlert/AnkokuAlert-Prefix.pch";
 				INFOPLIST_FILE = "AnkokuAlertTests/AnkokuAlertTests-Info.plist";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Test;
 		};
@@ -776,33 +816,41 @@
 		};
 		DBD33BCD179C3707003A41F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B079C8B88C0757FCB21023A2 /* Pods.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AnkokuAlert.app/Contents/MacOS/AnkokuAlert";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(PLATFORM_DIR)/Developer/Library/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AnkokuAlert/AnkokuAlert-Prefix.pch";
 				INFOPLIST_FILE = "AnkokuAlertTests/AnkokuAlertTests-Info.plist";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Debug;
 		};
 		DBD33BCE179C3707003A41F9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = D0FD6B1291D902E7ACC38562 /* Pods.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AnkokuAlert.app/Contents/MacOS/AnkokuAlert";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = "\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"";
+				FRAMEWORK_SEARCH_PATHS = (
+					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
+					"\"$(PLATFORM_DIR)/Developer/Library/Frameworks\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "AnkokuAlert/AnkokuAlert-Prefix.pch";
 				INFOPLIST_FILE = "AnkokuAlertTests/AnkokuAlertTests-Info.plist";
-				OTHER_LDFLAGS = "";
+				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = octest;
+				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};
