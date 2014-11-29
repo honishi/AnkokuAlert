@@ -77,31 +77,6 @@
     self.alertManager = nil;
 }
 
--(void)testCommunityInfo
-{
-    [self examineCommunityNameWithCommunity:@"co367128" expectedName:@"アイマス24時間放送"];
-    [self examineCommunityNameWithCommunity:@"co1902299" expectedName:@"＠ねこチーム"];
-    [self examineCommunityNameWithCommunity:@"co25623" expectedName:@"PITACore Box - ニコ生ツール開発・無人リクエスト放送"];
-}
-
--(void)examineCommunityNameWithCommunity:(NSString *)community expectedName:(NSString *)expectedName
-{
-    __block NSString *communityName = nil;
-    
-    [self.alertManager requestCommunityInfoForCommunity:community completion:^(NSDictionary *communityInfo, NSError *error) {
-        if (error) {
-            NSLog(@"error in request community info: %@", error);
-            return;
-        }
-        
-        communityName = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
-    }];
-    
-    waitForCondition(communityName != nil, 5.0f);
-    NSLog(@"[%@], expected[%@], actual[%@]", community, expectedName, communityName);
-    XCTAssert([communityName isEqualToString:expectedName] == true, @"");
-}
-
 #pragma mark - AlertManagerListener Methods
 
 -(void)alertManagerDidOpenStream:(AlertManager*)alertManager
@@ -118,6 +93,60 @@
 -(void)alertManager:(AlertManager*)alertManager didReceiveLive:(NSString*)live community:(NSString*)community user:(NSString*)user
 {
     NSLog(@"LOG: %s:%d: %@", __PRETTY_FUNCTION__, __LINE__, @"");
+}
+
+#pragma mark - Community Info (resolves community name from community id)
+
+-(void)testCommunityInfo
+{
+    [self examineCommunityNameWithCommunity:@"co367128" expectedName:@"アイマス24時間放送"];
+    [self examineCommunityNameWithCommunity:@"co1902299" expectedName:@"＠ねこチーム"];
+    [self examineCommunityNameWithCommunity:@"co25623" expectedName:@"PITACore Box - ニコ生ツール開発・無人リクエスト放送"];
+}
+
+-(void)examineCommunityNameWithCommunity:(NSString*)community expectedName:(NSString*)expectedName
+{
+    __block NSString* communityName = nil;
+
+    [self.alertManager requestCommunityInfoForCommunity:community completion:^(NSDictionary* communityInfo, NSError* error) {
+         if (error) {
+             NSLog(@"error in request community info: %@", error);
+             return;
+         }
+
+         communityName = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
+     }];
+
+    waitForCondition(communityName != nil, 5.0f);
+    NSLog(@"[%@], expected[%@], actual[%@]", community, expectedName, communityName);
+    XCTAssert([communityName isEqualToString:expectedName] == true, @"");
+}
+
+#pragma mark - Channel Info (resolves community id from channel name)
+
+-(void)testChannelInfo
+{
+    [self examineChannelNameWithChannelName:@"gurikan" expectedCommunityId:@"ch2590739"];
+    [self examineChannelNameWithChannelName:@"noriradi" expectedCommunityId:@"ch2597951"];
+    [self examineChannelNameWithChannelName:@"iiotonatati" expectedCommunityId:@"ch2598414"];
+}
+
+-(void)examineChannelNameWithChannelName:(NSString*)channelName expectedCommunityId:(NSString*)expectedCommunityId
+{
+    __block NSString* resolvedCommunityId = nil;
+
+    [self.alertManager requestChannelCommunityIdForChannelName:channelName completion:^(NSString* communityId, NSError* error) {
+         if (error) {
+             NSLog(@"error in request channel community id: %@", error);
+             return;
+         }
+
+         resolvedCommunityId = communityId;
+     }];
+
+    waitForCondition(resolvedCommunityId != nil, 5.0f);
+    NSLog(@"[%@], expected[%@], actual[%@]", channelName, expectedCommunityId, resolvedCommunityId);
+    XCTAssert([resolvedCommunityId isEqualToString:expectedCommunityId] == true, @"");
 }
 
 @end
