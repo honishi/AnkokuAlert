@@ -19,6 +19,7 @@
 		DB4E6B5817BBB2750079BA92 /* ImportCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B5617BBB2750079BA92 /* ImportCommunityTemplate.png */; };
 		DB4E6B5A17BBB27F0079BA92 /* PreferencesTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B5917BBB27F0079BA92 /* PreferencesTemplate.png */; };
 		DB4E6B5B17BBB27F0079BA92 /* PreferencesTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DB4E6B5917BBB27F0079BA92 /* PreferencesTemplate.png */; };
+		DB52A3761A29F314009D9B79 /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = DB52A3751A29F314009D9B79 /* icon.icns */; };
 		DB5BA5AC17B3B115004B8B0A /* ConfirmationWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */; };
 		DB5BA5AE17B3B115004B8B0A /* ConfirmationWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */; };
 		DB5BA5AF17B3B115004B8B0A /* ConfirmationWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */; };
@@ -33,8 +34,6 @@
 		DB8B346417BCEE1D001423E4 /* DefaultSound.aiff in Resources */ = {isa = PBXBuildFile; fileRef = DB8B346117BCEE1D001423E4 /* DefaultSound.aiff */; };
 		DB8B346517BCEE1D001423E4 /* OptionSound.aiff in Resources */ = {isa = PBXBuildFile; fileRef = DB8B346217BCEE1D001423E4 /* OptionSound.aiff */; };
 		DB8B346617BCEE1D001423E4 /* OptionSound.aiff in Resources */ = {isa = PBXBuildFile; fileRef = DB8B346217BCEE1D001423E4 /* OptionSound.aiff */; };
-		DBBE509B17BBE83A005D5C9B /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = DBBE509A17BBE83A005D5C9B /* icon.icns */; };
-		DBBE509C17BBE83A005D5C9B /* icon.icns in Resources */ = {isa = PBXBuildFile; fileRef = DBBE509A17BBE83A005D5C9B /* icon.icns */; };
 		DBBE50A217BBF862005D5C9B /* AddCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DBBE50A017BBF862005D5C9B /* AddCommunityTemplate.png */; };
 		DBBE50A317BBF862005D5C9B /* AddCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DBBE50A017BBF862005D5C9B /* AddCommunityTemplate.png */; };
 		DBBE50A417BBF862005D5C9B /* RemoveCommunityTemplate.png in Resources */ = {isa = PBXBuildFile; fileRef = DBBE50A117BBF862005D5C9B /* RemoveCommunityTemplate.png */; };
@@ -85,6 +84,7 @@
 		DB4E6B4D17BBB23A0079BA92 /* StopStreamTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = StopStreamTemplate.png; path = Resources/StopStreamTemplate.png; sourceTree = "<group>"; };
 		DB4E6B5617BBB2750079BA92 /* ImportCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = ImportCommunityTemplate.png; path = Resources/ImportCommunityTemplate.png; sourceTree = "<group>"; };
 		DB4E6B5917BBB27F0079BA92 /* PreferencesTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = PreferencesTemplate.png; path = Resources/PreferencesTemplate.png; sourceTree = "<group>"; };
+		DB52A3751A29F314009D9B79 /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = icon.icns; sourceTree = "<group>"; };
 		DB5BA5A917B3B115004B8B0A /* ConfirmationWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ConfirmationWindowController.h; sourceTree = "<group>"; };
 		DB5BA5AA17B3B115004B8B0A /* ConfirmationWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ConfirmationWindowController.m; sourceTree = "<group>"; };
 		DB5BA5AB17B3B115004B8B0A /* ConfirmationWindowController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ConfirmationWindowController.xib; sourceTree = "<group>"; };
@@ -100,7 +100,6 @@
 		DB76445417B5FF70003A79B6 /* AlertLogScrollView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlertLogScrollView.m; sourceTree = "<group>"; };
 		DB8B346117BCEE1D001423E4 /* DefaultSound.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; name = DefaultSound.aiff; path = Resources/DefaultSound.aiff; sourceTree = "<group>"; };
 		DB8B346217BCEE1D001423E4 /* OptionSound.aiff */ = {isa = PBXFileReference; lastKnownFileType = audio.aiff; name = OptionSound.aiff; path = Resources/OptionSound.aiff; sourceTree = "<group>"; };
-		DBBE509A17BBE83A005D5C9B /* icon.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; name = icon.icns; path = Resources/icon.icns; sourceTree = "<group>"; };
 		DBBE50A017BBF862005D5C9B /* AddCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = AddCommunityTemplate.png; path = Resources/AddCommunityTemplate.png; sourceTree = "<group>"; };
 		DBBE50A117BBF862005D5C9B /* RemoveCommunityTemplate.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = RemoveCommunityTemplate.png; path = Resources/RemoveCommunityTemplate.png; sourceTree = "<group>"; };
 		DBBE50A617BC0F54005D5C9B /* AnkokuAlert.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = AnkokuAlert.entitlements; sourceTree = "<group>"; };
@@ -191,7 +190,7 @@
 		DB69268717B3F4CB00027BBC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				DBBE509A17BBE83A005D5C9B /* icon.icns */,
+				DB52A3751A29F314009D9B79 /* icon.icns */,
 				DB4E6B4A17BBB1DB0079BA92 /* StartStreamTemplate.png */,
 				DB4E6B4D17BBB23A0079BA92 /* StopStreamTemplate.png */,
 				DBBE50A017BBF862005D5C9B /* AddCommunityTemplate.png */,
@@ -438,9 +437,9 @@
 				DB4E6B4E17BBB23A0079BA92 /* StopStreamTemplate.png in Resources */,
 				DB4E6B5717BBB2750079BA92 /* ImportCommunityTemplate.png in Resources */,
 				DB4E6B5A17BBB27F0079BA92 /* PreferencesTemplate.png in Resources */,
-				DBBE509B17BBE83A005D5C9B /* icon.icns in Resources */,
 				DBBE50A217BBF862005D5C9B /* AddCommunityTemplate.png in Resources */,
 				DBBE50A417BBF862005D5C9B /* RemoveCommunityTemplate.png in Resources */,
+				DB52A3761A29F314009D9B79 /* icon.icns in Resources */,
 				DB8B346317BCEE1D001423E4 /* DefaultSound.aiff in Resources */,
 				DB8B346517BCEE1D001423E4 /* OptionSound.aiff in Resources */,
 			);
@@ -460,7 +459,6 @@
 				DB4E6B4F17BBB23A0079BA92 /* StopStreamTemplate.png in Resources */,
 				DB4E6B5817BBB2750079BA92 /* ImportCommunityTemplate.png in Resources */,
 				DB4E6B5B17BBB27F0079BA92 /* PreferencesTemplate.png in Resources */,
-				DBBE509C17BBE83A005D5C9B /* icon.icns in Resources */,
 				DBBE50A317BBF862005D5C9B /* AddCommunityTemplate.png in Resources */,
 				DBBE50A517BBF862005D5C9B /* RemoveCommunityTemplate.png in Resources */,
 				DB8B346417BCEE1D001423E4 /* DefaultSound.aiff in Resources */,
