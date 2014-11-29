@@ -27,4 +27,6 @@
 -(IBAction)showImportCommunityWindow:(id)sender;
 -(IBAction)showPreferences:(id)sender;
 
+-(NSString*)firstMatchStringWithRegexpPattern:(NSString*)regexpPattern inString:(NSString*)inString;
+
 @end

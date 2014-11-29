@@ -16,7 +16,9 @@ typedef NS_ENUM (NSInteger, AlertManagerErrorCode) {
     AlertManagerErrorCodeStreamInfoRequestFailed,
     AlertManagerErrorCodeStreamInfoParseFailed,
     AlertManagerErrorCodeCommunityInfoRequestFailed,
-    AlertManagerErrorCodeCommunityInfoParseFailed
+    AlertManagerErrorCodeCommunityInfoParseFailed,
+    AlertManagerErrorCodeChannelCommunityIdRequestFailed,
+    AlertManagerErrorCodeChannelCommunityIdParseFailed
 };
 
 extern NSString* const AlertManagerAlertStatusKeyUserId;
@@ -36,6 +38,7 @@ extern NSString* const AlertManagerCommunityInfoKeyCommunityName;
 typedef void (^ LoginCompletionBlock)(NSDictionary* alertStatus, NSError* error);
 typedef void (^ StreamInfoCompletionBlock)(NSDictionary* streamInfo, NSError* error);
 typedef void (^ CommunityInfoCompletionBlock)(NSDictionary* communityInfo, NSError* error);
+typedef void (^ ChannelCommunityIdCompletionBlock)(NSString* communityId, NSError* error);
 
 @protocol AlertManagerStreamListener;
 
@@ -52,6 +55,7 @@ typedef void (^ CommunityInfoCompletionBlock)(NSDictionary* communityInfo, NSErr
 -(void)requestStreamInfoForLive:(NSString*)liveId completion:(StreamInfoCompletionBlock)completion;
 -(void)requestCommunityInfoForCommunity:(NSString*)communityId completion:(CommunityInfoCompletionBlock)completion;
 +(NSString*)communityUrlStringWithCommunithId:(NSString*)communityId;
+-(void)requestChannelCommunityIdForChannelName:(NSString*)channelName completion:(ChannelCommunityIdCompletionBlock)completion;
 
 @end
 

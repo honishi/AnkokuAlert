@@ -35,6 +35,7 @@ NSString* const kUserDefaultsKeyOpenLive = @"OpenLive";
 
 NSString* const kRegExpLiveId = @".*(lv\\d+)";
 NSString* const kRegExpCommunityId = @".*(co\\d+)";
+NSString* const kRegExpChannelName = @"https?:\\/\\/ch\\..+\\/([ -~]{4,})";
 
 NSString* const kAlertSoundFileNameDefault = @"DefaultSound";
 NSString* const kAlertSoundFileNameOption = @"OptionSound";
@@ -114,7 +115,8 @@ typedef NS_ENUM (NSInteger, AlertSoundType) {
 typedef NS_ENUM (NSInteger, CommunityInputType) {
     CommunityInputTypeUnknown,
     CommunityInputTypeLiveId,
-    CommunityInputTypeCommunityId
+    CommunityInputTypeCommunityId,
+    CommunityInputTypeChannelName
 };
 
 @interface MainWindowController ()<AlertManagerStreamListener, NSTableViewDataSource, NSTextFieldDelegate, NSUserNotificationCenterDelegate>
@@ -289,7 +291,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
             NSNumber* openLive = [NSUserDefaults.standardUserDefaults valueForKey:kUserDefaultsKeyOpenLive];
             if (!targetCommunity.isEnabled.boolValue) {
                 // do nothing
-            } else if (targetCommunity.rating.integerValue < targetRating.integerValue)   {
+            } else if (targetCommunity.rating.integerValue < targetRating.integerValue) {
                 [self playAlertSound:AlertSoundTypeOption];
             } else {
                 if (openLive.boolValue) {
@@ -373,7 +375,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
 -(IBAction)inputCommunity:(id)sender
 {
-    [self beginCommunityInputSheetWithMessage:@"Enter community# or community url:"];
+    [self beginCommunityInputSheetWithMessage:@"Enter community url:"];
 }
 
 -(IBAction)confirmCommunityRemoval:(id)sender
@@ -449,24 +451,29 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     NSTextView* inputView = obj.userInfo[@"NSFieldEditor"];
     NSString* inputContent = inputView.textStorage.string;
 
-    NSError* error = nil;
-    NSRegularExpression* liveIdRegexp = [NSRegularExpression regularExpressionWithPattern:kRegExpLiveId options:0 error:&error];
-    NSTextCheckingResult* result = [liveIdRegexp firstMatchInString:inputContent options:0 range:NSMakeRange(0, inputContent.length)];
+    NSString* matched = nil;
 
-    if (0 < result.numberOfRanges) {
+    matched = [self firstMatchStringWithRegexpPattern:kRegExpLiveId inString:inputContent];
+    if (matched) {
         self.hasValidCommunityInput = YES;
         self.communityInputType = CommunityInputTypeLiveId;
-        self.communityInputValue = [inputContent substringWithRange:[result rangeAtIndex:1]];
+        self.communityInputValue = matched;
         return;
     }
 
-    NSRegularExpression* communityIdRegexp = [NSRegularExpression regularExpressionWithPattern:kRegExpCommunityId options:0 error:&error];
-    result = [communityIdRegexp firstMatchInString:inputContent options:0 range:NSMakeRange(0, inputContent.length)];
-
-    if (0 < result.numberOfRanges) {
+    matched = [self firstMatchStringWithRegexpPattern:kRegExpCommunityId inString:inputContent];
+    if (matched) {
         self.hasValidCommunityInput = YES;
         self.communityInputType = CommunityInputTypeCommunityId;
-        self.communityInputValue = [inputContent substringWithRange:[result rangeAtIndex:1]];
+        self.communityInputValue = matched;
+        return;
+    }
+
+    matched = [self firstMatchStringWithRegexpPattern:kRegExpChannelName inString:inputContent];
+    if (matched) {
+        self.hasValidCommunityInput = YES;
+        self.communityInputType = CommunityInputTypeChannelName;
+        self.communityInputValue = matched;
         return;
     }
 
@@ -497,56 +504,85 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     [self endCommunityInputSheet];
 
     switch (self.communityInputType) {
-        case CommunityInputTypeLiveId: {
-            [AlertManager.sharedManager requestStreamInfoForLive:self.communityInputValue completion:^
-                 (NSDictionary* streamInfo, NSError* error) {
-                 if (error) {
-                     // do something
-                 } else {
-                     MOCommunity* community = MOAccount.defaultAccount.communityWithDefaultAttributes;
-                     community.communityId = streamInfo[AlertManagerStreamInfoKeyCommunityId];
-                     community.communityName = streamInfo[AlertManagerStreamInfoKeyCommunityName];
-                     [MOAccount.defaultAccount addCommunitiesObject:community];
-
-                     [self.managedObjectContext MR_saveOnlySelfAndWait];
-                     [self.communityArrayController rearrangeObjects];
-                     [self.communityScrollView flashScrollers];
-                 }
-             }];
-
+        case CommunityInputTypeLiveId:
+            [self addCommunityByLiveId];
             break;
-        }
 
-        case CommunityInputTypeCommunityId: {
-            for (MOCommunity* community in self.communityArrayController.arrangedObjects) {
-                if ([community.communityId isEqualToString:self.communityInputValue]) {
-                    [self beginCommunityInputSheetWithMessage:@"The community is already registered, please enter again:"];
-                    return;
-                }
-            }
-
-            [AlertManager.sharedManager requestCommunityInfoForCommunity:self.communityInputValue completion:^
-                 (NSDictionary* communityInfo, NSError* error) {
-                 if (error) {
-                     // do something
-                 } else {
-                     MOCommunity* community = MOAccount.defaultAccount.communityWithDefaultAttributes;
-                     community.communityId = self.communityInputValue;
-                     community.communityName = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
-                     [MOAccount.defaultAccount addCommunitiesObject:community];
-
-                     [self.managedObjectContext MR_saveOnlySelfAndWait];
-                     [self.communityArrayController rearrangeObjects];
-                     [self.communityScrollView flashScrollers];
-                 }
-             }];
+        case CommunityInputTypeCommunityId:
+            [self addCommunityByCommunityId];
             break;
-        }
+
+        case CommunityInputTypeChannelName:
+            [self addCommunityByChannelName];
+            break;
 
         default:
             break;
     }
+}
 
+-(void)addCommunityByLiveId
+{
+    [AlertManager.sharedManager requestStreamInfoForLive:self.communityInputValue completion:^
+         (NSDictionary* streamInfo, NSError* error) {
+         if (error) {
+             // do something
+             return;
+         }
+
+         MOCommunity* community = MOAccount.defaultAccount.communityWithDefaultAttributes;
+         community.communityId = streamInfo[AlertManagerStreamInfoKeyCommunityId];
+         community.communityName = streamInfo[AlertManagerStreamInfoKeyCommunityName];
+         [MOAccount.defaultAccount addCommunitiesObject:community];
+
+         [self.managedObjectContext MR_saveOnlySelfAndWait];
+         [self.communityArrayController rearrangeObjects];
+         [self.communityScrollView flashScrollers];
+     }];
+}
+
+-(void)addCommunityByCommunityId
+{
+    [self addCommunityByCommunityId:self.communityInputValue];
+}
+
+-(void)addCommunityByCommunityId:(NSString*)communityId
+{
+    for (MOCommunity* community in self.communityArrayController.arrangedObjects) {
+        if ([community.communityId isEqualToString:communityId]) {
+            [self beginCommunityInputSheetWithMessage:@"The community is already registered, please enter again:"];
+            return;
+        }
+    }
+
+    [AlertManager.sharedManager requestCommunityInfoForCommunity:communityId completion:^
+         (NSDictionary* communityInfo, NSError* error) {
+         if (error) {
+             // do something
+             return;
+         }
+
+         MOCommunity* community = MOAccount.defaultAccount.communityWithDefaultAttributes;
+         community.communityId = communityId;
+         community.communityName = communityInfo[AlertManagerCommunityInfoKeyCommunityName];
+         [MOAccount.defaultAccount addCommunitiesObject:community];
+
+         [self.managedObjectContext MR_saveOnlySelfAndWait];
+         [self.communityArrayController rearrangeObjects];
+         [self.communityScrollView flashScrollers];
+     }];
+}
+
+-(void)addCommunityByChannelName
+{
+    [AlertManager.sharedManager requestChannelCommunityIdForChannelName:self.communityInputValue completion:^(NSString* communityId, NSError* error) {
+         if (error) {
+             [self beginCommunityInputSheetWithMessage:@"Could not resolve community id, please enter again:"];
+             return;
+         }
+
+         [self addCommunityByCommunityId:communityId];
+     }];
 }
 
 -(void)removeCommunity
@@ -559,6 +595,23 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 #pragma mark Show Preferences (is in Public Interfaces)
 
 // snip
+
+#pragma mark Utility
+
+-(NSString*)firstMatchStringWithRegexpPattern:(NSString*)regexpPattern inString:(NSString*)inString
+{
+    NSError* error = nil;
+    NSRegularExpression* regexp = [NSRegularExpression regularExpressionWithPattern:regexpPattern options:0 error:&error];
+    NSTextCheckingResult* result = [regexp firstMatchInString:inString options:0 range:NSMakeRange(0, inString.length)];
+
+    NSString* patternInString = nil;
+
+    if (0 < result.numberOfRanges) {
+        patternInString = [inString substringWithRange:[result rangeAtIndex:1]];
+    }
+
+    return patternInString;
+}
 
 #pragma mark - Internal Methods, Actions in Community Table View
 

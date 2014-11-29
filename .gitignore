@@ -1,9 +1,20 @@
+# mac
 .DS_Store
-*.xcodeproj/*
-!*.xcodeproj/project.pbxproj
-!*.xcworkspace/contents.xcworkspacedata
-build
-.idea
+
+# appcode
+*.idea
+.idea/
+
+# xcode
+xcuserdata
+# xccheckout can be excluded, see comments here; http://stackoverflow.com/a/19260712
+*.xccheckout
+*/xcdebugger/
+
+# pods
+Pods/
+*.xcworkspace
+!default.xcworkspace
 
 # account info
 TestAccount.plist

@@ -14,6 +14,21 @@ brew insatll uncrustify
 cd .git/hooks
 ln -s ../../scripts/git-hooks/pre-commit
 ````
+
+project dependencies
+-
+* `xcproj` command is required to keep xcode.pbxproj file clean
+* see detail at http://qiita.com/masaki925/items/878ab05824b772d72da9
+
+````
+brew install xcproj
+````
+
+````
+pod install
+open AnkokuAlert.xcworkspace
+````
+
 setup coredata
 -
 ````

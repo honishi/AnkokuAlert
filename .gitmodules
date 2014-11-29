@@ -1,6 +1,0 @@
-[submodule "Vendor/SSKeychain"]
-	path = Vendor/SSKeychain
-	url = git@github.com:soffes/sskeychain.git
-[submodule "Vendor/MagicalRecord"]
-	path = Vendor/MagicalRecord
-	url = git@github.com:magicalpanda/MagicalRecord.git

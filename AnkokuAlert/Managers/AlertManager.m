@@ -13,6 +13,7 @@ NSString* const kUrlGetAlertStatus = @"http://live.nicovideo.jp/api/getalertstat
 NSString* const kUrlGetStreamInfo = @"http://live.nicovideo.jp/api/getstreaminfo/";
 NSString* const kUrlLive = @"http://live.nicovideo.jp/watch/";
 NSString* const kUrlCommunity = @"http://com.nicovideo.jp/community/";
+NSString* const kUrlChannel = @"http://ch.nicovideo.jp/";
 
 NSString* const kRequestHeaderUserAgent = @"NicoLiveAlert 1.2.0";
 NSString* const kRequestHeaderReferer = @"app:/NicoLiveAlert.swf";
@@ -74,6 +75,17 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
 @implementation AlertManager
 
 #pragma mark - Object Lifecycle
+
+-(id)init
+{
+    self = [super init];
+
+    if (self) {
+        [self deleteAllCookies];
+    }
+
+    return self;
+}
 
 +(AlertManager*)sharedManager
 {
@@ -181,7 +193,47 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     return [kUrlCommunity stringByAppendingString:communityId];
 }
 
+-(void)requestChannelCommunityIdForChannelName:(NSString*)channelName completion:(ChannelCommunityIdCompletionBlock)completion
+{
+    NSURL* url = [NSURL URLWithString:[kUrlChannel stringByAppendingString:channelName]];
+    FakedMutableURLRequest* request = [FakedMutableURLRequest requestWithURL:url];
+
+    asyncRequestCompletionBlock requestCompletion = ^(NSURLResponse* response, NSData* data, NSError* error) {
+        if (error) {
+            if (completion) {
+                completion(nil, [NSError errorWithDomain:AlertManagerErrorDomain code:AlertManagerErrorCodeChannelCommunityIdRequestFailed userInfo:nil]);
+            }
+        } else {
+            // LOG(@"%@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+            NSString* communityId = [self parseChannelCommunityId:data];
+
+            if (!communityId) {
+                if (completion) {
+                    completion(nil, [NSError errorWithDomain:AlertManagerErrorDomain code:AlertManagerErrorCodeChannelCommunityIdParseFailed userInfo:nil]);
+                }
+            } else {
+                if (completion) {
+                    completion(communityId, nil);
+                }
+            }
+        }
+    };
+
+    [NSURLConnection sendAsynchronousRequest:request queue:NSOperationQueue.mainQueue completionHandler:requestCompletion];
+}
+
 #pragma mark - Internal Methods
+
+-(void)deleteAllCookies
+{
+    NSHTTPCookieStorage* storage = [NSHTTPCookieStorage sharedHTTPCookieStorage];
+
+    for (NSHTTPCookie* cookie in [storage cookies]) {
+        [storage deleteCookie:cookie];
+    }
+
+    [[NSUserDefaults standardUserDefaults] synchronize];
+}
 
 #pragma mark Login to Antenna
 
@@ -591,6 +643,40 @@ typedef void (^ asyncRequestCompletionBlock)(NSURLResponse* response, NSData* da
     }
 
     return communityInfo;
+}
+
+#pragma mark Community Id from Channel Name
+
+-(NSString*)parseChannelCommunityId:(NSData*)data
+{
+    NSString* communityId = nil;
+
+    @try {
+        NSError* error = nil;
+        NSXMLDocument* xml = [[NSXMLDocument alloc] initWithData:data options:NSXMLDocumentTidyHTML error:&error];
+        NSXMLNode* rootElement = xml.rootElement;
+
+        NSString* found = nil;
+        NSString* cleansed = nil;
+
+        NSArray* nodes = [rootElement nodesForXPath:@"//*[@id=\"cp_symbol\"]/span/a/@href" error:&error];
+
+        if (nodes.count) {
+            found = ((NSXMLNode*)nodes[0]).stringValue;
+
+            NSRegularExpression* regex = [NSRegularExpression regularExpressionWithPattern:@"\\/" options:0 error:nil];
+            cleansed = [regex stringByReplacingMatchesInString:found options:0 range:NSMakeRange(0, found.length) withTemplate:@""];
+        }
+
+        communityId = cleansed;
+    }
+    @catch (NSException* exception) {
+        // parse error
+        LOG(@"caught exception in parsing channel community id");
+        // LOG(@"caught exception in parsing channel community id: %@", [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+    }
+
+    return communityId;
 }
 
 #pragma mark Encoding/Decoding Utility
