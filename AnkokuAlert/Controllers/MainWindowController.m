@@ -690,7 +690,8 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     self.windowTitle = [NSString stringWithFormat:@"Ankoku Alert: %@", account.userName ? account.userName:@"<No user selected.>"];
 
     if (account) {
-        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"account.objectID == %@", account.objectID];
+        // http://stackoverflow.com/a/24972869 ; account.objectId -> [account objectID]
+        NSPredicate* predicate = [NSPredicate predicateWithFormat:@"account.objectID == %@", [account objectID]];
         self.accountFilterPredicate = predicate;
     }
 }
