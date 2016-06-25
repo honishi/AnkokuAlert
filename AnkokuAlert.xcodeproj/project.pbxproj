@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		6D6A5619F9C27B73575EA62F /* libPods-AnkokuAlert.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 8D8C5E6E16A201044672651C /* libPods-AnkokuAlert.a */; };
+		72821E9B5014D70BDEECB9A4 /* libPods-AnkokuAlertTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED3603CA056B7553082CAD79 /* libPods-AnkokuAlertTests.a */; };
 		DB1088EA17AFD5F00086BC71 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DB1088E917AFD5F00086BC71 /* Security.framework */; };
 		DB2D1F9817A3FF4900183A59 /* MainWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = DB2D1F9617A3FF4900183A59 /* MainWindowController.m */; };
 		DB2D1F9A17A3FF4900183A59 /* MainWindowController.xib in Resources */ = {isa = PBXBuildFile; fileRef = DB2D1F9717A3FF4900183A59 /* MainWindowController.xib */; };
@@ -52,7 +54,6 @@
 		DBD33BBB179C3707003A41F9 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD33B98179C3706003A41F9 /* Cocoa.framework */; };
 		DBD33BC3179C3707003A41F9 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = DBD33BC1179C3707003A41F9 /* InfoPlist.strings */; };
 		DBD33BC6179C3707003A41F9 /* AnkokuAlertTests.m in Sources */ = {isa = PBXBuildFile; fileRef = DBD33BC5179C3707003A41F9 /* AnkokuAlertTests.m */; };
-		DCDED27FE53EFA610062E207 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1D3721E8B32936BBB6F8D402 /* libPods.a */; };
 		ED4E6A7E17B0E5A900B008CB /* _MOCommunity.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E6A7B17B0E5A900B008CB /* _MOCommunity.m */; };
 		ED4E6A8017B0E5A900B008CB /* MOCommunity.m in Sources */ = {isa = PBXBuildFile; fileRef = ED4E6A7D17B0E5A900B008CB /* MOCommunity.m */; };
 		ED4E6AF217B0EBC700B008CB /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DBD33B9C179C3706003A41F9 /* CoreData.framework */; };
@@ -72,10 +73,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1D3721E8B32936BBB6F8D402 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
-		4230068D339E942CB552E82D /* Pods.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.test.xcconfig; path = "Pods/Target Support Files/Pods/Pods.test.xcconfig"; sourceTree = "<group>"; };
-		B079C8B88C0757FCB21023A2 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
-		D0FD6B1291D902E7ACC38562 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		88665BE2B6750D5FC481BA6C /* Pods-AnkokuAlertTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnkokuAlertTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AnkokuAlertTests/Pods-AnkokuAlertTests.debug.xcconfig"; sourceTree = "<group>"; };
+		8CB854FF58DEBAA28F6DEAC2 /* Pods-AnkokuAlert.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnkokuAlert.debug.xcconfig"; path = "Pods/Target Support Files/Pods-AnkokuAlert/Pods-AnkokuAlert.debug.xcconfig"; sourceTree = "<group>"; };
+		8D8C5E6E16A201044672651C /* libPods-AnkokuAlert.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AnkokuAlert.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9A5E7C227C2028F5F2950466 /* Pods-AnkokuAlertTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnkokuAlertTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-AnkokuAlertTests/Pods-AnkokuAlertTests.release.xcconfig"; sourceTree = "<group>"; };
+		D2DAD5832D03FD7253B99DDF /* Pods-AnkokuAlert.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnkokuAlert.release.xcconfig"; path = "Pods/Target Support Files/Pods-AnkokuAlert/Pods-AnkokuAlert.release.xcconfig"; sourceTree = "<group>"; };
 		DB1088E917AFD5F00086BC71 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = System/Library/Frameworks/Security.framework; sourceTree = SDKROOT; };
 		DB2D1F9517A3FF4900183A59 /* MainWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainWindowController.h; sourceTree = "<group>"; };
 		DB2D1F9617A3FF4900183A59 /* MainWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainWindowController.m; sourceTree = "<group>"; };
@@ -124,6 +126,7 @@
 		DBD33BC0179C3707003A41F9 /* AnkokuAlertTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "AnkokuAlertTests-Info.plist"; sourceTree = "<group>"; };
 		DBD33BC2179C3707003A41F9 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		DBD33BC5179C3707003A41F9 /* AnkokuAlertTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AnkokuAlertTests.m; sourceTree = "<group>"; };
+		ED3603CA056B7553082CAD79 /* libPods-AnkokuAlertTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-AnkokuAlertTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED4E6A7A17B0E5A900B008CB /* _MOCommunity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = _MOCommunity.h; sourceTree = "<group>"; };
 		ED4E6A7B17B0E5A900B008CB /* _MOCommunity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = _MOCommunity.m; sourceTree = "<group>"; };
 		ED4E6A7C17B0E5A900B008CB /* MOCommunity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MOCommunity.h; sourceTree = "<group>"; };
@@ -134,6 +137,8 @@
 		ED7DC34317B225C1007A9D8F /* MOAccount.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MOAccount.m; sourceTree = "<group>"; };
 		EDCE607A17B4C860005B4C67 /* NSString+CompareCommunityId.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSString+CompareCommunityId.h"; sourceTree = "<group>"; };
 		EDCE607B17B4C860005B4C67 /* NSString+CompareCommunityId.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSString+CompareCommunityId.m"; sourceTree = "<group>"; };
+		F215BA24D1821A44779EF13F /* Pods-AnkokuAlert.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnkokuAlert.test.xcconfig"; path = "Pods/Target Support Files/Pods-AnkokuAlert/Pods-AnkokuAlert.test.xcconfig"; sourceTree = "<group>"; };
+		F7E126B32951FC3073B0E127 /* Pods-AnkokuAlertTests.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-AnkokuAlertTests.test.xcconfig"; path = "Pods/Target Support Files/Pods-AnkokuAlertTests/Pods-AnkokuAlertTests.test.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,7 +149,7 @@
 				ED4E6AF217B0EBC700B008CB /* CoreData.framework in Frameworks */,
 				DB1088EA17AFD5F00086BC71 /* Security.framework in Frameworks */,
 				DBD33B99179C3706003A41F9 /* Cocoa.framework in Frameworks */,
-				DCDED27FE53EFA610062E207 /* libPods.a in Frameworks */,
+				6D6A5619F9C27B73575EA62F /* libPods-AnkokuAlert.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -154,18 +159,22 @@
 			files = (
 				DBBE50A717BC158C005D5C9B /* Security.framework in Frameworks */,
 				DBD33BBB179C3707003A41F9 /* Cocoa.framework in Frameworks */,
+				72821E9B5014D70BDEECB9A4 /* libPods-AnkokuAlertTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		7EAD5F9D74FFA57CDDD55B3B /* Pods */ = {
+		A5B9FF92B04883DAE8EC9DF7 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				B079C8B88C0757FCB21023A2 /* Pods.debug.xcconfig */,
-				4230068D339E942CB552E82D /* Pods.test.xcconfig */,
-				D0FD6B1291D902E7ACC38562 /* Pods.release.xcconfig */,
+				8CB854FF58DEBAA28F6DEAC2 /* Pods-AnkokuAlert.debug.xcconfig */,
+				F215BA24D1821A44779EF13F /* Pods-AnkokuAlert.test.xcconfig */,
+				D2DAD5832D03FD7253B99DDF /* Pods-AnkokuAlert.release.xcconfig */,
+				88665BE2B6750D5FC481BA6C /* Pods-AnkokuAlertTests.debug.xcconfig */,
+				F7E126B32951FC3073B0E127 /* Pods-AnkokuAlertTests.test.xcconfig */,
+				9A5E7C227C2028F5F2950466 /* Pods-AnkokuAlertTests.release.xcconfig */,
 			);
 			name = Pods;
 			sourceTree = "<group>";
@@ -222,7 +231,7 @@
 				DBD33BBE179C3707003A41F9 /* AnkokuAlertTests */,
 				DBD33B97179C3706003A41F9 /* Frameworks */,
 				DBD33B96179C3706003A41F9 /* Products */,
-				7EAD5F9D74FFA57CDDD55B3B /* Pods */,
+				A5B9FF92B04883DAE8EC9DF7 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -241,7 +250,8 @@
 				DBD33B98179C3706003A41F9 /* Cocoa.framework */,
 				DB1088E917AFD5F00086BC71 /* Security.framework */,
 				DBD33B9A179C3706003A41F9 /* Other Frameworks */,
-				1D3721E8B32936BBB6F8D402 /* libPods.a */,
+				8D8C5E6E16A201044672651C /* libPods-AnkokuAlert.a */,
+				ED3603CA056B7553082CAD79 /* libPods-AnkokuAlertTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -347,12 +357,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DBD33BC9179C3707003A41F9 /* Build configuration list for PBXNativeTarget "AnkokuAlert" */;
 			buildPhases = (
-				726FA729794162E267616103 /* Check Pods Manifest.lock */,
+				03D50EF489DDAE580E6ADD6F /* [CP] Check Pods Manifest.lock */,
 				DBD33B91179C3706003A41F9 /* Sources */,
 				DBD33B92179C3706003A41F9 /* Frameworks */,
 				DBD33B93179C3706003A41F9 /* Resources */,
-				F8F81F763A3CDEA2368804FF /* Copy Pods Resources */,
-				56651166643024561FE01D75 /* Embed Pods Frameworks */,
+				7F13C9C1BFED4E25A9827992 /* [CP] Embed Pods Frameworks */,
+				18385632507A6F6377894963 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -367,12 +377,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = DBD33BCC179C3707003A41F9 /* Build configuration list for PBXNativeTarget "AnkokuAlertTests" */;
 			buildPhases = (
-				CA433B030F151A221AA291ED /* Check Pods Manifest.lock */,
+				B3FE57A3BB5F3590887B886A /* [CP] Check Pods Manifest.lock */,
 				DBD33BB3179C3707003A41F9 /* Sources */,
 				DBD33BB4179C3707003A41F9 /* Frameworks */,
 				DBD33BB5179C3707003A41F9 /* Resources */,
 				DBD33BB6179C3707003A41F9 /* ShellScript */,
-				D3E9493DB49ACCC921DAF8BB /* Copy Pods Resources */,
+				B2547B979386EA41578B1406 /* [CP] Embed Pods Frameworks */,
+				BBC262E6C8E8358A65E2BADF /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -470,29 +481,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		56651166643024561FE01D75 /* Embed Pods Frameworks */ = {
+		03D50EF489DDAE580E6ADD6F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		726FA729794162E267616103 /* Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -500,14 +496,59 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		CA433B030F151A221AA291ED /* Check Pods Manifest.lock */ = {
+		18385632507A6F6377894963 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AnkokuAlert/Pods-AnkokuAlert-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		7F13C9C1BFED4E25A9827992 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AnkokuAlert/Pods-AnkokuAlert-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B2547B979386EA41578B1406 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AnkokuAlertTests/Pods-AnkokuAlertTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B3FE57A3BB5F3590887B886A /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -515,19 +556,19 @@
 			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		D3E9493DB49ACCC921DAF8BB /* Copy Pods Resources */ = {
+		BBC262E6C8E8358A65E2BADF /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-AnkokuAlertTests/Pods-AnkokuAlertTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		DBD33BB6179C3707003A41F9 /* ShellScript */ = {
@@ -542,21 +583,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "# Run the unit tests in this test bundle.\n# \"${SYSTEM_DEVELOPER_DIR}/Tools/RunUnitTests\"\n";
-		};
-		F8F81F763A3CDEA2368804FF /* Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
-			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -672,7 +698,7 @@
 		};
 		DBBE50A917BC17A2005D5C9B /* Test */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4230068D339E942CB552E82D /* Pods.test.xcconfig */;
+			baseConfigurationReference = F215BA24D1821A44779EF13F /* Pods-AnkokuAlert.test.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = AnkokuAlert/AnkokuAlert.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -689,7 +715,7 @@
 		};
 		DBBE50AA17BC17A2005D5C9B /* Test */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 4230068D339E942CB552E82D /* Pods.test.xcconfig */;
+			baseConfigurationReference = F7E126B32951FC3073B0E127 /* Pods-AnkokuAlertTests.test.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -768,7 +794,7 @@
 		};
 		DBD33BCA179C3707003A41F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B079C8B88C0757FCB21023A2 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 8CB854FF58DEBAA28F6DEAC2 /* Pods-AnkokuAlert.debug.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = AnkokuAlert/AnkokuAlert.entitlements;
 				CODE_SIGN_IDENTITY = "Mac Developer";
@@ -785,7 +811,7 @@
 		};
 		DBD33BCB179C3707003A41F9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D0FD6B1291D902E7ACC38562 /* Pods.release.xcconfig */;
+			baseConfigurationReference = D2DAD5832D03FD7253B99DDF /* Pods-AnkokuAlert.release.xcconfig */;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = AnkokuAlert/AnkokuAlert.entitlements;
 				CODE_SIGN_IDENTITY = "3rd Party Mac Developer Application";
@@ -802,7 +828,7 @@
 		};
 		DBD33BCD179C3707003A41F9 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B079C8B88C0757FCB21023A2 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 88665BE2B6750D5FC481BA6C /* Pods-AnkokuAlertTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AnkokuAlert.app/Contents/MacOS/AnkokuAlert";
 				COMBINE_HIDPI_IMAGES = YES;
@@ -822,7 +848,7 @@
 		};
 		DBD33BCE179C3707003A41F9 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D0FD6B1291D902E7ACC38562 /* Pods.release.xcconfig */;
+			baseConfigurationReference = 9A5E7C227C2028F5F2950466 /* Pods-AnkokuAlertTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/AnkokuAlert.app/Contents/MacOS/AnkokuAlert";
 				COMBINE_HIDPI_IMAGES = YES;
