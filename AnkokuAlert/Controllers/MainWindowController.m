@@ -280,6 +280,7 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
     BOOL isForceAlerting = NO;  // for debug purpose
     BOOL shouldLogLiveInfo = NO;
     BOOL shouldNotifyLiveInfo = NO;
+    BOOL shouldSpeakLiveInfo = NO;
 
     for (MOCommunity* targetCommunity in targetCommunities) {
 #ifdef DEBUG_FORCE_ALERTING
@@ -293,11 +294,13 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
                 // do nothing
             } else if (targetCommunity.rating.integerValue < targetRating.integerValue) {
                 [self playAlertSound:AlertSoundTypeOption];
+                shouldSpeakLiveInfo = YES;
             } else {
                 if (openLive.boolValue) {
                     [NSWorkspace.sharedWorkspace openURL:[NSURL URLWithString:liveUrl]];
                 }
                 [self playAlertSound:AlertSoundTypeDefault];
+                shouldSpeakLiveInfo = YES;
             }
             shouldLogLiveInfo = YES;
             shouldNotifyLiveInfo = YES;
@@ -324,6 +327,10 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
                                                     liveUrl:liveUrl
                                               communityName:communityName
                                                communityUrl:communityUrl];
+                     if (shouldSpeakLiveInfo) {
+                         [self speakCommunityName:communityName
+                                         liveName:liveName];
+                     }
                  }
              }
          }];
@@ -811,6 +818,19 @@ typedef NS_ENUM (NSInteger, CommunityInputType) {
 
         [sound play];
     }
+}
+
+-(void)speakCommunityName:(NSString*)communityName liveName:(NSString*)liveName
+{
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath:@"/usr/bin/say"];
+    NSString *text = [NSString stringWithFormat:@"%@　で　%@　がはじまりました", communityName, liveName];
+    [task setArguments:[NSArray arrayWithObjects:text, nil]];
+    
+    dispatch_time_t delay = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1 * NSEC_PER_SEC));
+    dispatch_after(delay, dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [task launch];
+    });
 }
 
 -(void)showLiveNotificationWithLiveName:(NSString*)liveName liveUrl:(NSString*)liveUrl communityName:(NSString*)communityName communityUrl:(NSString*)communityUrl
