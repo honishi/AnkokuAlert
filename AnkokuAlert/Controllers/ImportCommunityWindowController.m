@@ -182,23 +182,32 @@ NSUInteger const kMaxRequestCommunityInfoConcurrency = 20;
 
 -(void)updateCommunityName
 {
+    NSUInteger delay = 0;
     for (NSMutableDictionary* community in self.communityArrayController.arrangedObjects) {
-        CommunityInfoRequestBlockOperation* operation =
-            [CommunityInfoRequestBlockOperation operationWithCommunity:community completion:^() {
-                 BOOL updateInProgress = NO;
-                 for (NSDictionary* community in self.communityArrayController.arrangedObjects) {
-                     if (((NSNumber*)community[kImportCommunityKeyIsCommunityNameUpdated]).boolValue == NO) {
-                         updateInProgress = YES;
-                         break;
-                     }
-                 }
-
-                 if (!updateInProgress) {
-                     self.isAllCommunityNameUpdated = YES;
-                 }
-             }];
-        [self.fetchCommunityNameOperationQueue addOperation:operation];
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delay * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self _updateCommunityName:community];
+        });
+        delay += 10;
     }
+}
+
+-(void)_updateCommunityName:(NSMutableDictionary*)community
+{
+    CommunityInfoRequestBlockOperation* operation =
+    [CommunityInfoRequestBlockOperation operationWithCommunity:community completion:^() {
+        BOOL updateInProgress = NO;
+        for (NSDictionary* community in self.communityArrayController.arrangedObjects) {
+            if (((NSNumber*)community[kImportCommunityKeyIsCommunityNameUpdated]).boolValue == NO) {
+                updateInProgress = YES;
+                break;
+            }
+        }
+        
+        if (!updateInProgress) {
+            self.isAllCommunityNameUpdated = YES;
+        }
+    }];
+    [self.fetchCommunityNameOperationQueue addOperation:operation];
 }
 
 #pragma mark Button Actions
