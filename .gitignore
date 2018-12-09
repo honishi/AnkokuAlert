@@ -18,3 +18,7 @@ Pods/
 
 # account info
 TestAccount.plist
+
+# bundler
+vendor/
+.bundle

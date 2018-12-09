@@ -6,10 +6,15 @@ DEPENDENCIES:
   - MagicalRecord/Shorthand (~> 2.2)
   - SSKeychain (~> 1.2.2)
 
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - MagicalRecord
+    - SSKeychain
+
 SPEC CHECKSUMS:
   MagicalRecord: 2dc87179ae7c1f2a274442624ec65a07d4357a6f
   SSKeychain: 88767e903ee8d274ed380e364d96b7a101235286
 
 PODFILE CHECKSUM: 23dc419a01522ff509ae790550ab76748599b5dc
 
-COCOAPODS: 1.0.1
+COCOAPODS: 1.5.3
