@@ -25,7 +25,7 @@
 
 -(void)logMessage:(NSString*)message
 {
-    NSAttributedString* attributedMessage = [[NSAttributedString alloc] initWithString:message];
+    NSAttributedString* attributedMessage = [[NSAttributedString alloc] initWithString:message attributes:self.defaultAttribute];
     [self logToConsole:attributedMessage];
 }
 
@@ -38,17 +38,17 @@
 
     NSMutableAttributedString* message = NSMutableAttributedString.new;
 
-    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"Live \""]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"Live \"" attributes:self.defaultAttribute]];
 
     NSAttributedString* liveNameAttributedString = [[NSAttributedString alloc] initWithString:liveName attributes:[self attributeWithLinkUrl:liveUrl]];
     [message appendAttributedString:liveNameAttributedString];
 
-    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\" started in \""]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\" started in \"" attributes:self.defaultAttribute]];
 
     NSAttributedString* communityNameAttributedString = [[NSAttributedString alloc] initWithString:communityName attributes:[self attributeWithLinkUrl:communityUrl]];
     [message appendAttributedString:communityNameAttributedString];
 
-    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\"."]];
+    [message appendAttributedString:[[NSAttributedString alloc] initWithString:@"\"." attributes:self.defaultAttribute]];
 
     [self logToConsole:message];
 }
@@ -61,6 +61,14 @@
 }
 
 #pragma mark - Internal Methods
+
+-(NSDictionary*)defaultAttribute
+{
+    NSMutableDictionary* attribute = NSMutableDictionary.new;
+    [attribute setObject:NSColor.controlTextColor forKey:NSForegroundColorAttributeName];
+    
+    return attribute;
+}
 
 -(NSDictionary*)attributeWithLinkUrl:(NSString*)linkUrl
 {
@@ -83,7 +91,7 @@
 
     NSString* formattedDateString = [dateFormatter stringFromDate:NSDate.date];
 
-    return [[NSAttributedString alloc] initWithString:formattedDateString];
+    return [[NSAttributedString alloc] initWithString:formattedDateString attributes:self.defaultAttribute];
 }
 
 -(void)logToConsole:(NSAttributedString*)message
